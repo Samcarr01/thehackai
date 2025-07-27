@@ -482,36 +482,36 @@ export default function AdminPage() {
           </p>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="mb-8">
-          <div className="bg-slate-800/80/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-purple-100/50 max-w-2xl mx-auto">
-            <div className="flex gap-2">
+        {/* Tab Navigation - Mobile Optimized */}
+        <div className="mb-6 px-4 sm:px-6 lg:px-8">
+          <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-purple-100/50 max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
               <button
                 onClick={() => setActiveTab('content')}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 text-sm ${
+                className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm min-h-[44px] flex items-center justify-center ${
                   activeTab === 'content'
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'text-gray-100 hover:text-purple-600'
+                    : 'text-gray-100 hover:text-purple-600 hover:bg-purple-900/20'
                 }`}
               >
                 📚 Content Manager
               </button>
               <button
                 onClick={() => setActiveTab('blog')}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 text-sm ${
+                className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm min-h-[44px] flex items-center justify-center ${
                   activeTab === 'blog'
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'text-gray-100 hover:text-purple-600'
+                    : 'text-gray-100 hover:text-purple-600 hover:bg-purple-900/20'
                 }`}
               >
                 ✍️ Blog Manager
               </button>
               <button
                 onClick={() => setActiveTab('tier')}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 text-sm ${
+                className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm min-h-[44px] flex items-center justify-center ${
                   activeTab === 'tier'
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'text-gray-100 hover:text-purple-600'
+                    : 'text-gray-100 hover:text-purple-600 hover:bg-purple-900/20'
                 }`}
               >
                 🎯 Tier Testing
@@ -522,33 +522,33 @@ export default function AdminPage() {
 
         {/* Content Management Tab */}
         {activeTab === 'content' && (
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 sm:px-6 lg:px-8">
             {/* Upload Section */}
-            <div className="bg-slate-800/80/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-purple-100/50">
-            <h2 className="text-2xl font-semibold text-white mb-6 flex items-center">
-              <span className="text-2xl mr-3">📤</span>
+            <div className="bg-slate-800/80 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl border border-purple-100/50">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white mb-4 sm:mb-6 flex items-center">
+              <span className="text-lg sm:text-xl lg:text-2xl mr-2 sm:mr-3">📤</span>
               Upload Content
             </h2>
 
             {/* Upload Type Toggle */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <div className="flex flex-col sm:flex-row bg-gray-800 rounded-xl p-1 gap-1 sm:gap-0">
                 <button
                   onClick={() => setUploadType('gpt')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
+                  className={`flex-1 py-3 px-3 sm:px-4 rounded-lg font-medium transition-all duration-200 text-sm min-h-[44px] flex items-center justify-center ${
                     uploadType === 'gpt'
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                      : 'text-gray-100 hover:text-purple-600'
+                      : 'text-gray-100 hover:text-purple-600 hover:bg-purple-900/20'
                   }`}
                 >
                   🤖 GPT Link
                 </button>
                 <button
                   onClick={() => setUploadType('document')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
+                  className={`flex-1 py-3 px-3 sm:px-4 rounded-lg font-medium transition-all duration-200 text-sm min-h-[44px] flex items-center justify-center ${
                     uploadType === 'document'
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                      : 'text-gray-100 hover:text-purple-600'
+                      : 'text-gray-100 hover:text-purple-600 hover:bg-purple-900/20'
                   }`}
                 >
                   📄 PDF Document
@@ -672,25 +672,25 @@ export default function AdminPage() {
           </div>
 
           {/* Content Management */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* GPTs Section */}
-            <div className="bg-slate-800/80/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-purple-100/50">
-              <h2 className="text-2xl font-semibold text-white mb-6 flex items-center">
-                <span className="text-2xl mr-3">🤖</span>
+            <div className="bg-slate-800/80 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl border border-purple-100/50">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white mb-4 sm:mb-6 flex items-center">
+                <span className="text-lg sm:text-xl lg:text-2xl mr-2 sm:mr-3">🤖</span>
                 GPTs Collection
               </h2>
 
               {recentUploads.filter(item => item.type === 'gpt').length > 0 ? (
-                <div className="max-h-96 overflow-y-auto space-y-4 pr-2">
+                <div className="max-h-80 sm:max-h-96 overflow-y-auto space-y-3 sm:space-y-4 pr-1 sm:pr-2">
                   {recentUploads.filter(item => item.type === 'gpt').map((item, index) => (
-                    <div key={`gpt-${item.id}`} className="p-4 border border-gray-200 rounded-xl hover:border-purple-300 transition-colors">
-                      <div className="flex items-start justify-between">
+                    <div key={`gpt-${item.id}`} className="p-3 sm:p-4 border border-gray-200 rounded-xl hover:border-purple-300 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-2">
-                            <span className="text-lg flex-shrink-0">🤖</span>
-                            <h3 className="font-semibold text-white text-sm leading-tight truncate">{item.title}</h3>
+                            <span className="text-base sm:text-lg flex-shrink-0">🤖</span>
+                            <h3 className="font-semibold text-white text-sm sm:text-base leading-tight">{item.title}</h3>
                           </div>
-                          <p className="text-xs text-gray-100 mb-2 leading-relaxed">{item.description.slice(0, 80)}...</p>
+                          <p className="text-xs sm:text-sm text-gray-100 mb-2 leading-relaxed line-clamp-2">{item.description.slice(0, 120)}...</p>
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full whitespace-nowrap">
                               {item.category}
@@ -702,26 +702,26 @@ export default function AdminPage() {
                             )}
                           </div>
                         </div>
-                        <div className="ml-4 flex items-center space-x-2">
+                        <div className="flex sm:ml-4 sm:items-center space-x-2 self-start sm:self-auto">
                           <button
                             onClick={() => handleToggleFeature(item)}
-                            className={`p-2 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                            className={`p-2 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
                               item.is_featured
                                 ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50'
                                 : 'text-gray-200 hover:text-yellow-600 hover:bg-yellow-50'
                             }`}
                             title={item.is_featured ? 'Remove from featured' : 'Add to featured'}
                           >
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                             </svg>
                           </button>
                           <button
                             onClick={() => handleDelete(item)}
-                            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                             title="Delete this GPT"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>

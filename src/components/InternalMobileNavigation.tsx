@@ -81,9 +81,9 @@ export default function InternalMobileNavigation({
         onClick={handleLinkClick} 
       />
 
-      {/* Mobile Menu Panel - FORCE SOLID BACKGROUND */}
+      {/* Mobile Menu Panel - OPTIMIZED WIDTH */}
       <div 
-        className={`fixed top-0 right-0 h-full w-72 sm:w-80 shadow-2xl transform transition-all duration-300 ease-out md:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-all duration-300 ease-out md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`} 
         style={{ 
@@ -128,8 +128,8 @@ export default function InternalMobileNavigation({
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-6 py-6">
-            <div className="space-y-2">
+          <nav className="flex-1 px-4 py-6">
+            <div className="space-y-1">
               {[
                 { href: '/', icon: '🏠', label: 'Home', delay: 'delay-200' },
                 { href: '/dashboard', icon: '📊', label: 'Dashboard', delay: 'delay-300' },
@@ -141,13 +141,13 @@ export default function InternalMobileNavigation({
                   key={item.href}
                   href={item.href}
                   onClick={handleLinkClick}
-                  className={`group flex items-center text-lg py-4 px-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 ${
+                  className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] ${
                     isActivePage(item.href)
                       ? 'bg-purple-900/20 text-purple-300 border-l-4 border-purple-500 font-medium shadow-sm'
                       : 'text-gray-200 hover:text-purple-400 hover:bg-purple-900/20'
                   } ${animateItems ? `translate-x-0 opacity-100 ${item.delay}` : 'translate-x-8 opacity-0'}`}
                 >
-                  <span className={`mr-4 text-2xl transition-transform duration-200 ${
+                  <span className={`mr-3 text-xl transition-transform duration-200 ${
                     isActivePage(item.href) ? 'scale-110' : 'group-hover:scale-110'
                   }`}>
                     {item.icon}
@@ -163,13 +163,13 @@ export default function InternalMobileNavigation({
                 <Link
                   href="/admin"
                   onClick={handleLinkClick}
-                  className={`group flex items-center text-lg py-4 px-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 ${
+                  className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] ${
                     isActivePage('/admin')
                       ? 'bg-purple-900/20 text-purple-300 border-l-4 border-purple-500 font-medium shadow-sm'
                       : 'text-purple-400 hover:text-purple-300 hover:bg-purple-900/20'
                   } ${animateItems ? 'translate-x-0 opacity-100 delay-700' : 'translate-x-8 opacity-0'}`}
                 >
-                  <span className={`mr-4 text-2xl transition-transform duration-200 ${
+                  <span className={`mr-3 text-xl transition-transform duration-200 ${
                     isActivePage('/admin') ? 'scale-110' : 'group-hover:scale-110'
                   }`}>
                     ⚙️
@@ -184,13 +184,13 @@ export default function InternalMobileNavigation({
               <Link
                 href="/plan"
                 onClick={handleLinkClick}
-                className={`group flex items-center text-lg py-4 px-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 ${
+                className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 ${
                   isActivePage('/plan')
                     ? 'text-purple-300 font-medium shadow-md'
                     : 'text-purple-400 hover:text-purple-300 hover:shadow-md'
                 } ${animateItems ? 'translate-x-0 opacity-100 delay-800' : 'translate-x-8 opacity-0'}`}
               >
-                <span className={`mr-4 text-2xl transition-transform duration-200 ${
+                <span className={`mr-3 text-xl transition-transform duration-200 ${
                   isActivePage('/plan') ? 'scale-110' : 'group-hover:scale-110'
                 }`}>
                   ⭐
@@ -203,8 +203,8 @@ export default function InternalMobileNavigation({
             </div>
           </nav>
 
-          {/* Authentication-based CTA Button - Consistent Spacing */}
-          <div className={`p-6 border-t border-gray-700 bg-gray-700/50 transition-all duration-500 delay-600 ${
+          {/* Authentication-based CTA Button - Optimized Spacing */}
+          <div className={`p-4 border-t border-gray-700 bg-gray-700/50 transition-all duration-500 delay-600 ${
             animateItems ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}>
             {/* Show Sign Out button for authenticated users */}
@@ -223,38 +223,38 @@ export default function InternalMobileNavigation({
                   window.location.href = '/'
                 }
               }}
-              className="group flex items-center justify-center w-full gradient-purple text-white py-4 px-6 rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[56px]"
+              className="group flex items-center justify-center w-full gradient-purple text-white py-3 px-4 rounded-xl font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[48px]"
             >
-              <span className="mr-3 text-xl transition-transform duration-200 group-hover:scale-110">👋</span>
+              <span className="mr-2 text-lg transition-transform duration-200 group-hover:scale-110">👋</span>
               Sign Out
             </button>
           </div>
 
-          {/* User Info Section - Moved to Bottom */}
+          {/* User Info Section - Optimized Bottom */}
           {userEmail && (
-            <div className={`px-6 py-6 border-t border-gray-700 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-purple-900/20 transition-all duration-500 delay-800 ${
+            <div className={`px-4 py-4 border-t border-gray-700 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-purple-900/20 transition-all duration-500 delay-800 ${
               animateItems ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}>
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2">
                 {/* Premium Badge */}
-                <div className={`self-start px-5 py-3 rounded-2xl text-base font-bold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                <div className={`self-start px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl ${
                   userTier === 'ultra'
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400/50' 
                     : userTier === 'pro' 
                       ? 'bg-purple-900/50 text-purple-300 border-2 border-purple-500/30' 
                       : 'bg-gray-800/50 text-gray-300 border-2 border-gray-600/30'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xl">{userTier === 'ultra' ? '🚀' : userTier === 'pro' ? '✨' : '🆓'}</span>
-                    <span className="tracking-wide">{userTier === 'ultra' ? 'ULTRA MEMBER' : userTier === 'pro' ? 'PRO MEMBER' : 'FREE ACCOUNT'}</span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-lg">{userTier === 'ultra' ? '🚀' : userTier === 'pro' ? '✨' : '🆓'}</span>
+                    <span className="tracking-wide text-xs">{userTier === 'ultra' ? 'ULTRA MEMBER' : userTier === 'pro' ? 'PRO MEMBER' : 'FREE ACCOUNT'}</span>
                   </div>
                 </div>
                 
                 {/* Email Display */}
-                <div className="bg-slate-800 rounded-xl px-4 py-3 border border-purple-500/30 shadow-sm">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm text-gray-200 font-medium truncate max-w-[200px]" title={userEmail}>
+                <div className="bg-slate-800 rounded-lg px-3 py-2 border border-purple-500/30 shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-gray-200 font-medium truncate max-w-[160px]" title={userEmail}>
                       {userEmail}
                     </span>
                   </div>
