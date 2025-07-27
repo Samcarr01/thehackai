@@ -94,46 +94,61 @@ export default function UniversalMobileSidebar({
 
   const menuItems = getMenuItems()
 
-  // Animation variants
+  // Enhanced Animation variants with premium easing
   const sidebarVariants = {
     closed: { 
-      scale: 0.8,
+      scale: 0.85,
       opacity: 0,
-      x: '-50%',
+      y: 20,
       transition: { 
         type: 'spring' as const,
-        stiffness: 400,
-        damping: 40
+        stiffness: 500,
+        damping: 45,
+        mass: 0.8
       }
     },
     open: { 
       scale: 1,
       opacity: 1,
-      x: 0,
+      y: 0,
       transition: { 
         type: 'spring' as const,
-        stiffness: 300,
-        damping: 30,
-        mass: 0.8
+        stiffness: 400,
+        damping: 35,
+        mass: 0.9,
+        delayChildren: 0.1,
+        staggerChildren: 0.05
       }
     }
   }
 
   const overlayVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1 }
+    closed: { 
+      opacity: 0,
+      transition: { duration: 0.2 }
+    },
+    open: { 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    }
   }
 
   const itemVariants = {
-    closed: { x: -20, opacity: 0 },
+    closed: { 
+      x: -15, 
+      opacity: 0,
+      scale: 0.95
+    },
     open: (i: number) => ({
       x: 0,
       opacity: 1,
+      scale: 1,
       transition: {
-        delay: 0.1 + (i * 0.05),
+        delay: 0.15 + (i * 0.03),
         type: 'spring' as const,
-        stiffness: 400,
-        damping: 25
+        stiffness: 450,
+        damping: 30,
+        mass: 0.8
       }
     })
   }
@@ -167,10 +182,26 @@ export default function UniversalMobileSidebar({
 
   return (
     <>
-      {/* Mobile Hamburger Button - Positioned on the right */}
-      <button
+      {/* Premium Mobile Hamburger Button */}
+      <motion.button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 right-4 z-50 w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-slate-800/90 hover:scale-110 active:scale-95 shadow-lg"
+        className="md:hidden fixed top-4 right-4 z-50 w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl"
+        style={{
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+        }}
+        whileHover={{ 
+          scale: 1.05,
+          rotate: isOpen ? 0 : 5,
+          transition: { type: 'spring', stiffness: 400, damping: 25 }
+        }}
+        whileTap={{ 
+          scale: 0.95,
+          transition: { duration: 0.1 }
+        }}
         aria-label="Toggle navigation menu"
         aria-expanded={isOpen}
       >
@@ -203,26 +234,30 @@ export default function UniversalMobileSidebar({
             transition={{ duration: 0.3 }}
           />
         </motion.div>
-      </button>
+      </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay */}
+            {/* Premium Overlay with Enhanced Blur */}
             <motion.div 
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 z-40 md:hidden"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)'
+              }}
               variants={overlayVariants}
               initial="closed"
               animate="open"
               exit="closed"
-              transition={{ duration: 0.3 }}
               onClick={closeSidebar}
               aria-hidden="true"
             />
 
-            {/* Compact Floating Sidebar Card */}
+            {/* Premium Floating Sidebar Card */}
             <motion.div 
-              className="fixed top-1/2 left-6 right-6 z-50 md:hidden max-w-sm mx-auto"
+              className="fixed top-1/2 left-4 right-4 z-50 md:hidden max-w-[340px] mx-auto"
               variants={sidebarVariants}
               initial="closed"
               animate="open"
@@ -231,82 +266,120 @@ export default function UniversalMobileSidebar({
               aria-label="Navigation menu"
               style={{
                 transform: 'translateY(-50%)',
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '24px',
-                boxShadow: '0 32px 64px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
+                backdropFilter: 'blur(32px)',
+                WebkitBackdropFilter: 'blur(32px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '28px',
+                boxShadow: `
+                  0 40px 80px -20px rgba(0, 0, 0, 0.8),
+                  0 24px 48px -12px rgba(0, 0, 0, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.06),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.2)
+                `
               }}
             >
-              <div className="flex flex-col overflow-hidden p-6">
+              <div className="flex flex-col overflow-hidden p-7">
                 
-                {/* Close Button */}
+                {/* Premium Close Button */}
                 <motion.button
                   onClick={closeSidebar}
-                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="absolute top-5 right-5 w-9 h-9 rounded-full flex items-center justify-center group"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  whileHover={{ 
+                    scale: 1.1,
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    transition: { type: 'spring', stiffness: 400, damping: 25 }
+                  }}
+                  whileTap={{ 
+                    scale: 0.92,
+                    transition: { duration: 0.1 }
+                  }}
                   variants={itemVariants}
                   initial="closed"
                   animate="open"
                   custom={0}
                 >
-                  <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg 
+                    className="w-4 h-4 text-white/70 group-hover:text-white/90 transition-colors" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </motion.button>
 
-                {/* User Profile Section - Only for authenticated users */}
+                {/* Premium User Profile Section */}
                 {isAuthenticated && userEmail && (
                   <motion.div 
-                    className="mb-6 pb-4 border-b border-white/10"
+                    className="mb-7 pb-5"
+                    style={{
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
                     custom={1}
                   >
-                    <div className="flex items-center space-x-3">
-                      {/* Enhanced Avatar */}
+                    <div className="flex items-center space-x-4">
+                      {/* Premium Avatar with Ring */}
                       <div className="relative">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                        <div className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 opacity-75 blur-sm"></div>
+                        <div className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-xl ${
                           userTier === 'ultra' 
                             ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600' 
                             : userTier === 'pro'
                               ? 'bg-gradient-to-br from-purple-600 to-purple-700'
                               : 'bg-gradient-to-br from-gray-600 to-gray-700'
-                        }`}>
-                          <span className="text-white font-bold text-sm">
+                        }`}
+                        style={{
+                          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                        }}>
+                          <span className="text-white font-semibold text-base">
                             {avatarLetter}
                           </span>
                         </div>
-                        {/* Online indicator */}
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900 shadow-sm">
+                        {/* Enhanced Online Indicator */}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-800 shadow-lg">
                           <div className="w-full h-full bg-green-400 rounded-full animate-pulse"></div>
                         </div>
                       </div>
                       
-                      {/* User Info */}
+                      {/* Enhanced User Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-medium text-sm truncate">
+                        <h3 className="text-white font-semibold text-base truncate mb-1">
                           {displayName}
                         </h3>
                         <motion.div 
-                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium mt-0.5 ${getTierBadgeStyle()}`}
-                          whileHover={{ scale: 1.05 }}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getTierBadgeStyle()}`}
+                          style={{
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                          }}
+                          whileHover={{ 
+                            scale: 1.05,
+                            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.3)',
+                            transition: { type: 'spring', stiffness: 400, damping: 25 }
+                          }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <span className="mr-1 text-xs">{getTierIcon()}</span>
-                          <span className="text-xs">{getTierLabel()}</span>
+                          <span className="mr-1.5 text-sm">{getTierIcon()}</span>
+                          <span className="text-xs font-bold tracking-wide">{getTierLabel()}</span>
                         </motion.div>
                       </div>
                     </div>
                   </motion.div>
                 )}
                 
-                {/* Main Navigation */}
-                <div className="mb-4">
-                  <nav className="space-y-1">
+                {/* Premium Main Navigation */}
+                <div className="mb-6">
+                  <nav className="space-y-2">
                     {menuItems.map((item, index) => (
                       <motion.div
                         key={item.href}
@@ -318,83 +391,131 @@ export default function UniversalMobileSidebar({
                         <Link
                           href={item.href}
                           onClick={closeSidebar}
-                          className={`group flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden ${
-                            isActivePage(item.href)
-                              ? 'bg-gradient-to-r from-purple-600/90 to-purple-700/90 text-white shadow-lg shadow-purple-600/30'
-                              : 'text-white/85 hover:text-white hover:bg-white/8'
-                          }`}
+                          className="group flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden"
+                          style={{
+                            ...(isActivePage(item.href) ? {
+                              background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)',
+                              boxShadow: '0 8px 24px rgba(147, 51, 234, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                              border: '1px solid rgba(147, 51, 234, 0.3)'
+                            } : {
+                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                              border: '1px solid rgba(255, 255, 255, 0.05)'
+                            })
+                          }}
                         >
-                          {/* Animated background for active state */}
+                          {/* Enhanced Animated Background */}
                           {isActivePage(item.href) && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-purple-600/30"
-                              initial={{ opacity: 0, scale: 0.8 }}
+                              className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 rounded-2xl"
+                              initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              transition={{ duration: 0.3 }}
+                              transition={{ duration: 0.4, ease: "easeOut" }}
                               layoutId="activeBackground"
                             />
                           )}
                           
-                          <motion.span 
-                            className="text-base mr-3 relative z-10"
-                            whileHover={{ scale: 1.1, rotate: 8 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                          {/* Icon with Enhanced Animation */}
+                          <motion.div 
+                            className="relative z-10 mr-4 flex items-center justify-center w-6 h-6"
+                            whileHover={{ 
+                              scale: 1.15, 
+                              rotate: isActivePage(item.href) ? 0 : 12,
+                              transition: { type: 'spring', stiffness: 500, damping: 30 }
+                            }}
+                            whileTap={{ scale: 0.95 }}
                           >
-                            {item.icon}
-                          </motion.span>
-                          <span className="font-medium text-sm relative z-10">{item.label}</span>
+                            <span className={`text-lg ${
+                              isActivePage(item.href) 
+                                ? 'text-white drop-shadow-sm' 
+                                : 'text-white/75 group-hover:text-white/95'
+                            }`}>
+                              {item.icon}
+                            </span>
+                          </motion.div>
                           
-                          {/* Active indicator */}
+                          {/* Enhanced Text */}
+                          <span className={`font-medium text-sm relative z-10 flex-1 transition-colors duration-200 ${
+                            isActivePage(item.href) 
+                              ? 'text-white font-semibold' 
+                              : 'text-white/85 group-hover:text-white/95'
+                          }`}>
+                            {item.label}
+                          </span>
+                          
+                          {/* Enhanced Active Indicator */}
                           {isActivePage(item.href) && (
                             <motion.div 
-                              className="ml-auto w-1.5 h-1.5 bg-white rounded-full relative z-10"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ delay: 0.2 }}
+                              className="ml-auto w-2 h-2 bg-white rounded-full relative z-10 shadow-lg"
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
                             />
                           )}
                           
-                          {/* Hover glow effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/15 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                          {/* Enhanced Hover Effects */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl" />
+                          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
                         </Link>
                       </motion.div>
                     ))}
                   </nav>
                 </div>
                 
-                {/* Account Actions - Only for authenticated users */}
+                {/* Premium Account Actions */}
                 {isAuthenticated && (
                   <motion.div 
-                    className="border-t border-white/10 p-4 space-y-3"
+                    className="pt-5 space-y-3"
+                    style={{
+                      borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
                     custom={menuItems.length + 2}
                   >
-                    {/* Plan Link */}
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    {/* Premium Plan Link */}
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
                       <Link
                         href="/plan"
                         onClick={closeSidebar}
-                        className={`flex items-center px-3 py-3 rounded-xl transition-all duration-200 min-h-[44px] border border-purple-500/30 relative overflow-hidden ${
-                          isActivePage('/plan')
-                            ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25'
-                            : 'text-purple-300 hover:text-white hover:bg-purple-600/20 hover:border-purple-400/50'
-                        }`}
+                        className="flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group"
+                        style={{
+                          background: isActivePage('/plan') 
+                            ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)'
+                            : 'linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(126, 34, 206, 0.1) 100%)',
+                          border: `1px solid ${isActivePage('/plan') ? 'rgba(147, 51, 234, 0.4)' : 'rgba(147, 51, 234, 0.2)'}`,
+                          boxShadow: isActivePage('/plan') 
+                            ? '0 8px 24px rgba(147, 51, 234, 0.25)'
+                            : '0 4px 12px rgba(147, 51, 234, 0.1)'
+                        }}
                       >
-                        <motion.span 
-                          className="text-lg mr-3"
-                          whileHover={{ scale: 1.1, rotate: 10 }}
+                        <motion.div 
+                          className="mr-4 flex items-center justify-center w-6 h-6"
+                          whileHover={{ 
+                            scale: 1.2, 
+                            rotate: 15,
+                            transition: { type: 'spring', stiffness: 500, damping: 30 }
+                          }}
                         >
-                          ⭐
-                        </motion.span>
-                        <span className="font-medium">Plan & Billing</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                          <span className="text-lg">⭐</span>
+                        </motion.div>
+                        <span className={`font-semibold text-sm flex-1 ${
+                          isActivePage('/plan') ? 'text-white' : 'text-purple-200 group-hover:text-white'
+                        }`}>
+                          Plan & Billing
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
                       </Link>
                     </motion.div>
                     
-                    {/* Sign Out Button */}
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    {/* Premium Sign Out Button */}
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
                       <button
                         onClick={async () => {
                           try {
@@ -407,49 +528,84 @@ export default function UniversalMobileSidebar({
                             window.location.href = '/'
                           }
                         }}
-                        className="w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 text-red-300 hover:text-white hover:bg-red-600/20 relative overflow-hidden group"
+                        className="w-full flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%)',
+                          border: '1px solid rgba(239, 68, 68, 0.2)'
+                        }}
                       >
-                        <motion.span 
-                          className="text-lg mr-3"
-                          whileHover={{ scale: 1.1, rotate: -10 }}
+                        <motion.div 
+                          className="mr-4 flex items-center justify-center w-6 h-6"
+                          whileHover={{ 
+                            scale: 1.2, 
+                            rotate: -15,
+                            transition: { type: 'spring', stiffness: 500, damping: 30 }
+                          }}
                         >
-                          👋
-                        </motion.span>
-                        <span className="font-medium">Sign Out</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/5 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <span className="text-lg">👋</span>
+                        </motion.div>
+                        <span className="font-semibold text-sm text-red-300 group-hover:text-white transition-colors duration-200">
+                          Sign Out
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
                       </button>
                     </motion.div>
                   </motion.div>
                 )}
 
-                {/* Auth Actions - Only for non-authenticated users */}
+                {/* Premium Auth Actions */}
                 {!isAuthenticated && (
                   <motion.div 
-                    className="border-t border-white/10 p-4 space-y-3"
+                    className="pt-5 space-y-3"
+                    style={{
+                      borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
                     custom={menuItems.length + 2}
                   >
-                    {/* Sign In Button */}
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    {/* Premium Sign In Button */}
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
                       <Link
                         href="/login"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl transition-all duration-200 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
+                        className="w-full flex items-center justify-center px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm group"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(10px)'
+                        }}
                       >
-                        <span className="font-medium">Sign In</span>
+                        <span className="text-white/90 group-hover:text-white transition-colors duration-200">
+                          Sign In
+                        </span>
                       </Link>
                     </motion.div>
                     
-                    {/* Sign Up Button */}
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    {/* Premium Get Started Button */}
+                    <motion.div 
+                      whileHover={{ 
+                        scale: 1.02,
+                        transition: { type: 'spring', stiffness: 400, damping: 25 }
+                      }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
                       <Link
                         href="/signup"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl transition-all duration-200 bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40"
+                        className="w-full flex items-center justify-center px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm group relative overflow-hidden"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)',
+                          border: '1px solid rgba(147, 51, 234, 0.4)',
+                          boxShadow: '0 8px 24px rgba(147, 51, 234, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                        }}
                       >
-                        <span className="font-medium">Get Started</span>
+                        <span className="text-white relative z-10">Get Started</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </Link>
                     </motion.div>
                   </motion.div>
