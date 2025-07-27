@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import UniversalMobileSidebar from './UniversalMobileSidebar'
+import MobileHeader from './MobileHeader'
 import { auth } from '@/lib/auth'
 import { userService, type UserProfile } from '@/lib/user'
 
@@ -54,6 +55,9 @@ export default function UniversalLayout({ children, className = '' }: UniversalL
 
   return (
     <div className={`min-h-screen ${className}`}>
+      {/* Mobile Header with Logo - Only visible on mobile */}
+      <MobileHeader />
+      
       {/* Universal Mobile Sidebar - Only visible on mobile */}
       <UniversalMobileSidebar 
         userEmail={user?.email}

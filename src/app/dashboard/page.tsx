@@ -10,7 +10,6 @@ import { auth } from '@/lib/auth'
 import { userService, type UserProfile, type UserTier, TIER_FEATURES } from '@/lib/user'
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
-import SmartNavigation from '@/components/SmartNavigation'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'
@@ -176,7 +175,6 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white">
-        <SmartNavigation user={null} />
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -189,8 +187,6 @@ export default function DashboardPage() {
 
   return (
     <DarkThemeBackground>
-      {/* Header */}
-      <SmartNavigation user={user} currentPage="dashboard" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Upgrade Success Message */}

@@ -8,7 +8,6 @@ import { userService, type UserProfile } from '@/lib/user'
 import { documentsService, type Document, type DocumentWithAccess } from '@/lib/documents'
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
-import SmartNavigation from '@/components/SmartNavigation'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import GradientBackground from '@/components/NetworkBackground'
 import DescriptionModal from '@/components/DescriptionModal'
@@ -246,7 +245,6 @@ export default function DocumentsPage() {
   return (
     <DarkThemeBackground>
       {/* Smart Navigation */}
-      <SmartNavigation user={user} currentPage="documents" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header Section */}

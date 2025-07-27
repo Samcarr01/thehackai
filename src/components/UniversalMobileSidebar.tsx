@@ -97,7 +97,9 @@ export default function UniversalMobileSidebar({
   // Animation variants
   const sidebarVariants = {
     closed: { 
-      x: '-100%',
+      scale: 0.8,
+      opacity: 0,
+      x: '-50%',
       transition: { 
         type: 'spring' as const,
         stiffness: 400,
@@ -105,11 +107,14 @@ export default function UniversalMobileSidebar({
       }
     },
     open: { 
+      scale: 1,
+      opacity: 1,
       x: 0,
       transition: { 
         type: 'spring' as const,
-        stiffness: 400,
-        damping: 40
+        stiffness: 300,
+        damping: 30,
+        mass: 0.8
       }
     }
   }
@@ -162,10 +167,10 @@ export default function UniversalMobileSidebar({
 
   return (
     <>
-      {/* Mobile Hamburger Button - Only visible on mobile */}
+      {/* Mobile Hamburger Button - Positioned on the right */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-lg bg-slate-900/80 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-200 hover:bg-slate-800/90 hover:scale-105 active:scale-95"
+        className="md:hidden fixed top-4 right-4 z-50 w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-slate-800/90 hover:scale-110 active:scale-95 shadow-lg"
         aria-label="Toggle navigation menu"
         aria-expanded={isOpen}
       >
@@ -215,9 +220,9 @@ export default function UniversalMobileSidebar({
               aria-hidden="true"
             />
 
-            {/* Sidebar Panel */}
+            {/* Compact Floating Sidebar Card */}
             <motion.div 
-              className="fixed top-0 left-0 h-full w-80 max-w-[85vw] z-50 md:hidden"
+              className="fixed top-1/2 left-6 right-6 z-50 md:hidden max-w-sm mx-auto"
               variants={sidebarVariants}
               initial="closed"
               animate="open"
@@ -225,56 +230,74 @@ export default function UniversalMobileSidebar({
               role="dialog"
               aria-label="Navigation menu"
               style={{
-                background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+                transform: 'translateY(-50%)',
+                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '24px',
+                boxShadow: '0 32px 64px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
               }}
             >
-              <div className="flex flex-col h-full overflow-hidden">
+              <div className="flex flex-col overflow-hidden p-6">
                 
+                {/* Close Button */}
+                <motion.button
+                  onClick={closeSidebar}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  variants={itemVariants}
+                  initial="closed"
+                  animate="open"
+                  custom={0}
+                >
+                  <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </motion.button>
+
                 {/* User Profile Section - Only for authenticated users */}
                 {isAuthenticated && userEmail && (
                   <motion.div 
-                    className="p-6 border-b border-white/10"
+                    className="mb-6 pb-4 border-b border-white/10"
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={0}
+                    custom={1}
                   >
                     <div className="flex items-center space-x-3">
                       {/* Enhanced Avatar */}
                       <div className="relative">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-xl ${
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
                           userTier === 'ultra' 
                             ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600' 
                             : userTier === 'pro'
                               ? 'bg-gradient-to-br from-purple-600 to-purple-700'
                               : 'bg-gradient-to-br from-gray-600 to-gray-700'
                         }`}>
-                          <span className="text-white font-bold text-lg">
+                          <span className="text-white font-bold text-sm">
                             {avatarLetter}
                           </span>
                         </div>
                         {/* Online indicator */}
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 shadow-lg">
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900 shadow-sm">
                           <div className="w-full h-full bg-green-400 rounded-full animate-pulse"></div>
                         </div>
                       </div>
                       
                       {/* User Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-semibold text-base truncate">
+                        <h3 className="text-white font-medium text-sm truncate">
                           {displayName}
                         </h3>
                         <motion.div 
-                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium mt-1 ${getTierBadgeStyle()}`}
+                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium mt-0.5 ${getTierBadgeStyle()}`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <span className="mr-1">{getTierIcon()}</span>
-                          {getTierLabel()}
+                          <span className="mr-1 text-xs">{getTierIcon()}</span>
+                          <span className="text-xs">{getTierLabel()}</span>
                         </motion.div>
                       </div>
                     </div>
@@ -282,7 +305,7 @@ export default function UniversalMobileSidebar({
                 )}
                 
                 {/* Main Navigation */}
-                <div className="flex-1 px-4 py-6 overflow-y-auto">
+                <div className="mb-4">
                   <nav className="space-y-1">
                     {menuItems.map((item, index) => (
                       <motion.div
@@ -290,24 +313,21 @@ export default function UniversalMobileSidebar({
                         variants={itemVariants}
                         initial="closed"
                         animate="open"
-                        custom={index + 1}
+                        custom={index + 2}
                       >
                         <Link
                           href={item.href}
                           onClick={closeSidebar}
-                          className={`group flex items-center px-3 py-3 rounded-xl transition-all duration-200 min-h-[44px] relative overflow-hidden ${
+                          className={`group flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden ${
                             isActivePage(item.href)
-                              ? 'bg-gradient-to-r from-purple-600/80 to-purple-700/80 text-white shadow-lg shadow-purple-600/25'
-                              : 'text-white/80 hover:text-white hover:bg-white/10'
+                              ? 'bg-gradient-to-r from-purple-600/90 to-purple-700/90 text-white shadow-lg shadow-purple-600/30'
+                              : 'text-white/85 hover:text-white hover:bg-white/8'
                           }`}
-                          style={{
-                            backdropFilter: isActivePage(item.href) ? 'blur(10px)' : 'none'
-                          }}
                         >
                           {/* Animated background for active state */}
                           {isActivePage(item.href) && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-purple-600/20"
+                              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-purple-600/30"
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.3 }}
@@ -316,18 +336,18 @@ export default function UniversalMobileSidebar({
                           )}
                           
                           <motion.span 
-                            className="text-lg mr-3 relative z-10"
-                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            className="text-base mr-3 relative z-10"
+                            whileHover={{ scale: 1.1, rotate: 8 }}
                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                           >
                             {item.icon}
                           </motion.span>
-                          <span className="font-medium relative z-10">{item.label}</span>
+                          <span className="font-medium text-sm relative z-10">{item.label}</span>
                           
                           {/* Active indicator */}
                           {isActivePage(item.href) && (
                             <motion.div 
-                              className="ml-auto w-2 h-2 bg-white rounded-full relative z-10"
+                              className="ml-auto w-1.5 h-1.5 bg-white rounded-full relative z-10"
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
                               transition={{ delay: 0.2 }}
@@ -335,7 +355,7 @@ export default function UniversalMobileSidebar({
                           )}
                           
                           {/* Hover glow effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/15 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
                         </Link>
                       </motion.div>
                     ))}
@@ -387,7 +407,7 @@ export default function UniversalMobileSidebar({
                             window.location.href = '/'
                           }
                         }}
-                        className="w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 min-h-[44px] text-red-300 hover:text-white hover:bg-red-600/20 relative overflow-hidden group"
+                        className="w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 text-red-300 hover:text-white hover:bg-red-600/20 relative overflow-hidden group"
                       >
                         <motion.span 
                           className="text-lg mr-3"
@@ -416,7 +436,7 @@ export default function UniversalMobileSidebar({
                       <Link
                         href="/login"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-3 rounded-xl transition-all duration-200 min-h-[44px] bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
+                        className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl transition-all duration-200 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
                       >
                         <span className="font-medium">Sign In</span>
                       </Link>
@@ -427,7 +447,7 @@ export default function UniversalMobileSidebar({
                       <Link
                         href="/signup"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-3 rounded-xl transition-all duration-200 min-h-[44px] bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 hover:scale-[1.02]"
+                        className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl transition-all duration-200 bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40"
                       >
                         <span className="font-medium">Get Started</span>
                       </Link>
