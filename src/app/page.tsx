@@ -13,8 +13,6 @@ import AnimatedCounter from '@/components/AnimatedCounter'
 import TypewriterText from '@/components/TypewriterText'
 import PromptRefinerDemo from '@/components/PromptRefinerDemo'
 import PlaybookFlipDemo from '@/components/PlaybookFlipDemo'
-import InternalMobileNavigation from '@/components/InternalMobileNavigation'
-import MobileNavigation from '@/components/MobileNavigation'
 
 export default function HomePage() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -150,19 +148,6 @@ export default function HomePage() {
               )}
             </nav>
             
-            {/* Mobile Navigation */}
-            {user ? (
-              <InternalMobileNavigation 
-                userEmail={user.email}
-                userTier={user.user_tier || 'free'}
-                showAdminLink={user.email === 'samcarr1232@gmail.com'}
-              />
-            ) : (
-              <MobileNavigation 
-                onFeatureClick={handleFeatureClick}
-                onPricingClick={handlePricingClick}
-              />
-            )}
           </div>
         </div>
       </header>

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import '../styles/mobile-optimizations.css'
 import { AdminProvider } from '@/contexts/AdminContext'
+import UniversalLayout from '@/components/UniversalLayout'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} font-sans`}>
         <AdminProvider>
-          {children}
+          <UniversalLayout>
+            {children}
+          </UniversalLayout>
         </AdminProvider>
       </body>
     </html>

@@ -11,7 +11,6 @@ import { userService, type UserProfile, type UserTier, TIER_FEATURES } from '@/l
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
 import SmartNavigation from '@/components/SmartNavigation'
-import InternalMobileNavigation from '@/components/InternalMobileNavigation'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'

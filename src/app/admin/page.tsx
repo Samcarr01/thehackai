@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import { userService, type UserProfile, type UserTier, TIER_FEATURES } from '@/lib/user'
-import InternalMobileNavigation from '@/components/InternalMobileNavigation'
 import NotificationModal from '@/components/NotificationModal'
 import BlogGenerationProgress from '@/components/BlogGenerationProgress'
 import { gptsService } from '@/lib/gpts'
@@ -458,12 +457,6 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Mobile Navigation */}
-            <InternalMobileNavigation 
-              userEmail={user.email}
-              userTier={user.user_tier || 'free'}
-              showAdminLink={true}
-            />
           </div>
         </div>
       </header>
