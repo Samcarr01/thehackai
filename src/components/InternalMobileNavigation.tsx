@@ -17,27 +17,18 @@ export default function InternalMobileNavigation({
   showAdminLink = false
 }: InternalMobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [animateItems, setAnimateItems] = useState(false)
   const pathname = usePathname()
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
-    if (!isOpen) {
-      // Start item animations after menu opens
-      setTimeout(() => setAnimateItems(true), 100)
-    } else {
-      setAnimateItems(false)
-    }
   }
   
   const handleLinkClick = () => {
-    setAnimateItems(false)
-    setTimeout(() => setIsOpen(false), 150)
+    setIsOpen(false)
   }
 
   // Close menu on route change
   useEffect(() => {
-    setAnimateItems(false)
     setIsOpen(false)
   }, [pathname])
 
@@ -47,221 +38,197 @@ export default function InternalMobileNavigation({
     return false
   }
 
+  // Get user's display name from email
+  const displayName = userEmail ? userEmail.split('@')[0] : 'User'
+
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Hamburger Menu Button */}
       <button
         onClick={toggleMenu}
-        className="md:hidden flex items-center justify-center w-12 h-12 rounded-xl hover:bg-purple-900/20 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
+        className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-purple-900/20 transition-all duration-200"
         aria-label="Toggle navigation menu"
+        aria-expanded={isOpen}
       >
-        <div className="flex flex-col w-6 h-6 justify-center">
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out ${
-            isOpen ? 'rotate-45 translate-y-1.5 bg-purple-400' : ''
-          }`} />
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out mt-1.5 ${
-            isOpen ? 'opacity-0 scale-0' : ''
-          }`} />
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out mt-1.5 ${
-            isOpen ? '-rotate-45 -translate-y-1.5 bg-purple-400' : ''
-          }`} />
+        <div className="w-5 h-5 flex flex-col justify-center items-center">
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? 'rotate-45 translate-y-0.5' : 'mb-1'
+            }`}
+          />
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? 'opacity-0' : ''
+            }`}
+          />
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? '-rotate-45 -translate-y-0.5' : 'mt-1'
+            }`}
+          />
         </div>
       </button>
 
-      {/* Mobile Menu Overlay - NO BLUR */}
+      {/* Overlay */}
       <div 
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-out ${
-          isOpen ? '' : 'pointer-events-none'
-        }`} 
-        style={{
-          backgroundColor: isOpen ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none'
-        }}
-        onClick={handleLinkClick} 
+        className={`fixed inset-0 bg-black/50 transition-opacity duration-300 md:hidden z-40 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={handleLinkClick}
+        aria-hidden="true"
       />
 
-      {/* Mobile Menu Panel - OPTIMIZED WIDTH */}
+      {/* Mobile Sidebar Panel */}
       <div 
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-2xl transform transition-all duration-300 ease-out md:hidden ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`} 
-        style={{ 
-          backgroundColor: '#1a1a2e',
-          background: '#1a1a2e',
-          zIndex: 9999,
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          opacity: 1
-        }}
+        className={`fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-slate-900 shadow-2xl transform transition-transform duration-300 ease-out md:hidden z-50 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        role="dialog"
+        aria-label="Navigation menu"
       >
-        <div 
-          className="flex flex-col h-full" 
-          style={{ 
-            backgroundColor: '#1a1a2e',
-            background: '#1a1a2e' 
-          }}
-        >
-          {/* Header */}
-          <div className={`flex items-center justify-between p-6 border-b border-gray-700 transition-all duration-500 ${
-            animateItems ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
-          }`}>
+        <div className="flex flex-col h-full">
+          
+          {/* User Profile Section */}
+          <div className="p-6 border-b border-gray-700">
             <div className="flex items-center space-x-3">
-              <div className="w-14 h-14 bg-slate-700 rounded-xl flex items-center justify-center shadow-lg animate-pulse p-1 border border-purple-500/30">
-                <Image
-                  src="/logo.png"
-                  alt="thehackai logo"
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-contain logo-dark-purple-blue-glow"
-                />
+              {/* Avatar */}
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">
+                  {displayName.charAt(0).toUpperCase()}
+                </span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">thehackai</span>
+              
+              {/* User Info */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white font-semibold text-base truncate">
+                  {displayName}
+                </h3>
+                <div className="flex items-center space-x-2 mt-1">
+                  <div className={`px-2 py-1 rounded-md text-xs font-medium ${
+                    userTier === 'ultra'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                      : userTier === 'pro'
+                        ? 'bg-purple-900/50 text-purple-300'
+                        : 'bg-gray-700 text-gray-300'
+                  }`}>
+                    {userTier === 'ultra' ? '🚀 ULTRA' : userTier === 'pro' ? '✨ PRO' : '🆓 FREE'}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Close Button */}
+              <button
+                onClick={handleLinkClick}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                aria-label="Close menu"
+              >
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <button
-              onClick={toggleMenu}
-              className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-gray-700 hover:scale-110 active:scale-95 transition-all duration-200"
-              aria-label="Close menu"
-            >
-              <span className="text-xl text-gray-300">✕</span>
-            </button>
           </div>
-
-          {/* Navigation Links */}
-          <nav className="flex-1 px-4 py-6">
-            <div className="space-y-1">
+          
+          {/* Main Navigation */}
+          <div className="flex-1 px-4 py-6 overflow-y-auto">
+            <nav className="space-y-1">
               {[
-                { href: '/', icon: '🏠', label: 'Home', delay: 'delay-200' },
-                { href: '/dashboard', icon: '📊', label: 'Dashboard', delay: 'delay-300' },
-                { href: '/gpts', icon: '🤖', label: 'GPTs', delay: 'delay-400' },
-                { href: '/documents', icon: '📚', label: 'Playbooks', delay: 'delay-500' },
-                { href: '/blog', icon: '📝', label: 'Blog', delay: 'delay-600' }
-              ].map((item, index) => (
+                { href: '/', icon: '🏠', label: 'Home' },
+                { href: '/dashboard', icon: '📊', label: 'Dashboard' },
+                { href: '/gpts', icon: '🤖', label: 'GPTs' },
+                { href: '/documents', icon: '📚', label: 'Playbooks' },
+                { href: '/blog', icon: '📝', label: 'Blog' }
+              ].map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={handleLinkClick}
-                  className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] ${
+                  className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group ${
                     isActivePage(item.href)
-                      ? 'bg-purple-900/20 text-purple-300 border-l-4 border-purple-500 font-medium shadow-sm'
-                      : 'text-gray-200 hover:text-purple-400 hover:bg-purple-900/20'
-                  } ${animateItems ? `translate-x-0 opacity-100 ${item.delay}` : 'translate-x-8 opacity-0'}`}
+                      ? 'bg-purple-600 text-white shadow-lg'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  }`}
                 >
-                  <span className={`mr-3 text-xl transition-transform duration-200 ${
-                    isActivePage(item.href) ? 'scale-110' : 'group-hover:scale-110'
-                  }`}>
+                  <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
                     {item.icon}
                   </span>
                   <span className="font-medium">{item.label}</span>
                   {isActivePage(item.href) && (
-                    <div className="ml-auto w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
                   )}
                 </Link>
               ))}
-
-              {showAdminLink && (
+            </nav>
+            
+            {/* Admin Section */}
+            {showAdminLink && (
+              <div className="mt-6 pt-6 border-t border-gray-700">
+                <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3 px-3">
+                  Admin
+                </div>
                 <Link
                   href="/admin"
                   onClick={handleLinkClick}
-                  className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] ${
+                  className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group ${
                     isActivePage('/admin')
-                      ? 'bg-purple-900/20 text-purple-300 border-l-4 border-purple-500 font-medium shadow-sm'
-                      : 'text-purple-400 hover:text-purple-300 hover:bg-purple-900/20'
-                  } ${animateItems ? 'translate-x-0 opacity-100 delay-700' : 'translate-x-8 opacity-0'}`}
+                      ? 'bg-purple-600 text-white shadow-lg'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  }`}
                 >
-                  <span className={`mr-3 text-xl transition-transform duration-200 ${
-                    isActivePage('/admin') ? 'scale-110' : 'group-hover:scale-110'
-                  }`}>
+                  <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
                     ⚙️
                   </span>
                   <span className="font-medium">Admin Panel</span>
                   {isActivePage('/admin') && (
-                    <div className="ml-auto w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
                   )}
                 </Link>
+              </div>
+            )}
+          </div>
+          
+          {/* Account Section */}
+          <div className="border-t border-gray-700 p-4 space-y-3">
+            {/* Plan Link */}
+            <Link
+              href="/plan"
+              onClick={handleLinkClick}
+              className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group border border-purple-500/30 ${
+                isActivePage('/plan')
+                  ? 'bg-purple-600 text-white shadow-lg'
+                  : 'text-purple-300 hover:text-white hover:bg-purple-600/20'
+              }`}
+            >
+              <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
+                ⭐
+              </span>
+              <span className="font-medium">Plan</span>
+              {isActivePage('/plan') && (
+                <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
               )}
-
-              <Link
-                href="/plan"
-                onClick={handleLinkClick}
-                className={`group flex items-center text-base py-3 px-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 min-h-[44px] bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 ${
-                  isActivePage('/plan')
-                    ? 'text-purple-300 font-medium shadow-md'
-                    : 'text-purple-400 hover:text-purple-300 hover:shadow-md'
-                } ${animateItems ? 'translate-x-0 opacity-100 delay-800' : 'translate-x-8 opacity-0'}`}
-              >
-                <span className={`mr-3 text-xl transition-transform duration-200 ${
-                  isActivePage('/plan') ? 'scale-110' : 'group-hover:scale-110'
-                }`}>
-                  ⭐
-                </span>
-                <span className="font-medium">Plan</span>
-                {isActivePage('/plan') && (
-                  <div className="ml-auto w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                )}
-              </Link>
-            </div>
-          </nav>
-
-          {/* Authentication-based CTA Button - Optimized Spacing */}
-          <div className={`p-4 border-t border-gray-700 bg-gray-700/50 transition-all duration-500 delay-600 ${
-            animateItems ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}>
-            {/* Show Sign Out button for authenticated users */}
+            </Link>
+            
+            {/* Sign Out Button */}
             <button
               onClick={async () => {
                 try {
                   handleLinkClick()
-                  // Use proper auth signOut method
                   const { auth } = await import('@/lib/auth')
                   await auth.signOut()
-                  // Redirect to home page after sign out
                   window.location.href = '/'
                 } catch (error) {
                   console.error('Sign out error:', error)
-                  // Fallback redirect on error
                   window.location.href = '/'
                 }
               }}
-              className="group flex items-center justify-center w-full gradient-purple text-white py-3 px-4 rounded-xl font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[48px]"
+              className="w-full flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group text-red-300 hover:text-white hover:bg-red-600/20"
             >
-              <span className="mr-2 text-lg transition-transform duration-200 group-hover:scale-110">👋</span>
-              Sign Out
+              <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
+                👋
+              </span>
+              <span className="font-medium">Sign Out</span>
             </button>
           </div>
-
-          {/* User Info Section - Optimized Bottom */}
-          {userEmail && (
-            <div className={`px-4 py-4 border-t border-gray-700 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-purple-900/20 transition-all duration-500 delay-800 ${
-              animateItems ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
-              <div className="flex flex-col space-y-2">
-                {/* Premium Badge */}
-                <div className={`self-start px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                  userTier === 'ultra'
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400/50' 
-                    : userTier === 'pro' 
-                      ? 'bg-purple-900/50 text-purple-300 border-2 border-purple-500/30' 
-                      : 'bg-gray-800/50 text-gray-300 border-2 border-gray-600/30'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <span className="text-lg">{userTier === 'ultra' ? '🚀' : userTier === 'pro' ? '✨' : '🆓'}</span>
-                    <span className="tracking-wide text-xs">{userTier === 'ultra' ? 'ULTRA MEMBER' : userTier === 'pro' ? 'PRO MEMBER' : 'FREE ACCOUNT'}</span>
-                  </div>
-                </div>
-                
-                {/* Email Display */}
-                <div className="bg-slate-800 rounded-lg px-3 py-2 border border-purple-500/30 shadow-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-200 font-medium truncate max-w-[160px]" title={userEmail}>
-                      {userEmail}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
         </div>
       </div>
