@@ -255,9 +255,9 @@ export default function UniversalMobileSidebar({
               aria-hidden="true"
             />
 
-            {/* Premium Floating Sidebar Card */}
+            {/* Compact Floating Navigation Card */}
             <motion.div 
-              className="fixed top-1/2 left-4 right-4 z-50 md:hidden max-w-[340px] mx-auto"
+              className="fixed top-1/2 left-6 z-50 md:hidden w-64"
               variants={sidebarVariants}
               initial="closed"
               animate="open"
@@ -266,67 +266,34 @@ export default function UniversalMobileSidebar({
               aria-label="Navigation menu"
               style={{
                 transform: 'translateY(-50%)',
+                maxHeight: '70vh',
                 background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
                 backdropFilter: 'blur(32px)',
                 WebkitBackdropFilter: 'blur(32px)',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '28px',
+                borderRadius: '24px',
                 boxShadow: `
-                  0 40px 80px -20px rgba(0, 0, 0, 0.8),
-                  0 24px 48px -12px rgba(0, 0, 0, 0.4),
+                  0 32px 64px -12px rgba(0, 0, 0, 0.7),
+                  0 16px 32px -8px rgba(0, 0, 0, 0.3),
                   0 0 0 1px rgba(255, 255, 255, 0.06),
                   inset 0 1px 0 rgba(255, 255, 255, 0.12),
                   inset 0 -1px 0 rgba(0, 0, 0, 0.2)
                 `
               }}
             >
-              <div className="flex flex-col overflow-hidden p-7">
-                
-                {/* Premium Close Button */}
-                <motion.button
-                  onClick={closeSidebar}
-                  className="absolute top-5 right-5 w-9 h-9 rounded-full flex items-center justify-center group"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)'
-                  }}
-                  whileHover={{ 
-                    scale: 1.1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                    transition: { type: 'spring', stiffness: 400, damping: 25 }
-                  }}
-                  whileTap={{ 
-                    scale: 0.92,
-                    transition: { duration: 0.1 }
-                  }}
-                  variants={itemVariants}
-                  initial="closed"
-                  animate="open"
-                  custom={0}
-                >
-                  <svg 
-                    className="w-4 h-4 text-white/70 group-hover:text-white/90 transition-colors" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                    strokeWidth={2.5}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </motion.button>
+              <div className="flex flex-col overflow-y-auto p-5" style={{ maxHeight: '65vh' }}>
 
-                {/* Premium User Profile Section */}
+                {/* User Profile Section */}
                 {isAuthenticated && userEmail && (
                   <motion.div 
-                    className="mb-7 pb-5"
+                    className="mb-5 pb-4"
                     style={{
                       borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
                     }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={1}
+                    custom={0}
                   >
                     <div className="flex items-center space-x-4">
                       {/* Premium Avatar with Ring */}
@@ -377,21 +344,21 @@ export default function UniversalMobileSidebar({
                   </motion.div>
                 )}
                 
-                {/* Premium Main Navigation */}
-                <div className="mb-6">
-                  <nav className="space-y-2">
+                {/* Main Navigation */}
+                <div className="mb-4">
+                  <nav className="space-y-1.5">
                     {menuItems.map((item, index) => (
                       <motion.div
                         key={item.href}
                         variants={itemVariants}
                         initial="closed"
                         animate="open"
-                        custom={index + 2}
+                        custom={index + 1}
                       >
                         <Link
                           href={item.href}
                           onClick={closeSidebar}
-                          className="group flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden"
+                          className="group flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden"
                           style={{
                             ...(isActivePage(item.href) ? {
                               background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)',
@@ -406,7 +373,7 @@ export default function UniversalMobileSidebar({
                           {/* Enhanced Animated Background */}
                           {isActivePage(item.href) && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 rounded-2xl"
+                              className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 rounded-xl"
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.4, ease: "easeOut" }}
@@ -416,7 +383,7 @@ export default function UniversalMobileSidebar({
                           
                           {/* Icon with Enhanced Animation */}
                           <motion.div 
-                            className="relative z-10 mr-4 flex items-center justify-center w-6 h-6"
+                            className="relative z-10 mr-3 flex items-center justify-center w-5 h-5"
                             whileHover={{ 
                               scale: 1.15, 
                               rotate: isActivePage(item.href) ? 0 : 12,
@@ -453,25 +420,25 @@ export default function UniversalMobileSidebar({
                           )}
                           
                           {/* Enhanced Hover Effects */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl" />
-                          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl" />
+                          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
                         </Link>
                       </motion.div>
                     ))}
                   </nav>
                 </div>
                 
-                {/* Premium Account Actions */}
+                {/* Account Actions */}
                 {isAuthenticated && (
                   <motion.div 
-                    className="pt-5 space-y-3"
+                    className="pt-4 space-y-2.5"
                     style={{
                       borderTop: '1px solid rgba(255, 255, 255, 0.08)'
                     }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={menuItems.length + 2}
+                    custom={menuItems.length + 1}
                   >
                     {/* Premium Plan Link */}
                     <motion.div 
@@ -481,7 +448,7 @@ export default function UniversalMobileSidebar({
                       <Link
                         href="/plan"
                         onClick={closeSidebar}
-                        className="flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group"
+                        className="flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
                         style={{
                           background: isActivePage('/plan') 
                             ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)'
@@ -528,7 +495,7 @@ export default function UniversalMobileSidebar({
                             window.location.href = '/'
                           }
                         }}
-                        className="w-full flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden group"
+                        className="w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 relative overflow-hidden group"
                         style={{
                           background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%)',
                           border: '1px solid rgba(239, 68, 68, 0.2)'
@@ -553,17 +520,17 @@ export default function UniversalMobileSidebar({
                   </motion.div>
                 )}
 
-                {/* Premium Auth Actions */}
+                {/* Auth Actions */}
                 {!isAuthenticated && (
                   <motion.div 
-                    className="pt-5 space-y-3"
+                    className="pt-4 space-y-2.5"
                     style={{
                       borderTop: '1px solid rgba(255, 255, 255, 0.08)'
                     }}
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={menuItems.length + 2}
+                    custom={menuItems.length + 1}
                   >
                     {/* Premium Sign In Button */}
                     <motion.div 
@@ -573,7 +540,7 @@ export default function UniversalMobileSidebar({
                       <Link
                         href="/login"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm group"
+                        className="w-full flex items-center justify-center px-3 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm group"
                         style={{
                           background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)',
                           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -597,7 +564,7 @@ export default function UniversalMobileSidebar({
                       <Link
                         href="/signup"
                         onClick={closeSidebar}
-                        className="w-full flex items-center justify-center px-4 py-3.5 rounded-2xl transition-all duration-300 font-semibold text-sm group relative overflow-hidden"
+                        className="w-full flex items-center justify-center px-3 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm group relative overflow-hidden"
                         style={{
                           background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.9) 0%, rgba(126, 34, 206, 0.9) 100%)',
                           border: '1px solid rgba(147, 51, 234, 0.4)',
