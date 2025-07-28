@@ -12,8 +12,14 @@ export default function MobileHeader({ showLogo = true, className = '' }: Mobile
   if (!showLogo) return null
 
   return (
-    <div className={`md:hidden fixed top-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-white/10 ${className}`}>
-      <div className="flex items-center justify-between p-4">
+    <div 
+      className={`md:hidden fixed top-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-white/10 ${className}`}
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        minHeight: 'calc(64px + env(safe-area-inset-top))'
+      }}
+    >
+      <div className="flex items-center justify-between px-4 py-3 min-h-[64px]">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">

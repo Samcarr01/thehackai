@@ -66,9 +66,11 @@ export default function UniversalLayout({ children, className = '' }: UniversalL
         showAdminLink={isAdmin}
       />
       
-      {/* Main Content */}
+      {/* Main Content with proper mobile spacing */}
       <main className="w-full">
-        {children}
+        <div className="mobile-content-spacing md:!pt-0">
+          {children}
+        </div>
       </main>
     </div>
   )

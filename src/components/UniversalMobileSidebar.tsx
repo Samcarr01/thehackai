@@ -185,8 +185,10 @@ export default function UniversalMobileSidebar({
       {/* Premium Mobile Hamburger Button */}
       <motion.button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 right-4 z-50 w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl"
+        className="md:hidden fixed z-50 w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl"
         style={{
+          top: 'calc(env(safe-area-inset-top) + 16px)',
+          right: '16px',
           background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',

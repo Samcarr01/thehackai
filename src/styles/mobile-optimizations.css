@@ -152,6 +152,24 @@
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
   }
+  
+  /* Fix header cutoff issues on notched devices */
+  .mobile-safe-header {
+    padding-top: calc(env(safe-area-inset-top) + 16px);
+    min-height: calc(64px + env(safe-area-inset-top));
+  }
+  
+  /* Content spacing to account for fixed header */
+  .mobile-content-spacing {
+    padding-top: calc(64px + env(safe-area-inset-top) + 16px);
+  }
+  
+  /* Ensure proper safe area on all iOS devices */
+  @supports (height: env(safe-area-inset-top)) {
+    .mobile-safe-top {
+      padding-top: env(safe-area-inset-top);
+    }
+  }
 }
 
 /* Android-specific fixes */
