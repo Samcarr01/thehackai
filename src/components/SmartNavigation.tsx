@@ -35,13 +35,14 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
             href={effectiveUser ? "/dashboard" : "/"} 
             className="flex items-center space-x-3 group"
           >
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-purple-200/50 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:border-purple-300/60 transition-all duration-300 p-2">
+            <div className="w-20 h-20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
               <Image
                 src="/logo.png"
                 alt="thehackai logo"
-                width={56}
-                height={56}
+                width={80}
+                height={80}
                 className="w-full h-full object-contain"
+                priority
               />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300">
