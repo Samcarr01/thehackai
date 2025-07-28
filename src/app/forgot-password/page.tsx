@@ -17,15 +17,19 @@ export default function ForgotPasswordPage() {
     setError('')
     
     try {
+      console.log('Attempting password reset for:', email)
       const { error } = await auth.resetPassword(email)
       
       if (error) {
-        setError(error.message)
+        console.error('Password reset error:', error)
+        setError(`Failed to send reset email: ${error.message}`)
       } else {
+        console.log('Password reset email sent successfully')
         setSent(true)
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      console.error('Unexpected error during password reset:', err)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }

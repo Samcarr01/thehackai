@@ -77,6 +77,7 @@ function HomePageContent() {
       {/* Smart Navigation */}
       <SmartNavigation 
         user={user} 
+        loading={loading}
         onFeatureClick={handleFeatureClick}
         onPricingClick={handlePricingClick}
       />

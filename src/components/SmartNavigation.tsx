@@ -14,9 +14,10 @@ interface SmartNavigationProps {
   currentPage?: 'gpts' | 'documents' | 'blog' | 'dashboard' | 'settings'
   onFeatureClick?: () => void
   onPricingClick?: () => void
+  loading?: boolean
 }
 
-export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick }: SmartNavigationProps) {
+export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick, loading = false }: SmartNavigationProps) {
   const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
   const router = useRouter()
   
@@ -229,15 +230,20 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
           </div>
 
           {/* Mobile Navigation */}
-          {effectiveUser ? (
-            <InternalMobileNavigation 
-              userEmail={effectiveUser.email}
-              userTier={effectiveUser.user_tier || 'free'}
-              showAdminLink={!!(user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
-            />
-          ) : (
-            // Public mobile navigation
-            <div className="md:hidden">
+          <div className="md:hidden">
+            {loading ? (
+              // Loading state - show minimal UI
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-lg bg-gray-700 animate-pulse"></div>
+              </div>
+            ) : effectiveUser ? (
+              <InternalMobileNavigation 
+                userEmail={effectiveUser.email}
+                userTier={effectiveUser.user_tier || 'free'}
+                showAdminLink={!!(user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
+              />
+            ) : (
+              // Public mobile navigation - simple links for now since this is mainly homepage
               <div className="flex items-center space-x-3">
                 <Link
                   href="/login"
@@ -247,13 +253,13 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                 </Link>
                 <Link
                   href="/signup"
-                  className="text-sm gradient-purple text-white px-3 py-2 rounded-full font-medium button-hover"
+                  className="text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
                 >
                   Get Started
                 </Link>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>
