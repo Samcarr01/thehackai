@@ -22,7 +22,7 @@ export default function GPTsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedGpt, setSelectedGpt] = useState<GPT | null>(null)
   const [contentStats, setContentStats] = useState<ContentStats | null>(null)
-  const { getEffectiveUser } = useAdmin()
+  const { getEffectiveUser, adminViewMode } = useAdmin()
   const router = useRouter()
   
   // Get effective user for display (applies global admin toggle)
@@ -75,6 +75,15 @@ export default function GPTsPage() {
   useEffect(() => {
     loadData()
   }, [router])
+
+  // Refetch data when admin view mode changes
+  useEffect(() => {
+    if (user) {
+      console.log('🔄 Admin view mode changed to:', adminViewMode)
+      setLoading(true)
+      loadData()
+    }
+  }, [adminViewMode])
 
   // Refetch data when the page becomes visible (handles browser back/forward)
   useEffect(() => {

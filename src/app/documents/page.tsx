@@ -23,7 +23,7 @@ export default function DocumentsPage() {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set())
   const [contentStats, setContentStats] = useState<ContentStats | null>(null)
-  const { getEffectiveUser } = useAdmin()
+  const { getEffectiveUser, adminViewMode } = useAdmin()
   const router = useRouter()
   
   // Get effective user for display (applies global admin toggle)
@@ -57,12 +57,17 @@ export default function DocumentsPage() {
       // Load documents, categories, and content stats with access control
       console.log('🔄 Fetching fresh documents data...')
       const effectiveUserTier = getEffectiveUser(userProfile)?.user_tier || 'free'
+      console.log('👤 User profile tier:', userProfile?.user_tier)
+      console.log('🎭 Effective user tier:', effectiveUserTier)
+      console.log('🔧 Admin view mode:', adminViewMode)
+      
       const [allDocuments, allCategories, stats] = await Promise.all([
         documentsService.getAllDocumentsWithAccess(effectiveUserTier),
         documentsService.getCategories(),
         contentStatsService.getContentStats(effectiveUserTier)
       ])
       console.log('📊 Loaded documents:', allDocuments.length)
+      console.log('🔒 First document access:', allDocuments[0]?.hasAccess)
       
       setDocuments(allDocuments)
       setCategories(['All', ...allCategories])
@@ -78,6 +83,15 @@ export default function DocumentsPage() {
   useEffect(() => {
     loadData()
   }, [router])
+
+  // Refetch data when admin view mode changes
+  useEffect(() => {
+    if (user) {
+      console.log('🔄 Admin view mode changed to:', adminViewMode)
+      setLoading(true)
+      loadData()
+    }
+  }, [adminViewMode])
 
   // Refetch data when the page becomes visible (handles browser back/forward)
   useEffect(() => {
