@@ -94,16 +94,16 @@ export default function UniversalMobileSidebar({
 
   const menuItems = getMenuItems()
 
-  // Enhanced Animation variants with premium easing
+  // Modern Centered Modal Animation variants
   const sidebarVariants = {
     closed: { 
-      scale: 0.85,
+      scale: 0.9,
       opacity: 0,
-      y: 20,
+      y: 30,
       transition: { 
         type: 'spring' as const,
-        stiffness: 500,
-        damping: 45,
+        stiffness: 600,
+        damping: 50,
         mass: 0.8
       }
     },
@@ -113,11 +113,11 @@ export default function UniversalMobileSidebar({
       y: 0,
       transition: { 
         type: 'spring' as const,
-        stiffness: 400,
-        damping: 35,
-        mass: 0.9,
-        delayChildren: 0.1,
-        staggerChildren: 0.05
+        stiffness: 500,
+        damping: 40,
+        mass: 1,
+        delayChildren: 0.15,
+        staggerChildren: 0.04
       }
     }
   }
@@ -125,11 +125,11 @@ export default function UniversalMobileSidebar({
   const overlayVariants = {
     closed: { 
       opacity: 0,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.25 }
     },
     open: { 
       opacity: 1,
-      transition: { duration: 0.3 }
+      transition: { duration: 0.35 }
     }
   }
 
@@ -239,13 +239,13 @@ export default function UniversalMobileSidebar({
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Premium Overlay with Enhanced Blur */}
+            {/* Modern Modal Overlay */}
             <motion.div 
-              className="fixed inset-0 z-40 md:hidden"
+              className="fixed inset-0 z-40 md:hidden flex items-center justify-center p-6"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)'
+                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.8) 100%)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)'
               }}
               variants={overlayVariants}
               initial="closed"
@@ -253,34 +253,34 @@ export default function UniversalMobileSidebar({
               exit="closed"
               onClick={closeSidebar}
               aria-hidden="true"
-            />
-
-            {/* Compact Floating Navigation Card */}
-            <motion.div 
-              className="fixed top-1/2 left-6 z-50 md:hidden w-64"
-              variants={sidebarVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              role="dialog"
-              aria-label="Navigation menu"
-              style={{
-                transform: 'translateY(-50%)',
-                maxHeight: '70vh',
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
-                backdropFilter: 'blur(32px)',
-                WebkitBackdropFilter: 'blur(32px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '24px',
-                boxShadow: `
-                  0 32px 64px -12px rgba(0, 0, 0, 0.7),
-                  0 16px 32px -8px rgba(0, 0, 0, 0.3),
-                  0 0 0 1px rgba(255, 255, 255, 0.06),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                  inset 0 -1px 0 rgba(0, 0, 0, 0.2)
-                `
-              }}
             >
+              {/* Fully Centered Navigation Modal */}
+              <motion.div 
+                className="w-full max-w-[280px] mx-auto"
+                variants={sidebarVariants}
+                initial="closed"
+                animate="open"
+                exit="closed"
+                role="dialog"
+                aria-label="Navigation menu"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  maxHeight: '75vh',
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.98) 100%)',
+                  backdropFilter: 'blur(32px)',
+                  WebkitBackdropFilter: 'blur(32px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '28px',
+                  boxShadow: `
+                    0 48px 96px -20px rgba(0, 0, 0, 0.8),
+                    0 24px 48px -12px rgba(0, 0, 0, 0.4),
+                    0 8px 24px -8px rgba(0, 0, 0, 0.2),
+                    0 0 0 1px rgba(255, 255, 255, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)
+                  `
+                }}
+              >
               <div className="flex flex-col overflow-y-auto p-5" style={{ maxHeight: '65vh' }}>
 
                 {/* User Profile Section */}
@@ -578,7 +578,8 @@ export default function UniversalMobileSidebar({
                   </motion.div>
                 )}
 
-              </div>
+                </div>
+              </motion.div>
             </motion.div>
           </>
         )}
