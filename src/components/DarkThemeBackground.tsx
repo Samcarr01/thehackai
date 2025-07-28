@@ -20,7 +20,7 @@ export default function DarkThemeBackground({ children, className = "" }: DarkTh
       </div>
       
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 pt-20">
         {children}
       </div>
     </div>
