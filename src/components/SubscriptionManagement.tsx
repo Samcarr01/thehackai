@@ -51,6 +51,41 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
     }
   }
 
+  const handleCancelSubscription = async () => {
+    if (!user.stripe_customer_id) {
+      setError('No billing information found')
+      return
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to cancel your subscription? You will continue to have access until the end of your current billing period.'
+    )
+
+    if (!confirmed) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/stripe/create-portal-session', {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to open billing portal')
+      }
+
+      // Redirect to Stripe portal where they can cancel
+      window.location.href = data.url
+    } catch (error: any) {
+      setError(error.message || 'Failed to open billing portal')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="bg-slate-800/80 rounded-3xl p-6 shadow-lg border border-purple-500/30">
       <div className="flex items-center justify-between mb-6">
@@ -142,13 +177,26 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
 
         {/* Billing Management */}
         {user.stripe_customer_id && currentTier !== 'free' && (
-          <button
-            onClick={handleManageBilling}
-            disabled={loading}
-            className="px-4 py-2 border border-purple-500 text-purple-300 font-medium rounded-lg hover:bg-purple-500/10 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Loading...' : 'Manage Billing'}
-          </button>
+          <>
+            <button
+              onClick={handleManageBilling}
+              disabled={loading}
+              className="px-4 py-2 border border-purple-500 text-purple-300 font-medium rounded-lg hover:bg-purple-500/10 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Loading...' : '💳 Manage Billing'}
+            </button>
+            
+            {/* Cancel Subscription Button */}
+            {user.subscription_status === 'active' && !user.subscription_cancel_at_period_end && (
+              <button
+                onClick={handleCancelSubscription}
+                disabled={loading}
+                className="px-4 py-2 border border-red-500 text-red-300 font-medium rounded-lg hover:bg-red-500/10 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Loading...' : '❌ Cancel Subscription'}
+              </button>
+            )}
+          </>
         )}
 
         {/* View All Plans */}

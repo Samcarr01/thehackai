@@ -14,6 +14,7 @@ import AnimatedCounter from '@/components/AnimatedCounter'
 import TypewriterText from '@/components/TypewriterText'
 import PromptRefinerDemo from '@/components/PromptRefinerDemo'
 import PlaybookFlipDemo from '@/components/PlaybookFlipDemo'
+import SmartNavigation from '@/components/SmartNavigation'
 
 function HomePageContent() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -72,97 +73,13 @@ function HomePageContent() {
     <DarkThemeBackground>
       {/* Animated Background */}
       <GradientBackground />
-      {/* Navigation Header with Dark Glassmorphism */}
-      <header className="fixed top-0 w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-              <div className="w-12 sm:w-14 h-12 sm:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 p-1 border border-purple-200/30">
-                <Image
-                  src="/logo.png"
-                  alt="thehackai logo"
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-contain logo-dark-purple-blue-glow"
-                />
-              </div>
-              <span className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300">
-                thehackai
-              </span>
-            </Link>
-            
-            <nav className="hidden md:flex items-center space-x-6">
-              <a 
-                href="#features" 
-                className="relative text-gray-300 hover:text-purple-400 transition-all duration-300 cursor-pointer font-medium group"
-                onClick={(e) => {
-                  e.preventDefault()
-                  handleFeatureClick()
-                }}
-              >
-                Features
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a 
-                href="#pricing" 
-                className="relative text-gray-300 hover:text-purple-400 transition-all duration-300 cursor-pointer font-medium group"
-                onClick={(e) => {
-                  e.preventDefault()
-                  handlePricingClick()
-                }}
-              >
-                Pricing
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <Link 
-                href="/blog" 
-                className="relative text-gray-300 hover:text-purple-400 transition-all duration-300 font-medium group"
-              >
-                Blog
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              {loading ? (
-                <div className="animate-pulse flex space-x-3">
-                  <div className="h-10 w-20 bg-gray-200 rounded-lg"></div>
-                  <div className="h-10 w-24 bg-gray-200 rounded-full"></div>
-                </div>
-              ) : user ? (
-                <Link 
-                  href="/dashboard" 
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:rotate-1 relative overflow-hidden group"
-                >
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <span>Dashboard</span>
-                    <span className="text-lg transform group-hover:translate-x-1 transition-transform duration-300">⚡</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>
-              ) : (
-                <>
-                  <Link 
-                    href="/login" 
-                    className="relative text-gray-300 font-medium hover:text-purple-400 transition-all duration-300 px-4 py-2 rounded-lg hover:bg-purple-500/10 group"
-                  >
-                    Sign In
-                    <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-500/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-                  </Link>
-                  <Link 
-                    href="/signup" 
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:rotate-1 relative overflow-hidden group"
-                  >
-                    <span className="relative z-10 flex items-center space-x-2">
-                      <span>Get Started</span>
-                      <span className="text-lg transform group-hover:translate-x-1 transition-transform duration-300">✨</span>
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </Link>
-                </>
-              )}
-            </nav>
-            
-          </div>
-        </div>
-      </header>
+      
+      {/* Smart Navigation */}
+      <SmartNavigation 
+        user={user} 
+        onFeatureClick={handleFeatureClick}
+        onPricingClick={handlePricingClick}
+      />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">

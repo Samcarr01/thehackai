@@ -12,9 +12,11 @@ import InternalMobileNavigation from './InternalMobileNavigation'
 interface SmartNavigationProps {
   user: UserProfile | null
   currentPage?: 'gpts' | 'documents' | 'blog' | 'dashboard' | 'settings'
+  onFeatureClick?: () => void
+  onPricingClick?: () => void
 }
 
-export default function SmartNavigation({ user, currentPage }: SmartNavigationProps) {
+export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick }: SmartNavigationProps) {
   const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
   const router = useRouter()
   
@@ -159,6 +161,33 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
                       <span>Home</span>
                     </div>
                   </Link>
+                  
+                  {/* Features link - only show on homepage */}
+                  {onFeatureClick && (
+                    <button
+                      onClick={onFeatureClick}
+                      className="px-4 py-2.5 rounded-xl font-medium text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300 group"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="group-hover:scale-105 transition-transform duration-300">⚡</span>
+                        <span>Features</span>
+                      </div>
+                    </button>
+                  )}
+                  
+                  {/* Pricing link - only show on homepage */}
+                  {onPricingClick && (
+                    <button
+                      onClick={onPricingClick}
+                      className="px-4 py-2.5 rounded-xl font-medium text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300 group"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="group-hover:scale-105 transition-transform duration-300">💰</span>
+                        <span>Pricing</span>
+                      </div>
+                    </button>
+                  )}
+                  
                   <Link
                     href="/blog"
                     className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 group ${
