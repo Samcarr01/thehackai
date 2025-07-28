@@ -56,7 +56,9 @@ export default function UniversalLayout({ children, className = '' }: UniversalL
   return (
     <div className={`min-h-screen ${className}`}>
       {/* Mobile Header with Logo - Only visible on mobile */}
-      <MobileHeader />
+      <div className="md:hidden">
+        <MobileHeader />
+      </div>
       
       {/* Universal Mobile Sidebar - Only visible on mobile */}
       <UniversalMobileSidebar 

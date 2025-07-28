@@ -5,12 +5,13 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { userService, type UserProfile } from '@/lib/user'
+import { userService, type UserProfile, type UserTier, TIER_FEATURES } from '@/lib/user'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'
 import { blogService, type BlogPost } from '@/lib/blog'
 import { aiService } from '@/lib/ai'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import SmartNavigation from '@/components/SmartNavigation'
 import NotificationModal from '@/components/NotificationModal'
 
 interface AnalyzedContent {
@@ -22,7 +23,7 @@ interface AnalyzedContent {
 export default function AdminPage() {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeSection, setActiveSection] = useState<'content' | 'blog' | 'settings'>('content')
+  const [activeSection, setActiveSection] = useState<'content' | 'blog' | 'tier'>('content')
   const [gpts, setGpts] = useState<any[]>([])
   const [documents, setDocuments] = useState<any[]>([])
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
@@ -44,6 +45,23 @@ export default function AdminPage() {
     type: 'success'
   })
 
+  // Tier testing state
+  const [switchingTier, setSwitchingTier] = useState(false)
+  const [confirmTierChange, setConfirmTierChange] = useState<{
+    isOpen: boolean
+    targetTier: UserTier | null
+  }>({
+    isOpen: false,
+    targetTier: null
+  })
+  const [tierTestData, setTierTestData] = useState<{
+    gpts: any[]
+    documents: any[]
+  }>({
+    gpts: [],
+    documents: []
+  })
+
   const router = useRouter()
 
   const showNotification = (title: string, message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -52,6 +70,70 @@ export default function AdminPage() {
 
   const closeNotification = () => {
     setNotification(prev => ({ ...prev, isOpen: false }))
+  }
+
+  // Tier testing functions
+  const loadTierTestData = async () => {
+    try {
+      const [gpts, documents] = await Promise.all([
+        gptsService.getAllGPTs(),
+        documentsService.getAllDocuments()
+      ])
+      
+      setTierTestData({ gpts, documents })
+    } catch (error) {
+      console.error('Error loading tier test data:', error)
+    }
+  }
+
+  const handleTierChange = async (targetTier: UserTier) => {
+    if (!user) return
+    
+    setSwitchingTier(true)
+    try {
+      // Direct database update for admin user only
+      const success = await userService.updateTier(user.id, targetTier)
+      
+      if (success) {
+        // Update local user state
+        setUser(prev => prev ? { ...prev, user_tier: targetTier, is_pro: targetTier === 'pro' || targetTier === 'ultra' } : null)
+        
+        showNotification(
+          'Tier Changed Successfully',
+          `Admin tier switched to ${TIER_FEATURES[targetTier].name} (${targetTier.toUpperCase()})`,
+          'success'
+        )
+        
+        // Refresh tier test data
+        await loadTierTestData()
+      } else {
+        showNotification('Error', 'Failed to change tier', 'error')
+      }
+    } catch (error) {
+      console.error('Error changing tier:', error)
+      showNotification('Error', 'Failed to change tier', 'error')
+    } finally {
+      setSwitchingTier(false)
+      setConfirmTierChange({ isOpen: false, targetTier: null })
+    }
+  }
+
+  const getTierAccessSummary = (tier: UserTier) => {
+    const tierInfo = TIER_FEATURES[tier]
+    const accessibleGpts = tierTestData.gpts.filter(gpt => 
+      userService.hasAccessToTier(tier, gpt.required_tier || 'free')
+    )
+    const accessibleDocs = tierTestData.documents.filter(doc => 
+      userService.hasAccessToTier(tier, doc.required_tier || 'free')
+    )
+    
+    return {
+      ...tierInfo,
+      accessibleGpts: accessibleGpts.length,
+      accessibleDocs: accessibleDocs.length,
+      totalGpts: tierTestData.gpts.length,
+      totalDocs: tierTestData.documents.length
+    }
   }
 
   useEffect(() => {
@@ -74,7 +156,7 @@ export default function AdminPage() {
           }
         }
 
-        await loadContent()
+        await Promise.all([loadContent(), loadTierTestData()])
       } catch (err) {
         console.error('Error loading data:', err)
         router.push('/login')
@@ -214,6 +296,7 @@ export default function AdminPage() {
 
   return (
     <DarkThemeBackground>
+      <SmartNavigation user={user} />
       <div className="min-h-screen">
         {/* Header */}
         <div className="border-b border-white/10 bg-slate-900/80 backdrop-blur-sm">
@@ -242,7 +325,7 @@ export default function AdminPage() {
               {[
                 { id: 'content', label: 'Content Management', icon: '📚' },
                 { id: 'blog', label: 'Blog Posts', icon: '✍️' },
-                { id: 'settings', label: 'Settings', icon: '⚙️' }
+                { id: 'tier', label: 'Tier Testing', icon: '🎯' }
               ].map((section) => (
                 <button
                   key={section.id}
@@ -489,17 +572,250 @@ export default function AdminPage() {
             </div>
           )}
 
-          {activeSection === 'settings' && (
-            <div className="bg-slate-800/60 rounded-2xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-                <span className="mr-3">⚙️</span>
-                Admin Settings
-              </h2>
-              <p className="text-gray-400">Settings panel coming soon...</p>
+          {activeSection === 'tier' && (
+            <div className="space-y-8">
+              {/* Current Tier Status */}
+              <div className="bg-slate-800/60 rounded-2xl p-6 border border-white/10">
+                <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <span className="mr-3">🎯</span>
+                  Admin Tier Management
+                </h2>
+                
+                {/* Current Status */}
+                <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-xl border border-purple-500/30">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">Current Admin Tier</h3>
+                      <p className="text-gray-300">Testing subscription access as: {user?.email}</p>
+                    </div>
+                    <div className={`px-4 py-2 rounded-full text-sm font-bold ${
+                      user?.user_tier === 'ultra' 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
+                        : user?.user_tier === 'pro'
+                          ? 'bg-purple-900/30 text-purple-200'
+                          : 'bg-gray-800 text-gray-100'
+                    }`}>
+                      {user?.user_tier?.toUpperCase() || 'FREE'} TIER
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tier Switch Buttons */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Quick Tier Switch</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {(['free', 'pro', 'ultra'] as UserTier[]).map((tier) => {
+                      const isCurrentTier = user?.user_tier === tier
+                      const tierInfo = TIER_FEATURES[tier]
+                      const accessSummary = getTierAccessSummary(tier)
+                      
+                      return (
+                        <button
+                          key={tier}
+                          onClick={() => setConfirmTierChange({ isOpen: true, targetTier: tier })}
+                          disabled={isCurrentTier || switchingTier}
+                          className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                            isCurrentTier
+                              ? 'bg-green-900/20 border-green-500/30 text-green-300 cursor-not-allowed'
+                              : 'bg-slate-700/50 border-slate-600 hover:border-purple-300 hover:shadow-md text-white'
+                          }`}
+                        >
+                          <div className="text-left">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold">{tierInfo.name}</h4>
+                              <span className="text-sm text-gray-300">£{tierInfo.price}/mo</span>
+                            </div>
+                            <p className="text-sm text-gray-300 mb-3">{tierInfo.description}</p>
+                            <div className="text-xs text-gray-400">
+                              <div>📱 {accessSummary.accessibleGpts}/{accessSummary.totalGpts} GPTs</div>
+                              <div>📚 {accessSummary.accessibleDocs}/{accessSummary.totalDocs} Playbooks</div>
+                            </div>
+                            {isCurrentTier && (
+                              <div className="mt-2 text-xs font-medium text-green-400">
+                                ✅ Current Tier
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Testing Information */}
+                <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-4">
+                  <h4 className="font-semibold text-yellow-200 mb-2">⚠️ Admin Testing Mode</h4>
+                  <ul className="text-sm text-yellow-100 space-y-1">
+                    <li>• This bypasses Stripe and changes your tier instantly</li>
+                    <li>• Only works for admin email: samcarr1232@gmail.com</li>
+                    <li>• Use this to test content access and upgrade flows</li>
+                    <li>• Regular users will use normal Stripe payment flow</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Tier Access Summary */}
+              <div className="bg-slate-800/60 rounded-2xl p-6 border border-white/10">
+                <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <span className="mr-3">📊</span>
+                  Content Access Summary
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {(['free', 'pro', 'ultra'] as UserTier[]).map((tier) => {
+                    const accessSummary = getTierAccessSummary(tier)
+                    const isCurrentTier = user?.user_tier === tier
+                    
+                    return (
+                      <div key={tier} className={`p-6 rounded-xl border-2 ${
+                        isCurrentTier 
+                          ? 'bg-purple-900/20 border-purple-500/30' 
+                          : 'bg-slate-700/30 border-slate-600'
+                      }`}>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white">{accessSummary.name}</h3>
+                          {isCurrentTier && (
+                            <span className="text-sm bg-purple-900/30 text-purple-200 px-2 py-1 rounded-full">
+                              Current
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-300">GPTs Access</span>
+                            <span className="text-sm font-medium text-white">
+                              {accessSummary.accessibleGpts}/{accessSummary.totalGpts}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-300">Playbooks Access</span>
+                            <span className="text-sm font-medium text-white">
+                              {accessSummary.accessibleDocs}/{accessSummary.totalDocs}
+                            </span>
+                          </div>
+                          <div className="pt-2 border-t border-slate-600">
+                            <p className="text-xs text-gray-300">{accessSummary.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Quick Test Links */}
+              <div className="bg-slate-800/60 rounded-2xl p-6 border border-white/10">
+                <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <span className="mr-3">🧪</span>
+                  Quick Testing Links
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <a
+                    href="/gpts"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-4 bg-purple-900/20 border border-purple-500/30 rounded-xl hover:bg-purple-900/30 transition-colors"
+                  >
+                    <h3 className="font-semibold text-purple-200">🤖 Test GPTs Page</h3>
+                    <p className="text-sm text-purple-100">Test tier-based GPT access and upgrade prompts</p>
+                  </a>
+                  
+                  <a
+                    href="/documents"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-xl hover:bg-blue-900/30 transition-colors"
+                  >
+                    <h3 className="font-semibold text-blue-200">📚 Test Playbooks Page</h3>
+                    <p className="text-sm text-blue-100">Test tier-based document access and downloads</p>
+                  </a>
+                  
+                  <a
+                    href="/dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-4 bg-green-900/20 border border-green-500/30 rounded-xl hover:bg-green-900/30 transition-colors"
+                  >
+                    <h3 className="font-semibold text-green-200">📊 Test Dashboard</h3>
+                    <p className="text-sm text-green-100">Test tier-specific dashboard content</p>
+                  </a>
+                  
+                  <a
+                    href="/upgrade"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-4 bg-orange-900/20 border border-orange-500/30 rounded-xl hover:bg-orange-900/30 transition-colors"
+                  >
+                    <h3 className="font-semibold text-orange-200">💳 Test Upgrade Page</h3>
+                    <p className="text-sm text-orange-100">Test tier-based upgrade flows and pricing</p>
+                  </a>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Tier Change Confirmation Modal */}
+      {confirmTierChange.isOpen && confirmTierChange.targetTier && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setConfirmTierChange({ isOpen: false, targetTier: null })} />
+          <div className="relative bg-slate-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-white/10">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <span className="mr-3">⚠️</span>
+              Confirm Tier Change
+            </h3>
+            
+            <div className="space-y-4 mb-6">
+              <p className="text-gray-300">
+                Are you sure you want to switch to <strong className="text-white">{TIER_FEATURES[confirmTierChange.targetTier].name}</strong> tier?
+              </p>
+              
+              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-4">
+                <p className="text-sm text-yellow-100">
+                  <strong>Admin Testing Mode:</strong> This will instantly change your tier for testing purposes. 
+                  Regular users go through Stripe payment flow.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-300">Current Tier:</span>
+                  <span className="font-medium text-white">{TIER_FEATURES[user?.user_tier || 'free'].name}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-300">New Tier:</span>
+                  <span className="font-medium text-purple-200">{TIER_FEATURES[confirmTierChange.targetTier].name}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setConfirmTierChange({ isOpen: false, targetTier: null })}
+                className="flex-1 px-4 py-2 bg-gray-700 text-gray-200 rounded-xl hover:bg-gray-600 transition-colors"
+                disabled={switchingTier}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (confirmTierChange.targetTier) {
+                    await handleTierChange(confirmTierChange.targetTier)
+                    setConfirmTierChange({ isOpen: false, targetTier: null })
+                  }
+                }}
+                disabled={switchingTier}
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {switchingTier ? 'Switching...' : 'Confirm Change'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Notification Modal */}
       <NotificationModal

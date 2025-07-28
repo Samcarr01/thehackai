@@ -8,6 +8,7 @@ import { userService, type UserProfile } from '@/lib/user'
 import { blogService, type BlogPost } from '@/lib/blog'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import SmartNavigation from '@/components/SmartNavigation'
 
 export default function BlogPageClient() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -90,7 +91,7 @@ export default function BlogPageClient() {
 
   return (
     <DarkThemeBackground>
-      {/* Header */}
+      <SmartNavigation user={user} currentPage="blog" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header Section */}

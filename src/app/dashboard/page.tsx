@@ -11,6 +11,7 @@ import { userService, type UserProfile, type UserTier, TIER_FEATURES } from '@/l
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import SmartNavigation from '@/components/SmartNavigation'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'
 
@@ -187,6 +188,7 @@ export default function DashboardPage() {
 
   return (
     <DarkThemeBackground>
+      <SmartNavigation user={user} currentPage="dashboard" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Upgrade Success Message */}

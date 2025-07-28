@@ -9,6 +9,7 @@ import { gptsService, type GPT, type GPTWithAccess } from '@/lib/gpts'
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import SmartNavigation from '@/components/SmartNavigation'
 import GradientBackground from '@/components/NetworkBackground'
 import DescriptionModal from '@/components/DescriptionModal'
 
@@ -183,7 +184,7 @@ export default function GPTsPage() {
 
   return (
     <DarkThemeBackground>
-      {/* Smart Navigation */}
+      <SmartNavigation user={user} currentPage="gpts" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header Section */}
