@@ -189,21 +189,21 @@ export default function InternalMobileNavigation({
           
           {/* Account Section */}
           <div className="border-t border-gray-700 p-4 space-y-3">
-            {/* Plan Link */}
+            {/* Account Settings Link */}
             <Link
-              href="/plan"
+              href="/settings"
               onClick={handleLinkClick}
               className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group border border-purple-500/30 ${
-                isActivePage('/plan')
+                isActivePage('/settings')
                   ? 'bg-purple-600 text-white shadow-lg'
                   : 'text-purple-300 hover:text-white hover:bg-purple-600/20'
               }`}
             >
               <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
-                ⭐
+                ⚙️
               </span>
-              <span className="font-medium">Plan</span>
-              {isActivePage('/plan') && (
+              <span className="font-medium">Account</span>
+              {isActivePage('/settings') && (
                 <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
               )}
             </Link>

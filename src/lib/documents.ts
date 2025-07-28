@@ -53,9 +53,9 @@ export const documentsService = {
     
     return documents.map(doc => ({
       ...doc,
-      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (doc.required_tier === 'pro' || doc.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'pro')
     }))
   },
 
@@ -82,9 +82,9 @@ export const documentsService = {
     
     return documents.map(doc => ({
       ...doc,
-      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (doc.required_tier === 'pro' || doc.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'pro')
     }))
   },
 
@@ -93,9 +93,9 @@ export const documentsService = {
     
     return documents.map(doc => ({
       ...doc,
-      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, doc.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (doc.required_tier === 'pro' || doc.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, doc.required_tier || 'pro')
     }))
   },
 
@@ -103,7 +103,7 @@ export const documentsService = {
     const documents = await this.getAllDocuments()
     
     return documents.filter(doc => 
-      userService.hasAccessToTier(userTier, doc.required_tier || 'free')
+      userService.hasAccessToTier(userTier, doc.required_tier || 'pro')
     )
   },
 
@@ -195,7 +195,7 @@ export const documentsService = {
     }
     
     // Check if user has access to this tier
-    const requiredTier = document.required_tier || 'free'
+    const requiredTier = document.required_tier || 'pro'
     if (!userService.hasAccessToTier(userTier, requiredTier)) {
       throw new Error(`Access denied. This document requires ${requiredTier} tier access.`)
     }
@@ -232,7 +232,7 @@ export const documentsService = {
         pdf_url: publicUrl,
         category: documentData.category,
         is_featured: documentData.is_featured ?? false,
-        required_tier: documentData.required_tier ?? 'free',
+        required_tier: documentData.required_tier ?? 'pro',
         added_date: new Date().toISOString().split('T')[0]
       }])
       .select()

@@ -11,7 +11,7 @@ import InternalMobileNavigation from './InternalMobileNavigation'
 
 interface SmartNavigationProps {
   user: UserProfile | null
-  currentPage?: 'gpts' | 'documents' | 'blog' | 'dashboard'
+  currentPage?: 'gpts' | 'documents' | 'blog' | 'dashboard' | 'settings'
 }
 
 export default function SmartNavigation({ user, currentPage }: SmartNavigationProps) {
@@ -62,8 +62,7 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
                     { href: "/dashboard", label: "Dashboard", page: "dashboard", icon: "📊" },
                     { href: "/gpts", label: "GPTs", page: "gpts", icon: "🤖" },
                     { href: "/documents", label: "Playbooks", page: "documents", icon: "📚" },
-                    { href: "/blog", label: "Blog", page: "blog", icon: "✍️" },
-                    { href: "/plan", label: "Plan", icon: "⚡" }
+                    { href: "/blog", label: "Blog", page: "blog", icon: "✍️" }
                   ].map((item) => {
                     const isActive = currentPage === item.page
                     return (
@@ -125,6 +124,18 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
                        effectiveUser && effectiveUser.user_tier === 'pro' ? 'Pro' : 'Free'}
                     </span>
                   </div>
+                  
+                  {/* Settings Link */}
+                  <Link
+                    href="/settings"
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                      currentPage === 'settings'
+                        ? 'text-purple-300 bg-purple-900/30 border border-purple-500/30'
+                        : 'text-gray-400 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    ⚙️ Settings
+                  </Link>
                   
                   {/* Sign Out Button */}
                   <button

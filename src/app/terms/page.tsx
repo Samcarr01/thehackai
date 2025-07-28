@@ -86,25 +86,42 @@ export default function TermsPage() {
                 <li>You may cancel your subscription at any time</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">5. Content Usage</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">5. Content Usage and Restrictions</h2>
+              <p className="mb-4 text-gray-700 leading-relaxed">
+                The GPTs and playbooks provided are for your personal and business use only. Content is provided "as is" without warranty.
+              </p>
+              <p className="mb-2 text-white font-semibold">STRICTLY PROHIBITED:</p>
+              <ul className="mb-6 text-gray-700 leading-relaxed list-disc list-inside space-y-2 ml-4">
+                <li><strong>Redistribution:</strong> You may not share, distribute, or republish any GPTs or playbooks</li>
+                <li><strong>Commercial Resale:</strong> You may not sell, license, or monetize any content from this platform</li>
+                <li><strong>Account Sharing:</strong> You may not share your account credentials or allow others to access your account</li>
+                <li><strong>File Sharing:</strong> You may not upload content to file-sharing platforms or cloud storage for others to access</li>
+                <li><strong>Public Distribution:</strong> You may not post content on social media, forums, or any public platforms</li>
+                <li><strong>Team Distribution:</strong> You may not distribute content to team members, colleagues, or business partners without individual subscriptions</li>
+              </ul>
               <p className="mb-6 text-gray-700 leading-relaxed">
-                The GPTs and playbooks provided are for your personal and business use. You may not redistribute, resell, 
-                or share account access with others. Content is provided "as is" without warranty.
+                <strong>Violation of these restrictions will result in immediate account termination and may result in legal action.</strong>
               </p>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">6. Prohibited Uses</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">6. Additional Prohibited Uses</h2>
               <ul className="mb-6 text-gray-700 leading-relaxed list-disc list-inside space-y-2">
-                <li>Sharing account credentials with others</li>
-                <li>Attempting to circumvent payment systems</li>
+                <li>Attempting to circumvent payment systems or access restrictions</li>
                 <li>Using content for illegal or harmful purposes</li>
-                <li>Reverse engineering or copying our service</li>
+                <li>Reverse engineering or copying our service infrastructure</li>
+                <li>Creating derivative works from our proprietary content</li>
+                <li>Using automated tools to scrape or download content</li>
                 <li>Violating any applicable laws or regulations</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">7. Intellectual Property</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">7. Intellectual Property and Licensing</h2>
+              <p className="mb-4 text-gray-700 leading-relaxed">
+                All content, including GPTs, playbooks, and service materials, remain the exclusive property of thehackai. 
+                You receive a limited, non-transferable license to use the content solely for your personal and business purposes.
+              </p>
               <p className="mb-6 text-gray-700 leading-relaxed">
-                All content, including GPTs, playbooks, and service materials, remain the property of thehackai. 
-                You receive a limited license to use the content for your personal and business purposes.
+                <strong>This license does not grant you any rights to:</strong> reproduce, distribute, display publicly, 
+                create derivative works, or commercially exploit any content. The license terminates immediately upon 
+                violation of these terms or cancellation of your subscription.
               </p>
 
               <h2 className="text-2xl font-semibold text-white mb-4">8. Limitation of Liability</h2>
@@ -113,25 +130,37 @@ export default function TermsPage() {
                 resulting from your use of the service. Our liability is limited to the amount you paid for the service.
               </p>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">9. Termination</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">9. Content Protection and Enforcement</h2>
+              <p className="mb-4 text-gray-700 leading-relaxed">
+                We actively monitor and protect our intellectual property. We employ various technical and legal measures to detect 
+                unauthorized distribution of our content.
+              </p>
+              <ul className="mb-6 text-gray-700 leading-relaxed list-disc list-inside space-y-2">
+                <li>Content is watermarked and tracked for unauthorized distribution</li>
+                <li>We monitor file-sharing platforms and social media for our content</li>
+                <li>We may pursue legal action against violators including claims for damages</li>
+                <li>We cooperate with platforms to remove unauthorized content</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-white mb-4">10. Account Termination</h2>
               <p className="mb-6 text-gray-700 leading-relaxed">
                 We may terminate or suspend your account immediately, without prior notice, for conduct that we believe 
-                violates these Terms of Service or is harmful to other users or the service.
+                violates these Terms of Service, including content sharing violations, or is harmful to other users or the service.
               </p>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">10. Changes to Terms</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">11. Changes to Terms</h2>
               <p className="mb-6 text-gray-700 leading-relaxed">
                 We reserve the right to modify these terms at any time. We will notify users of significant changes 
                 via email or through the service. Continued use after changes constitutes acceptance.
               </p>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">11. Governing Law</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">12. Governing Law</h2>
               <p className="mb-6 text-gray-700 leading-relaxed">
                 These Terms shall be interpreted and governed by the laws of the United Kingdom. 
                 Any disputes shall be subject to the exclusive jurisdiction of UK courts.
               </p>
 
-              <h2 className="text-2xl font-semibold text-white mb-4">12. Contact Information</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">13. Contact Information</h2>
               <p className="mb-6 text-gray-700 leading-relaxed">
                 If you have any questions about these Terms of Service, please contact us through our 
                 <Link href="/contact" className="text-purple-400 hover:text-purple-300 font-medium"> contact page</Link>.

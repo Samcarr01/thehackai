@@ -53,9 +53,9 @@ export const gptsService = {
     
     return gpts.map(gpt => ({
       ...gpt,
-      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (gpt.required_tier === 'pro' || gpt.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'pro')
     }))
   },
 
@@ -82,9 +82,9 @@ export const gptsService = {
     
     return gpts.map(gpt => ({
       ...gpt,
-      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (gpt.required_tier === 'pro' || gpt.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'pro')
     }))
   },
 
@@ -93,9 +93,9 @@ export const gptsService = {
     
     return gpts.map(gpt => ({
       ...gpt,
-      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'free'),
+      hasAccess: userService.hasAccessToTier(userTier, gpt.required_tier || 'pro'),
       canUpgrade: userTier === 'free' && (gpt.required_tier === 'pro' || gpt.required_tier === 'ultra'),
-      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'free')
+      upgradeMessage: this.getUpgradeMessage(userTier, gpt.required_tier || 'pro')
     }))
   },
 
@@ -103,7 +103,7 @@ export const gptsService = {
     const gpts = await this.getAllGPTs()
     
     return gpts.filter(gpt => 
-      userService.hasAccessToTier(userTier, gpt.required_tier || 'free')
+      userService.hasAccessToTier(userTier, gpt.required_tier || 'pro')
     )
   },
 
@@ -190,7 +190,7 @@ export const gptsService = {
         chatgpt_url: gptData.chatgpt_url,
         category: gptData.category,
         is_featured: gptData.is_featured ?? false,
-        required_tier: gptData.required_tier ?? 'free',
+        required_tier: gptData.required_tier ?? 'pro',
         added_date: new Date().toISOString().split('T')[0]
       }])
       .select()

@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { userService, type UserProfile } from '@/lib/user'
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
@@ -14,11 +15,22 @@ import TypewriterText from '@/components/TypewriterText'
 import PromptRefinerDemo from '@/components/PromptRefinerDemo'
 import PlaybookFlipDemo from '@/components/PlaybookFlipDemo'
 
-export default function HomePage() {
+function HomePageContent() {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [contentStats, setContentStats] = useState<ContentStats | null>(null)
+  const [showDeletedMessage, setShowDeletedMessage] = useState(false)
+  const searchParams = useSearchParams()
   
+  // Check for account deletion success message
+  useEffect(() => {
+    if (searchParams.get('deleted') === 'true') {
+      setShowDeletedMessage(true)
+      // Hide message after 5 seconds
+      setTimeout(() => setShowDeletedMessage(false), 5000)
+    }
+  }, [searchParams])
+
   // Check authentication status and get user profile
   useEffect(() => {
     const checkAuth = async () => {
@@ -526,5 +538,17 @@ export default function HomePage() {
         </div>
       </footer>
     </DarkThemeBackground>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   )
 }
