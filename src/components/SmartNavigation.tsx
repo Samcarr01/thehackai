@@ -35,26 +35,18 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
             href={effectiveUser ? "/dashboard" : "/"} 
             className="flex items-center space-x-3 group"
           >
-            <div className="relative">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1 border border-purple-200/30 group-hover:scale-105 group-hover:shadow-purple-500/20 transition-all duration-300">
-                <Image
-                  src="/logo.png"
-                  alt="thehackai logo"
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10"></div>
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-1 border border-purple-200/30 group-hover:scale-105 group-hover:shadow-purple-500/20 transition-all duration-300">
+              <Image
+                src="/logo.png"
+                alt="thehackai logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300">
-                thehackai
-              </span>
-              <span className="text-xs text-gray-400 font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                AI Workflows
-              </span>
-            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300">
+              thehackai
+            </span>
           </Link>
           
           {/* Desktop Navigation */}
@@ -63,7 +55,7 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
               // Logged in navigation
               <>
                 {/* Main Navigation */}
-                <nav className="flex items-center space-x-1 mr-8">
+                <nav className="flex items-center space-x-1 mr-6">
                   {[
                     { href: "/", label: "Home", icon: "🏠" },
                     { href: "/dashboard", label: "Dashboard", page: "dashboard", icon: "📊" },
@@ -103,7 +95,7 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
                   {user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin' && (
                     <Link
                       href="/admin"
-                      className="relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 group ml-2 bg-red-900/20 text-red-300 border border-red-500/30 hover:bg-red-900/30 hover:border-red-400/50"
+                      className="relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 group ml-2 bg-red-900/30 text-red-200 border border-red-500/40 hover:bg-red-900/40 hover:border-red-400/60"
                     >
                       <div className="flex items-center space-x-2">
                         <span className="group-hover:scale-105 transition-transform duration-300">🔧</span>
@@ -114,45 +106,31 @@ export default function SmartNavigation({ user, currentPage }: SmartNavigationPr
                 </nav>
                 
                 {/* User Profile Section */}
-                <div className="flex items-center space-x-4 pl-6 border-l border-white/10">
-                  {/* Tier Badge */}
-                  <div className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center space-x-2 transition-all duration-300 ${
-                    user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin'
-                      ? 'bg-red-900/30 text-red-200 border border-red-500/30 shadow-lg shadow-red-500/10'
-                      : effectiveUser && effectiveUser.user_tier === 'ultra'
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
-                        : effectiveUser && effectiveUser.user_tier === 'pro' 
-                          ? 'bg-purple-900/40 text-purple-200 border border-purple-500/40 shadow-lg shadow-purple-500/10' 
-                          : 'bg-gray-800/60 text-gray-300 border border-gray-600/40'
+                <div className="flex items-center space-x-3 pl-6 border-l border-white/10">
+                  {/* Tier Badge - Always show user's actual tier */}
+                  <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
+                    effectiveUser && effectiveUser.user_tier === 'ultra'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
+                      : effectiveUser && effectiveUser.user_tier === 'pro' 
+                        ? 'bg-purple-900/50 text-purple-200 border border-purple-500/30' 
+                        : 'bg-gray-800/50 text-gray-300 border border-gray-600/30'
                   }`}>
-                    {user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin' ? (
-                      <>
-                        <span className="text-lg">🔧</span>
-                        <span>Admin</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">
-                          {effectiveUser && effectiveUser.user_tier === 'ultra' ? '🚀' : 
-                           effectiveUser && effectiveUser.user_tier === 'pro' ? '✨' : '🆓'}
-                        </span>
-                        <span>
-                          {effectiveUser && effectiveUser.user_tier === 'ultra' ? 'Ultra' : 
-                           effectiveUser && effectiveUser.user_tier === 'pro' ? 'Pro' : 'Free'}
-                        </span>
-                      </>
-                    )}
+                    <span>
+                      {effectiveUser && effectiveUser.user_tier === 'ultra' ? '🚀' : 
+                       effectiveUser && effectiveUser.user_tier === 'pro' ? '✨' : '🆓'}
+                    </span>
+                    <span>
+                      {effectiveUser && effectiveUser.user_tier === 'ultra' ? 'Ultra' : 
+                       effectiveUser && effectiveUser.user_tier === 'pro' ? 'Pro' : 'Free'}
+                    </span>
                   </div>
                   
                   {/* Sign Out Button */}
                   <button
                     onClick={handleSignOut}
-                    className="px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300 group"
+                    className="px-3 py-1.5 rounded-full text-xs font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300"
                   >
-                    <div className="flex items-center space-x-2">
-                      <span className="group-hover:scale-105 transition-transform duration-300">👋</span>
-                      <span>Sign Out</span>
-                    </div>
+                    Sign Out
                   </button>
                 </div>
               </>
