@@ -282,6 +282,45 @@ export default function UniversalMobileSidebar({
                 }}
               >
               <div className="flex flex-col overflow-y-auto p-5" style={{ maxHeight: '65vh' }}>
+                
+                {/* Close Button - Proper X Icon */}
+                <motion.button
+                  onClick={closeSidebar}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center group z-10"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  whileHover={{ 
+                    scale: 1.1,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    transition: { type: 'spring', stiffness: 400, damping: 25 }
+                  }}
+                  whileTap={{ 
+                    scale: 0.9,
+                    transition: { duration: 0.1 }
+                  }}
+                  variants={itemVariants}
+                  initial="closed"
+                  animate="open"
+                  custom={0}
+                >
+                  {/* Clean X Icon SVG */}
+                  <svg 
+                    className="w-4 h-4 text-white/80 group-hover:text-white transition-colors" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      d="M6 18L18 6M6 6l12 12" 
+                    />
+                  </svg>
+                </motion.button>
 
                 {/* User Profile Section */}
                 {isAuthenticated && userEmail && (
@@ -293,7 +332,7 @@ export default function UniversalMobileSidebar({
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={0}
+                    custom={1}
                   >
                     <div className="flex items-center space-x-4">
                       {/* Premium Avatar with Ring */}
@@ -353,7 +392,7 @@ export default function UniversalMobileSidebar({
                         variants={itemVariants}
                         initial="closed"
                         animate="open"
-                        custom={index + 1}
+                        custom={index + 2}
                       >
                         <Link
                           href={item.href}
@@ -438,7 +477,7 @@ export default function UniversalMobileSidebar({
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={menuItems.length + 1}
+                    custom={menuItems.length + 2}
                   >
                     {/* Premium Plan Link */}
                     <motion.div 
@@ -530,7 +569,7 @@ export default function UniversalMobileSidebar({
                     variants={itemVariants}
                     initial="closed"
                     animate="open"
-                    custom={menuItems.length + 1}
+                    custom={menuItems.length + 2}
                   >
                     {/* Premium Sign In Button */}
                     <motion.div 
