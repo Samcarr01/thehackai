@@ -30,7 +30,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const getEffectiveUser = (user: any) => {
     // Only apply toggle for admin user
     if (user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'free') {
-      return { ...user, is_pro: false, email: 'test@user.com' } // Simulate free user
+      return { 
+        ...user, 
+        is_pro: false, 
+        user_tier: 'free', 
+        email: 'test@user.com' 
+      } // Simulate free user
     }
     return user
   }
