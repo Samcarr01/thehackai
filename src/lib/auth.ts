@@ -38,6 +38,9 @@ export const auth = {
   async signOut() {
     const supabase = createClient()
     
+    // Clear localStorage persistence flag
+    localStorage.removeItem('supabase-auth-persist')
+    
     const { error } = await supabase.auth.signOut()
     
     return { error }
@@ -103,4 +106,5 @@ export const auth = {
     
     return { data, error }
   },
+
 }
