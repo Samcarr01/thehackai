@@ -212,18 +212,28 @@ export default function InternalMobileNavigation({
             <button
               onClick={async () => {
                 try {
-                  handleLinkClick()
-                  // Import auth properly
+                  console.log('Mobile sign out initiated...')
+                  handleLinkClick() // Close the mobile menu
+                  
+                  // Import and use auth
                   const { auth } = await import('@/lib/auth')
                   const { error } = await auth.signOut()
+                  
                   if (error) {
-                    console.error('Sign out error:', error)
+                    console.error('Mobile sign out error:', error)
+                  } else {
+                    console.log('Mobile sign out successful')
                   }
+                  
+                  // Clear any localStorage items
+                  localStorage.removeItem('supabase-auth-persist')
+                  localStorage.removeItem('rememberMe')
+                  
                   // Force page reload to clear all state
                   window.location.href = '/'
                 } catch (error) {
-                  console.error('Sign out error:', error)
-                  // Fallback - force navigation
+                  console.error('Mobile sign out error:', error)
+                  // Fallback - force navigation even if sign out failed
                   window.location.href = '/'
                 }
               }}

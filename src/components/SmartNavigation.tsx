@@ -32,8 +32,26 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   })
   
   const handleSignOut = async () => {
-    await auth.signOut()
-    router.push('/')
+    try {
+      console.log('Desktop sign out initiated...')
+      const { error } = await auth.signOut()
+      if (error) {
+        console.error('Desktop sign out error:', error)
+      } else {
+        console.log('Desktop sign out successful')
+      }
+      
+      // Clear any localStorage items
+      localStorage.removeItem('supabase-auth-persist')
+      localStorage.removeItem('rememberMe')
+      
+      // Force page reload to clear all state
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Desktop sign out error:', error)
+      // Force navigation even if sign out failed
+      window.location.href = '/'
+    }
   }
 
   return (
