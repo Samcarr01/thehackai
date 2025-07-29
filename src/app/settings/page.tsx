@@ -47,6 +47,29 @@ export default function SettingsPage() {
     }
 
     getUser()
+    
+    // Listen for auth state changes
+    const { supabase } = auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Settings Page: Auth state changed:', event)
+      if (event === 'SIGNED_OUT') {
+        // User signed out - redirect to login
+        router.push('/login')
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // User signed in - refresh user data
+        let userProfile = await userService.getProfile(session.user.id)
+        if (!userProfile) {
+          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+        }
+        if (userProfile) {
+          setUser(userProfile)
+        }
+      }
+    })
+    
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router])
 
   const handleDeleteAccount = async () => {
