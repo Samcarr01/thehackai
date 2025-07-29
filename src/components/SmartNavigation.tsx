@@ -35,34 +35,66 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
     setLocalUser(user)
   }, [user])
   
-  // Enhanced auth check that runs on every component mount
+  // Aggressive auth check that polls until user is found or timeout
   useEffect(() => {
-    const checkAuth = async () => {
+    let attempts = 0
+    const maxAttempts = 10
+    const pollInterval = 500 // Poll every 500ms
+    
+    const pollForAuth = async () => {
       try {
+        attempts++
+        console.log(`SmartNavigation: Auth check attempt ${attempts}/${maxAttempts}`)
+        
         const { user: authUser } = await auth.getUser()
-        console.log('SmartNavigation: Auth check result:', !!authUser, authUser?.email)
+        console.log('SmartNavigation: Auth result:', !!authUser, authUser?.email)
         
         if (authUser) {
           let userProfile = await userService.getProfile(authUser.id)
           if (!userProfile) {
             userProfile = await userService.createProfile(authUser.id, authUser.email || '')
           }
-          console.log('SmartNavigation: Setting user profile:', userProfile?.email)
+          console.log('SmartNavigation: SUCCESS - Setting user profile:', userProfile?.email)
           setLocalUser(userProfile)
-        } else {
-          console.log('SmartNavigation: No authenticated user found')
+          setAuthChecked(true)
+          return true // Success - stop polling
+        } else if (attempts >= maxAttempts) {
+          console.log('SmartNavigation: Max attempts reached - assuming no user')
           setLocalUser(null)
+          setAuthChecked(true)
+          return true // Stop polling
+        } else {
+          console.log('SmartNavigation: No user found, will retry...')
+          return false // Continue polling
         }
       } catch (error) {
         console.error('SmartNavigation: Auth check failed:', error)
-        setLocalUser(null)
-      } finally {
-        setAuthChecked(true)
+        if (attempts >= maxAttempts) {
+          setLocalUser(null)
+          setAuthChecked(true)
+          return true // Stop polling
+        }
+        return false // Continue polling
       }
     }
     
-    checkAuth()
-  }, []) // Remove dependencies to run on every mount
+    const startPolling = async () => {
+      const success = await pollForAuth()
+      if (!success) {
+        const interval = setInterval(async () => {
+          const shouldStop = await pollForAuth()
+          if (shouldStop) {
+            clearInterval(interval)
+          }
+        }, pollInterval)
+        
+        // Cleanup interval after max time
+        setTimeout(() => clearInterval(interval), maxAttempts * pollInterval)
+      }
+    }
+    
+    startPolling()
+  }, []) // Run once on mount
   
   // Listen for auth state changes to update mobile navigation immediately
   useEffect(() => {
