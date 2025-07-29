@@ -35,46 +35,59 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
     setLocalUser(user)
   }, [user])
   
-  // Initial auth check on component mount to fix redirect timing issues
+  // Enhanced auth check that runs on every component mount
   useEffect(() => {
-    const checkInitialAuth = async () => {
-      if (!user && !authChecked) {
-        try {
-          const { user: authUser } = await auth.getUser()
-          if (authUser) {
-            let userProfile = await userService.getProfile(authUser.id)
-            if (!userProfile) {
-              userProfile = await userService.createProfile(authUser.id, authUser.email || '')
-            }
-            setLocalUser(userProfile)
-            console.log('SmartNavigation: Initial auth check found user:', userProfile?.email)
+    const checkAuth = async () => {
+      try {
+        const { user: authUser } = await auth.getUser()
+        console.log('SmartNavigation: Auth check result:', !!authUser, authUser?.email)
+        
+        if (authUser) {
+          let userProfile = await userService.getProfile(authUser.id)
+          if (!userProfile) {
+            userProfile = await userService.createProfile(authUser.id, authUser.email || '')
           }
-        } catch (error) {
-          console.error('SmartNavigation: Initial auth check failed:', error)
-        } finally {
-          setAuthChecked(true)
+          console.log('SmartNavigation: Setting user profile:', userProfile?.email)
+          setLocalUser(userProfile)
+        } else {
+          console.log('SmartNavigation: No authenticated user found')
+          setLocalUser(null)
         }
+      } catch (error) {
+        console.error('SmartNavigation: Auth check failed:', error)
+        setLocalUser(null)
+      } finally {
+        setAuthChecked(true)
       }
     }
     
-    checkInitialAuth()
-  }, [user, authChecked])
+    checkAuth()
+  }, []) // Remove dependencies to run on every mount
   
   // Listen for auth state changes to update mobile navigation immediately
   useEffect(() => {
     const { supabase } = auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('SmartNavigation: Auth state changed:', event)
+      console.log('SmartNavigation: Auth state changed:', event, !!session?.user)
+      
       if (event === 'SIGNED_IN' && session?.user) {
-        // User signed in - get profile and update local state
+        console.log('SmartNavigation: User signed in, updating profile')
         let userProfile = await userService.getProfile(session.user.id)
         if (!userProfile) {
           userProfile = await userService.createProfile(session.user.id, session.user.email || '')
         }
+        console.log('SmartNavigation: Profile updated:', userProfile?.email)
         setLocalUser(userProfile)
       } else if (event === 'SIGNED_OUT') {
-        // User signed out - clear local state
+        console.log('SmartNavigation: User signed out')
         setLocalUser(null)
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        // Also check on token refresh to catch any missed updates
+        console.log('SmartNavigation: Token refreshed, checking user')
+        let userProfile = await userService.getProfile(session.user.id)
+        if (userProfile) {
+          setLocalUser(userProfile)
+        }
       }
     })
     
