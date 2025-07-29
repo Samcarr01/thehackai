@@ -293,7 +293,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
           </div>
 
           {/* Mobile Navigation */}
-          <div className="md:hidden">
+          <div className="md:hidden relative">
+            {/* DEBUG: Show current auth state */}
+            <div className="text-xs text-red-500 absolute top-0 right-0 bg-red-900 p-1 z-50 rounded">
+              User: {currentUser ? '✅' : '❌'} | Eff: {effectiveUser ? '✅' : '❌'}
+            </div>
             {effectiveUser || currentUser ? (
               <InternalMobileNavigation 
                 userEmail={(effectiveUser || currentUser)?.email || ''}
@@ -303,6 +307,10 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             ) : (
               // Public mobile navigation - only show when truly no user
               <div className="flex items-center space-x-3">
+                {/* DEBUG INDICATOR */}
+                <div className="bg-red-500 text-white p-1 text-xs rounded mr-2">
+                  PUBLIC NAV
+                </div>
                 <Link
                   href="/login"
                   className="text-sm text-gray-300 hover:text-purple-400 transition-colors font-medium"
