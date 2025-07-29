@@ -147,9 +147,9 @@ export default function DocumentsPage() {
         {shouldTruncate && (
           <button
             onClick={() => setSelectedDocument(document)}
-            className="text-purple-600 hover:text-purple-700 text-xs font-medium transition-colors"
+            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors py-2 px-1 -mx-1 min-h-[44px] flex items-center"
           >
-            Read more
+            Read more →
           </button>
         )}
       </div>
@@ -261,7 +261,7 @@ export default function DocumentsPage() {
     <DarkThemeBackground>
       <SmartNavigation user={user} currentPage="documents" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-4 sm:pb-8">
         {/* Header Section */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">

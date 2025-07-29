@@ -190,7 +190,7 @@ export default function DashboardPage() {
     <DarkThemeBackground>
       <SmartNavigation user={user} currentPage="dashboard" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8">
         {/* Upgrade Success Message */}
         {showUpgradeSuccess && (
           <div className="mb-8 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
