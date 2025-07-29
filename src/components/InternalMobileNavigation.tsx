@@ -137,7 +137,7 @@ export default function InternalMobileNavigation({
                 { href: '/dashboard', icon: '📊', label: 'Dashboard' },
                 { href: '/gpts', icon: '🤖', label: 'GPTs' },
                 { href: '/documents', icon: '📚', label: 'Playbooks' },
-                { href: '/blog', icon: '📝', label: 'Blog' }
+                { href: '/blog', icon: '✍️', label: 'Blog' }
               ].map((item) => (
                 <Link
                   key={item.href}

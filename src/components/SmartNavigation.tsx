@@ -24,11 +24,14 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   // Get effective user for display (applies global admin toggle)
   const effectiveUser = getEffectiveUser(user)
   
-  // Debug logging
-  console.log('SmartNavigation Debug:', {
-    user: user,
-    effectiveUser: effectiveUser,
-    showingInternalMobile: !!effectiveUser
+  // Debug logging for mobile navigation issues
+  console.log('SmartNavigation Mobile Debug:', {
+    hasUser: !!user,
+    hasEffectiveUser: !!effectiveUser,
+    userEmail: user?.email,
+    effectiveUserEmail: effectiveUser?.email,
+    showingInternalMobile: !!effectiveUser,
+    adminViewMode: adminViewMode
   })
   
   const handleSignOut = async () => {
@@ -258,14 +261,14 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden">
-            {effectiveUser ? (
+            {effectiveUser || user ? (
               <InternalMobileNavigation 
-                userEmail={effectiveUser.email}
-                userTier={effectiveUser.user_tier || 'free'}
+                userEmail={(effectiveUser || user)?.email || ''}
+                userTier={(effectiveUser || user)?.user_tier || 'free'}
                 showAdminLink={!!(user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
               />
             ) : (
-              // Public mobile navigation - simple links for now since this is mainly homepage
+              // Public mobile navigation - only show when truly no user
               <div className="flex items-center space-x-3">
                 <Link
                   href="/login"
