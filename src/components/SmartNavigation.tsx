@@ -340,36 +340,19 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             )}
           </div>
 
-          {/* Mobile Navigation - DEBUG MODE */}
+          {/* Mobile Navigation - FIXED */}
           <div className="md:hidden relative">
-            {/* DEBUG INDICATOR */}
-            <div className="absolute -top-16 left-0 right-0 bg-yellow-500 text-black p-2 text-xs font-bold z-50 rounded">
-              🔍 AUTH DEBUG: currentUser={currentUser?.email || 'NULL'} | localUser={localUser?.email || 'NULL'} | propUser={user?.email || 'NULL'}
-            </div>
-            
-            {currentUser ? (
-              <>
-                {/* DEBUG: Showing Internal Mobile Nav */}
-                <div className="absolute -top-8 left-0 right-0 bg-green-500 text-white p-1 text-xs font-bold z-50 rounded">
-                  ✅ INTERNAL MOBILE NAV (SHOULD HAVE SETTINGS)
-                </div>
-                <InternalMobileNavigation 
-                  userEmail={currentUser.email}
-                  userTier={currentUser.user_tier || 'free'}
-                  showAdminLink={!!(currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
-                />
-              </>
+            {(currentUser || effectiveUser) ? (
+              <InternalMobileNavigation 
+                userEmail={(currentUser || effectiveUser)?.email}
+                userTier={(currentUser || effectiveUser)?.user_tier || 'free'}
+                showAdminLink={!!((currentUser || effectiveUser)?.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
+              />
             ) : (
-              <>
-                {/* DEBUG: Showing Public Mobile Nav */}
-                <div className="absolute -top-8 left-0 right-0 bg-red-500 text-white p-1 text-xs font-bold z-50 rounded">
-                  ❌ PUBLIC MOBILE NAV (NO SETTINGS)
-                </div>
-                <MobileNavigation 
-                  onFeatureClick={onFeatureClick || (() => {})}
-                  onPricingClick={onPricingClick || (() => {})}
-                />
-              </>
+              <MobileNavigation 
+                onFeatureClick={onFeatureClick || (() => {})}
+                onPricingClick={onPricingClick || (() => {})}
+              />
             )}
           </div>
         </div>
