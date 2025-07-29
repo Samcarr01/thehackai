@@ -118,7 +118,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             href={effectiveUser ? "/dashboard" : "/"} 
             className="flex items-center space-x-3 group"
           >
-            <div className="w-20 h-20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
+            <div className="w-12 h-12 sm:w-20 sm:h-20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
               <Image
                 src="/logo.png"
                 alt="thehackai logo"
@@ -311,6 +311,10 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
+            {/* Debug mobile auth state */}
+            <div className="text-xs bg-red-500 text-white p-1 rounded mb-2">
+              Auth Debug: User={!!currentUser} Effective={!!effectiveUser} Email={currentUser?.email || 'none'}
+            </div>
             {/* Simplified Mobile Navigation - Remove debug, fix logic */}
             {effectiveUser || currentUser ? (
               <InternalMobileNavigation 

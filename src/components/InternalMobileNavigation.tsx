@@ -88,6 +88,11 @@ export default function InternalMobileNavigation({
       >
         <div className="flex flex-col h-full">
           
+          {/* DEBUG INDICATOR */}
+          <div className="bg-green-500 text-white p-2 text-center font-bold text-xs">
+            🎉 INTERNAL MOBILE NAV RENDERING! Email: {userEmail}
+          </div>
+          
           {/* User Profile Section */}
           <div className="p-6 border-b border-gray-700">
             <div className="flex items-center space-x-3">
