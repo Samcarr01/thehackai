@@ -356,22 +356,15 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
-            {/* Visual auth state indicator */}
-            {!authChecked ? (
-              <div className="text-xs bg-yellow-500 text-black p-2 rounded mb-2 font-bold">
-                🔄 CHECKING AUTHENTICATION...
-              </div>
-            ) : (effectiveUser || currentUser) ? (
-              <div className="text-xs bg-green-500 text-white p-2 rounded mb-2 font-bold">
-                ✅ SIGNED IN: {(effectiveUser || currentUser)?.email}
-              </div>
-            ) : (
-              <div className="text-xs bg-red-500 text-white p-2 rounded mb-2 font-bold">
-                ❌ NOT SIGNED IN
-              </div>
-            )}
-            {/* Simplified Mobile Navigation - Remove debug, fix logic */}
-            {effectiveUser || currentUser ? (
+            {/* Detailed auth state indicator */}
+            <div className="text-xs bg-blue-500 text-white p-2 rounded mb-2 font-bold">
+              Auth: {authChecked ? 'Checked' : 'Checking'} | 
+              Local: {localUser?.email || 'none'} | 
+              Current: {currentUser?.email || 'none'} | 
+              Showing: {(authChecked && (effectiveUser || currentUser)) ? 'Internal' : 'Public'}
+            </div>
+            {/* Mobile Navigation - Use same logic as auth indicator */}
+            {authChecked && (effectiveUser || currentUser) ? (
               <InternalMobileNavigation 
                 userEmail={(effectiveUser || currentUser)?.email || ''}
                 userTier={(effectiveUser || currentUser)?.user_tier || 'free'}
