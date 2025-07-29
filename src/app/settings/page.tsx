@@ -147,6 +147,26 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Security Settings */}
+        <div className="bg-slate-800/80 rounded-2xl p-6 mb-8 border border-purple-100/50">
+          <h2 className="text-xl font-semibold text-white mb-4">Security</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-100 mb-2">Password</label>
+              <p className="text-gray-300 text-sm mb-3">
+                Update your password to keep your account secure
+              </p>
+              <button
+                onClick={() => window.location.href = '/forgot-password'}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                🔐 Reset Password
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Subscription Management */}
         <div className="mb-8">
           <SubscriptionManagement 

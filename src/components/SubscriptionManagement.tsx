@@ -90,8 +90,8 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
     <div className="bg-slate-800/80 rounded-3xl p-6 shadow-lg border border-purple-500/30">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-white mb-1">Current Plan</h3>
-          <p className="text-gray-300 text-sm">Manage your subscription and billing</p>
+          <h3 className="text-xl font-bold text-white mb-1">Subscription Management</h3>
+          <p className="text-gray-300 text-sm">Manage your subscription, billing, and plan changes</p>
         </div>
         <div className="text-right">
           <div className="flex items-center gap-2 mb-1">
@@ -175,23 +175,23 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
           </div>
         )}
 
-        {/* Billing Management */}
-        {user.stripe_customer_id && currentTier !== 'free' && (
+        {/* Billing Management - Always show for paid users */}
+        {currentTier !== 'free' && (
           <>
             <button
               onClick={handleManageBilling}
               disabled={loading}
-              className="px-4 py-2 border border-purple-500 text-purple-300 font-medium rounded-lg hover:bg-purple-500/10 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {loading ? 'Loading...' : '💳 Manage Billing'}
+              {loading ? 'Loading...' : '💳 Manage Billing & Payment'}
             </button>
             
-            {/* Cancel Subscription Button */}
-            {user.subscription_status === 'active' && !user.subscription_cancel_at_period_end && (
+            {/* Cancel Subscription Button - Show for active subscriptions */}
+            {(!user.subscription_cancel_at_period_end) && (
               <button
                 onClick={handleCancelSubscription}
                 disabled={loading}
-                className="px-4 py-2 border border-red-500 text-red-300 font-medium rounded-lg hover:bg-red-500/10 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {loading ? 'Loading...' : '❌ Cancel Subscription'}
               </button>
@@ -202,9 +202,9 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
         {/* View All Plans */}
         <button
           onClick={() => router.push('/upgrade')}
-          className="px-4 py-2 bg-gray-700 text-gray-300 font-medium rounded-lg hover:bg-gray-600 transition-colors text-sm"
+          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 shadow-lg"
         >
-          View All Plans
+          📊 View All Plans
         </button>
       </div>
 

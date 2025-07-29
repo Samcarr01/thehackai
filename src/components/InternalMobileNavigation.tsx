@@ -213,11 +213,17 @@ export default function InternalMobileNavigation({
               onClick={async () => {
                 try {
                   handleLinkClick()
+                  // Import auth properly
                   const { auth } = await import('@/lib/auth')
-                  await auth.signOut()
+                  const { error } = await auth.signOut()
+                  if (error) {
+                    console.error('Sign out error:', error)
+                  }
+                  // Force page reload to clear all state
                   window.location.href = '/'
                 } catch (error) {
                   console.error('Sign out error:', error)
+                  // Fallback - force navigation
                   window.location.href = '/'
                 }
               }}
