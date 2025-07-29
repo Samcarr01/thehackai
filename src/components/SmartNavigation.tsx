@@ -356,22 +356,14 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
-            {/* Detailed auth state indicator */}
-            <div className="text-xs bg-blue-500 text-white p-2 rounded mb-2 font-bold">
-              Auth: {authChecked ? 'Checked' : 'Checking'} | 
-              Local: {localUser?.email || 'none'} | 
-              Current: {currentUser?.email || 'none'} | 
-              Showing: {(authChecked && (effectiveUser || currentUser)) ? 'Internal' : 'Public'}
-            </div>
-            {/* Mobile Navigation - Use same logic as auth indicator */}
-            {authChecked && (effectiveUser || currentUser) ? (
+            {/* Mobile Navigation - Fixed logic */}
+            {localUser ? (
               <InternalMobileNavigation 
-                userEmail={(effectiveUser || currentUser)?.email || ''}
-                userTier={(effectiveUser || currentUser)?.user_tier || 'free'}
-                showAdminLink={!!(currentUser && currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
+                userEmail={localUser.email}
+                userTier={localUser.user_tier || 'free'}
+                showAdminLink={!!(localUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
               />
             ) : (
-              // Public mobile navigation for unauthenticated users
               <MobileNavigation 
                 onFeatureClick={onFeatureClick || (() => {})}
                 onPricingClick={onPricingClick || (() => {})}

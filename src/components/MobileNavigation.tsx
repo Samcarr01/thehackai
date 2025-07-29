@@ -107,11 +107,6 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
             background: '#1a1a2e' 
           }}
         >
-          {/* DEBUG INDICATOR */}
-          <div className="bg-red-500 text-white p-2 text-center font-bold text-xs">
-            🚨 PUBLIC MOBILE NAV RENDERING - NO USER!
-          </div>
-          
           {/* Header */}
           <div className={`flex items-center justify-between p-6 border-b border-gray-700 transition-all duration-500 ${
             animateItems ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
