@@ -23,8 +23,15 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   const [localUser, setLocalUser] = useState<UserProfile | null>(user)
   const [authChecked, setAuthChecked] = useState(false)
   
-  // Use only local user state (ignore prop user to avoid conflicts)
-  const currentUser = localUser
+  // Update local user when prop changes
+  useEffect(() => {
+    if (user && !localUser) {
+      setLocalUser(user)
+    }
+  }, [user, localUser])
+  
+  // Use either local user state OR prop user (whichever is available)
+  const currentUser = localUser || user
   
   // Get effective user for display (applies global admin toggle)
   const effectiveUser = getEffectiveUser(currentUser)
@@ -332,11 +339,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             )}
           </div>
 
-          {/* Mobile Navigation - Simplified Working Version */}
+          {/* Mobile Navigation - Uses current user (local OR prop) */}
           <div className="md:hidden">
             <SimpleMobileNav 
-              isAuthenticated={!!localUser}
-              userEmail={localUser?.email || ''}
+              isAuthenticated={!!currentUser}
+              userEmail={currentUser?.email || ''}
             />
           </div>
         </div>
