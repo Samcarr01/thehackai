@@ -82,16 +82,6 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
     }
   }, [])
   
-  // Debug logging for mobile navigation issues
-  console.log('SmartNavigation Mobile Debug:', {
-    hasUser: !!currentUser,
-    hasEffectiveUser: !!effectiveUser,
-    userEmail: currentUser?.email,
-    effectiveUserEmail: effectiveUser?.email,
-    showingInternalMobile: !!(effectiveUser || currentUser),
-    adminViewMode: adminViewMode,
-    mobileNavComponent: (effectiveUser || currentUser) ? 'InternalMobileNavigation' : 'PublicMobileNavigation'
-  })
   
   const handleSignOut = async () => {
     try {
@@ -320,10 +310,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
-            {/* DEBUG: Show current auth state */}
-            <div className="text-xs text-red-500 absolute top-0 right-0 bg-red-900 p-1 z-50 rounded">
-              User: {currentUser ? '✅' : '❌'} | Eff: {effectiveUser ? '✅' : '❌'}
-            </div>
+            {/* Simplified Mobile Navigation - Remove debug, fix logic */}
             {effectiveUser || currentUser ? (
               <InternalMobileNavigation 
                 userEmail={(effectiveUser || currentUser)?.email || ''}
@@ -331,12 +318,17 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                 showAdminLink={!!(currentUser && currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
               />
             ) : (
-              // Public mobile navigation - only show when truly no user
-              <div className="flex items-center space-x-3">
-                <div className="bg-red-500 text-white p-2 text-center font-bold w-full rounded">
-                  🚨 PUBLIC NAVIGATION - NO USER DETECTED! 🚨
+              // Simple mobile hamburger for public navigation
+              <button
+                className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-purple-900/20 transition-all duration-200"
+                aria-label="Toggle navigation menu"
+              >
+                <div className="w-5 h-5 flex flex-col justify-center items-center">
+                  <span className="w-full h-0.5 bg-gray-300 mb-1" />
+                  <span className="w-full h-0.5 bg-gray-300" />
+                  <span className="w-full h-0.5 bg-gray-300 mt-1" />
                 </div>
-              </div>
+              </button>
             )}
           </div>
         </div>
