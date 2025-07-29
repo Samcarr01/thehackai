@@ -1,6 +1,10 @@
 import { createClient } from './supabase/client'
 
+// Expose supabase client for auth state listening
+const supabase = createClient()
+
 export const auth = {
+  supabase,
   async signUp(email: string, password: string) {
     const supabase = createClient()
     

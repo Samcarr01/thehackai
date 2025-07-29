@@ -146,6 +146,30 @@ export default function DashboardPage() {
     }
 
     getUser()
+    
+    // Listen for auth state changes
+    const { supabase } = auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Dashboard: Auth state changed:', event)
+      if (event === 'SIGNED_OUT') {
+        // User signed out - redirect to login
+        router.push('/login')
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // User signed in - refresh user data
+        let userProfile = await userService.getProfile(session.user.id)
+        if (!userProfile) {
+          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+        }
+        if (userProfile) {
+          setUser(userProfile)
+          await loadStats(userProfile.user_tier || 'free')
+        }
+      }
+    })
+    
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router])
 
   // Check for upgrade success parameter

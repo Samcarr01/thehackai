@@ -74,6 +74,24 @@ export default function GPTsPage() {
 
   useEffect(() => {
     loadData()
+    
+    // Listen for auth state changes
+    const { supabase } = auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('GPTs Page: Auth state changed:', event)
+      if (event === 'SIGNED_OUT') {
+        // User signed out - redirect to login
+        router.push('/login')
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // User signed in - refresh data
+        setLoading(true)
+        loadData()
+      }
+    })
+    
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router])
 
   // Refetch data when admin view mode changes
