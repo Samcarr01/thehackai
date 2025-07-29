@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation'
 import { type UserProfile, userService } from '@/lib/user'
 import { useAdmin } from '@/contexts/AdminContext'
 import { auth } from '@/lib/auth'
-import AuthenticatedMobileNav from './AuthenticatedMobileNav'
-import PublicMobileNav from './PublicMobileNav'
+import InternalMobileNavigation from './InternalMobileNavigation'
+import MobileNavigation from './MobileNavigation'
 
 interface SmartNavigationProps {
   user: UserProfile | null
@@ -340,15 +340,36 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             )}
           </div>
 
-          {/* Mobile Navigation - Clean Working Version */}
-          <div className="md:hidden">
+          {/* Mobile Navigation - DEBUG MODE */}
+          <div className="md:hidden relative">
+            {/* DEBUG INDICATOR */}
+            <div className="absolute -top-16 left-0 right-0 bg-yellow-500 text-black p-2 text-xs font-bold z-50 rounded">
+              🔍 AUTH DEBUG: currentUser={currentUser?.email || 'NULL'} | localUser={localUser?.email || 'NULL'} | propUser={user?.email || 'NULL'}
+            </div>
+            
             {currentUser ? (
-              <AuthenticatedMobileNav 
-                userEmail={currentUser.email}
-                isAdmin={currentUser.email === 'samcarr1232@gmail.com'}
-              />
+              <>
+                {/* DEBUG: Showing Internal Mobile Nav */}
+                <div className="absolute -top-8 left-0 right-0 bg-green-500 text-white p-1 text-xs font-bold z-50 rounded">
+                  ✅ INTERNAL MOBILE NAV (SHOULD HAVE SETTINGS)
+                </div>
+                <InternalMobileNavigation 
+                  userEmail={currentUser.email}
+                  userTier={currentUser.user_tier || 'free'}
+                  showAdminLink={!!(currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
+                />
+              </>
             ) : (
-              <PublicMobileNav />
+              <>
+                {/* DEBUG: Showing Public Mobile Nav */}
+                <div className="absolute -top-8 left-0 right-0 bg-red-500 text-white p-1 text-xs font-bold z-50 rounded">
+                  ❌ PUBLIC MOBILE NAV (NO SETTINGS)
+                </div>
+                <MobileNavigation 
+                  onFeatureClick={onFeatureClick || (() => {})}
+                  onPricingClick={onPricingClick || (() => {})}
+                />
+              </>
             )}
           </div>
         </div>
