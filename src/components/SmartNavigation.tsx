@@ -20,7 +20,8 @@ interface SmartNavigationProps {
 export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick, loading = false }: SmartNavigationProps) {
   const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
   const router = useRouter()
-  const [localUser, setLocalUser] = useState<UserProfile | null>(user)\n  const [authChecked, setAuthChecked] = useState(false)
+  const [localUser, setLocalUser] = useState<UserProfile | null>(user)
+  const [authChecked, setAuthChecked] = useState(false)
   
   // Use local user state or prop user, whichever is more recent
   const currentUser = localUser || user
@@ -45,7 +46,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
               userProfile = await userService.createProfile(authUser.id, authUser.email || '')
             }
             setLocalUser(userProfile)
-            console.log('SmartNavigation: Initial auth check found user:', userProfile.email)
+            console.log('SmartNavigation: Initial auth check found user:', userProfile?.email)
           }
         } catch (error) {
           console.error('SmartNavigation: Initial auth check failed:', error)
