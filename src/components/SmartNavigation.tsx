@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation'
 import { type UserProfile, userService } from '@/lib/user'
 import { useAdmin } from '@/contexts/AdminContext'
 import { auth } from '@/lib/auth'
-import InternalMobileNavigation from './InternalMobileNavigation'
-import MobileNavigation from './MobileNavigation'
+import SimpleMobileNav from './SimpleMobileNav'
 
 interface SmartNavigationProps {
   user: UserProfile | null
@@ -333,26 +332,12 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             )}
           </div>
 
-          {/* Mobile Navigation */}
-          <div className="md:hidden relative">
-            {/* Debug indicator */}
-            <div className="absolute top-0 right-0 z-50 text-xs p-1 rounded bg-blue-500 text-white">
-              {localUser ? `Auth: ${localUser.email}` : 'Public'}
-            </div>
-            
-            {/* Mobile Navigation - Fixed logic */}
-            {localUser ? (
-              <InternalMobileNavigation 
-                userEmail={localUser.email}
-                userTier={localUser.user_tier || 'free'}
-                showAdminLink={!!(localUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
-              />
-            ) : (
-              <MobileNavigation 
-                onFeatureClick={onFeatureClick || (() => {})}
-                onPricingClick={onPricingClick || (() => {})}
-              />
-            )}
+          {/* Mobile Navigation - Simplified Working Version */}
+          <div className="md:hidden">
+            <SimpleMobileNav 
+              isAuthenticated={!!localUser}
+              userEmail={localUser?.email || ''}
+            />
           </div>
         </div>
       </div>
