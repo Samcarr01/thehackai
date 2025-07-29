@@ -24,6 +24,13 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   // Get effective user for display (applies global admin toggle)
   const effectiveUser = getEffectiveUser(user)
   
+  // Debug logging
+  console.log('SmartNavigation Debug:', {
+    user: user,
+    effectiveUser: effectiveUser,
+    showingInternalMobile: !!effectiveUser
+  })
+  
   const handleSignOut = async () => {
     await auth.signOut()
     router.push('/')
@@ -231,12 +238,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden">
-            {loading ? (
-              // Loading state - show minimal UI
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-lg bg-gray-700 animate-pulse"></div>
-              </div>
-            ) : effectiveUser ? (
+            {effectiveUser ? (
               <InternalMobileNavigation 
                 userEmail={effectiveUser.email}
                 userTier={effectiveUser.user_tier || 'free'}

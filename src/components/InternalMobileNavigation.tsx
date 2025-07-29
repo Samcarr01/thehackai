@@ -189,7 +189,7 @@ export default function InternalMobileNavigation({
           
           {/* Account Section */}
           <div className="border-t border-gray-700 p-4 space-y-3">
-            {/* Account Settings Link */}
+            {/* Settings Link */}
             <Link
               href="/settings"
               onClick={handleLinkClick}
@@ -202,7 +202,7 @@ export default function InternalMobileNavigation({
               <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
                 ⚙️
               </span>
-              <span className="font-medium">Account</span>
+              <span className="font-medium">Settings</span>
               {isActivePage('/settings') && (
                 <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
               )}
