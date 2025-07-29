@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { auth } from '@/lib/auth'
+import DarkThemeBackground from '@/components/DarkThemeBackground'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -36,28 +37,28 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <DarkThemeBackground className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Logo */}
         <div className="flex justify-center">
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-3 border border-purple-200/30">
+            <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-lg p-3 border border-purple-200/30">
               <Image
                 src="/logo.png"
                 alt="thehackai logo"
-                width={48}
-                height={48}
-                className="w-full h-full object-contain"
+                width={56}
+                height={56}
+                className="w-full h-full object-contain logo-dark-purple-blue-glow"
               />
             </div>
             <span className="text-2xl font-bold text-gradient">thehackai</span>
           </Link>
         </div>
         
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold text-white">
           {sent ? 'Check your email! 📧' : 'Forgot password? 🔑'}
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-100">
           {sent 
             ? "We've sent a reset link to your email address"
             : "No worries, we'll send you reset instructions"
@@ -68,8 +69,8 @@ export default function ForgotPasswordPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="glass rounded-2xl px-8 py-8 shadow-xl border border-purple-100">
           {error && (
-            <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-200">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mb-4 p-4 rounded-xl bg-red-900/20 border border-red-500/30">
+              <p className="text-sm text-red-200">{error}</p>
             </div>
           )}
 
@@ -80,10 +81,10 @@ export default function ForgotPasswordPage() {
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   We&apos;ve sent a password reset link to:
                 </p>
-                <p className="font-medium text-gray-900">{email}</p>
+                <p className="font-medium text-white">{email}</p>
               </div>
               
               <div className="space-y-4">
@@ -99,7 +100,7 @@ export default function ForgotPasswordPage() {
                 
                 <Link
                   href="/login"
-                  className="block w-full text-center bg-white text-purple-600 py-3 px-4 rounded-xl text-sm font-semibold border-2 border-purple-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300"
+                  className="block w-full text-center bg-slate-800/80 text-purple-300 py-3 px-4 rounded-xl text-sm font-semibold border-2 border-purple-500/30 hover:border-purple-400/60 hover:bg-slate-700/80 transition-all duration-300"
                 >
                   Back to login 👋
                 </Link>
@@ -108,7 +109,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
                   Email address
                 </label>
                 <input
@@ -119,10 +120,10 @@ export default function ForgotPasswordPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 border border-gray-600 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-800 text-gray-100"
                   placeholder="your@email.com"
                 />
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-gray-300">
                   Enter the email address associated with your account
                 </p>
               </div>
@@ -150,9 +151,9 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-100">
               Remember your password?{' '}
-              <Link href="/login" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
+              <Link href="/login" className="font-medium text-purple-400 hover:text-purple-300 transition-colors">
                 Sign in here 👋
               </Link>
             </p>
@@ -161,12 +162,12 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Back to home */}
-      <div className="mt-8 text-center">
-        <Link href="/" className="text-sm text-gray-500 hover:text-purple-600 transition-colors flex items-center justify-center space-x-1">
+      <div className="mt-6 sm:mt-8 text-center">
+        <Link href="/" className="text-sm text-gray-300 hover:text-purple-600 transition-colors flex items-center justify-center space-x-1 py-2">
           <span>←</span>
           <span>Back to thehackai</span>
         </Link>
       </div>
-    </div>
+    </DarkThemeBackground>
   )
 }

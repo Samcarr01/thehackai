@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { auth } from '@/lib/auth'
+import DarkThemeBackground from '@/components/DarkThemeBackground'
 
 function ResetPasswordContent() {
   const [password, setPassword] = useState('')
@@ -70,15 +71,15 @@ function ResetPasswordContent() {
 
   if (!validToken && !error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex flex-col justify-center items-center">
+      <DarkThemeBackground className="flex flex-col justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-        <p className="mt-4 text-gray-600">Verifying reset link...</p>
-      </div>
+        <p className="mt-4 text-gray-100">Verifying reset link...</p>
+      </DarkThemeBackground>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <DarkThemeBackground className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Logo */}
         <div className="flex justify-center">
@@ -96,10 +97,10 @@ function ResetPasswordContent() {
           </Link>
         </div>
         
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold text-white">
           {success ? 'Password updated! 🎉' : 'Set new password 🔐'}
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-100">
           {success 
             ? "Your password has been successfully updated"
             : "Choose a strong password for your account"
@@ -244,23 +245,23 @@ function ResetPasswordContent() {
       </div>
 
       {/* Back to home */}
-      <div className="mt-8 text-center">
-        <Link href="/" className="text-sm text-gray-500 hover:text-purple-600 transition-colors flex items-center justify-center space-x-1">
+      <div className="mt-6 sm:mt-8 text-center">
+        <Link href="/" className="text-sm text-gray-300 hover:text-purple-600 transition-colors flex items-center justify-center space-x-1 py-2">
           <span>←</span>
           <span>Back to thehackai</span>
         </Link>
       </div>
-    </div>
+    </DarkThemeBackground>
   )
 }
 
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex flex-col justify-center items-center">
+      <DarkThemeBackground className="flex flex-col justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-        <p className="mt-4 text-gray-600">Loading...</p>
-      </div>
+        <p className="mt-4 text-gray-100">Loading...</p>
+      </DarkThemeBackground>
     }>
       <ResetPasswordContent />
     </Suspense>
