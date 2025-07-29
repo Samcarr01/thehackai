@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { type UserProfile } from '@/lib/user'
+import { type UserProfile, userService } from '@/lib/user'
 import { useAdmin } from '@/contexts/AdminContext'
 import { auth } from '@/lib/auth'
 import InternalMobileNavigation from './InternalMobileNavigation'
@@ -20,18 +20,51 @@ interface SmartNavigationProps {
 export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick, loading = false }: SmartNavigationProps) {
   const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
   const router = useRouter()
+  const [localUser, setLocalUser] = useState<UserProfile | null>(user)
+  
+  // Use local user state or prop user, whichever is more recent
+  const currentUser = localUser || user
   
   // Get effective user for display (applies global admin toggle)
-  const effectiveUser = getEffectiveUser(user)
+  const effectiveUser = getEffectiveUser(currentUser)
+  
+  // Update local user when prop changes
+  useEffect(() => {
+    setLocalUser(user)
+  }, [user])
+  
+  // Listen for auth state changes to update mobile navigation immediately
+  useEffect(() => {
+    const { supabase } = auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('SmartNavigation: Auth state changed:', event)
+      if (event === 'SIGNED_IN' && session?.user) {
+        // User signed in - get profile and update local state
+        let userProfile = await userService.getProfile(session.user.id)
+        if (!userProfile) {
+          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+        }
+        setLocalUser(userProfile)
+      } else if (event === 'SIGNED_OUT') {
+        // User signed out - clear local state
+        setLocalUser(null)
+      }
+    })
+    
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
   
   // Debug logging for mobile navigation issues
   console.log('SmartNavigation Mobile Debug:', {
-    hasUser: !!user,
+    hasUser: !!currentUser,
     hasEffectiveUser: !!effectiveUser,
-    userEmail: user?.email,
+    userEmail: currentUser?.email,
     effectiveUserEmail: effectiveUser?.email,
-    showingInternalMobile: !!effectiveUser,
-    adminViewMode: adminViewMode
+    showingInternalMobile: !!(effectiveUser || currentUser),
+    adminViewMode: adminViewMode,
+    mobileNavComponent: (effectiveUser || currentUser) ? 'InternalMobileNavigation' : 'PublicMobileNavigation'
   })
   
   const handleSignOut = async () => {
@@ -125,7 +158,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                   })}
                   
                   {/* Admin Link */}
-                  {user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin' && (
+                  {currentUser && currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin' && (
                     <Link
                       href="/admin"
                       className="relative px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 group ml-2 bg-red-900/30 text-red-200 border border-red-500/40 hover:bg-red-900/40 hover:border-red-400/60"
@@ -261,11 +294,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden">
-            {effectiveUser || user ? (
+            {effectiveUser || currentUser ? (
               <InternalMobileNavigation 
-                userEmail={(effectiveUser || user)?.email || ''}
-                userTier={(effectiveUser || user)?.user_tier || 'free'}
-                showAdminLink={!!(user && user.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
+                userEmail={(effectiveUser || currentUser)?.email || ''}
+                userTier={(effectiveUser || currentUser)?.user_tier || 'free'}
+                showAdminLink={!!(currentUser && currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
               />
             ) : (
               // Public mobile navigation - only show when truly no user
