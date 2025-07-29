@@ -339,8 +339,35 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             )}
           </div>
 
-          {/* Mobile Navigation - Uses current user (local OR prop) */}
+          {/* Mobile Navigation - Debug Version */}
           <div className="md:hidden">
+            {/* Debug info */}
+            <div className="bg-red-500 text-white p-2 text-xs">
+              DEBUG: localUser={localUser?.email || 'null'} | propUser={user?.email || 'null'} | currentUser={currentUser?.email || 'null'}
+            </div>
+            
+            {currentUser ? (
+              <div className="bg-green-500 text-white p-1 text-xs">
+                SHOULD SHOW AUTH MENU FOR: {currentUser.email}
+              </div>
+            ) : (
+              <div className="bg-blue-500 text-white p-1 text-xs">
+                SHOULD SHOW PUBLIC MENU - NO USER
+              </div>
+            )}
+            
+            {/* Fallback mobile nav if SimpleMobileNav is broken */}
+            <div className="bg-yellow-500 text-black p-2 text-xs">
+              FALLBACK MOBILE NAV - AUTH: {currentUser ? 'YES' : 'NO'}
+              {currentUser && (
+                <div className="mt-2">
+                  <a href="/settings" className="bg-purple-600 text-white px-4 py-2 rounded font-bold">
+                    🔧 SETTINGS LINK
+                  </a>
+                </div>
+              )}
+            </div>
+            
             <SimpleMobileNav 
               isAuthenticated={!!currentUser}
               userEmail={currentUser?.email || ''}
