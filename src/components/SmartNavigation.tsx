@@ -8,6 +8,7 @@ import { type UserProfile, userService } from '@/lib/user'
 import { useAdmin } from '@/contexts/AdminContext'
 import { auth } from '@/lib/auth'
 import InternalMobileNavigation from './InternalMobileNavigation'
+import MobileNavigation from './MobileNavigation'
 
 interface SmartNavigationProps {
   user: UserProfile | null
@@ -318,17 +319,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                 showAdminLink={!!(currentUser && currentUser.email === 'samcarr1232@gmail.com' && adminViewMode === 'admin')}
               />
             ) : (
-              // Simple mobile hamburger for public navigation
-              <button
-                className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-purple-900/20 transition-all duration-200"
-                aria-label="Toggle navigation menu"
-              >
-                <div className="w-5 h-5 flex flex-col justify-center items-center">
-                  <span className="w-full h-0.5 bg-gray-300 mb-1" />
-                  <span className="w-full h-0.5 bg-gray-300" />
-                  <span className="w-full h-0.5 bg-gray-300 mt-1" />
-                </div>
-              </button>
+              // Public mobile navigation for unauthenticated users
+              <MobileNavigation 
+                onFeatureClick={onFeatureClick || (() => {})}
+                onPricingClick={onPricingClick || (() => {})}
+              />
             )}
           </div>
         </div>
