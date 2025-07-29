@@ -24,17 +24,15 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
   }
 
   const handleManageBilling = async () => {
-    if (!user.stripe_customer_id) {
-      setError('No billing information found')
-      return
-    }
-
     setLoading(true)
     setError('')
 
     try {
       const response = await fetch('/api/stripe/create-portal-session', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const data = await response.json()
@@ -43,8 +41,10 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
         throw new Error(data.error || 'Failed to open billing portal')
       }
 
+      // Open portal in current window
       window.location.href = data.url
     } catch (error: any) {
+      console.error('Billing portal error:', error)
       setError(error.message || 'Failed to open billing portal')
     } finally {
       setLoading(false)
@@ -52,13 +52,8 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
   }
 
   const handleCancelSubscription = async () => {
-    if (!user.stripe_customer_id) {
-      setError('No billing information found')
-      return
-    }
-
     const confirmed = window.confirm(
-      'Are you sure you want to cancel your subscription? You will continue to have access until the end of your current billing period.'
+      'This will open the billing portal where you can cancel your subscription. You will continue to have access until the end of your current billing period. Continue?'
     )
 
     if (!confirmed) return
@@ -69,6 +64,9 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
     try {
       const response = await fetch('/api/stripe/create-portal-session', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const data = await response.json()
@@ -80,6 +78,7 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
       // Redirect to Stripe portal where they can cancel
       window.location.href = data.url
     } catch (error: any) {
+      console.error('Cancel subscription error:', error)
       setError(error.message || 'Failed to open billing portal')
     } finally {
       setLoading(false)
@@ -158,45 +157,51 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-3">
         {/* Upgrade Options */}
-        {upgradeOptions.length > 0 && (
-          <div className="flex flex-wrap gap-3">
-            {upgradeOptions.map((tier) => {
-              const tierConfig = STRIPE_CONFIG.PLANS[tier]
-              return (
-                <button
-                  key={tier}
-                  onClick={() => handleUpgrade(tier)}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 text-sm"
-                >
-                  Upgrade to {tierConfig.name} - £{(tierConfig.price / 100).toFixed(0)}/mo
-                </button>
-              )
-            })}
-          </div>
-        )}
-
-        {/* Billing Management - Always show for paid users */}
-        {currentTier !== 'free' && (
-          <>
+        {upgradeOptions.length > 0 && upgradeOptions.map((tier) => {
+          const tierConfig = STRIPE_CONFIG.PLANS[tier]
+          return (
             <button
-              onClick={handleManageBilling}
-              disabled={loading}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              key={tier}
+              onClick={() => handleUpgrade(tier)}
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 hover:scale-105 shadow-lg"
             >
-              {loading ? 'Loading...' : '💳 Manage Billing & Payment'}
+              ⬆️ Upgrade to {tierConfig.name} - £{(tierConfig.price / 100).toFixed(0)}/mo
             </button>
-            
-            {/* Cancel Subscription Button - Show for active subscriptions */}
-            {(!user.subscription_cancel_at_period_end) && (
-              <button
-                onClick={handleCancelSubscription}
-                disabled={loading}
-                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {loading ? 'Loading...' : '❌ Cancel Subscription'}
-              </button>
+          )
+        })}
+
+        {/* Manage Billing Button - Show for all users */}
+        <button
+          onClick={handleManageBilling}
+          disabled={loading}
+          className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+        >
+          {loading ? (
+            <div className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Loading...</span>
+            </div>
+          ) : (
+            <>💳 {currentTier === 'free' ? 'Billing Portal' : 'Manage Billing'}</>
+          )}
+        </button>
+        
+        {/* Cancel Subscription Button - Show for paid users only */}
+        {currentTier !== 'free' && !user.subscription_cancel_at_period_end && (
+          <button
+            onClick={handleCancelSubscription}
+            disabled={loading}
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          >
+            {loading ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Loading...</span>
+              </div>
+            ) : (
+              <>❌ Cancel Subscription</>
             )}
-          </>
+          </button>
         )}
 
         {/* View All Plans */}
