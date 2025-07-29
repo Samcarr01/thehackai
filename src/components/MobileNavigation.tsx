@@ -46,6 +46,20 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
     setIsOpen(false)
   }, [pathname])
 
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
   const isActivePage = (path: string) => {
     if (path === '/' && pathname === '/') return true
     if (path !== '/' && pathname.startsWith(path)) return true
@@ -54,148 +68,146 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Hamburger Menu Button */}
       <button
         onClick={toggleMenu}
-        className="md:hidden flex items-center justify-center w-12 h-12 rounded-xl hover:bg-purple-900/20 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
+        className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-purple-900/20 transition-all duration-200"
         aria-label="Toggle navigation menu"
+        aria-expanded={isOpen}
       >
-        <div className="flex flex-col w-6 h-6 justify-center">
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out ${
-            isOpen ? 'rotate-45 translate-y-1.5 bg-purple-400' : ''
-          }`} />
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out mt-1.5 ${
-            isOpen ? 'opacity-0 scale-0' : ''
-          }`} />
-          <span className={`block h-0.5 w-full bg-gray-300 transition-all duration-300 ease-out mt-1.5 ${
-            isOpen ? '-rotate-45 -translate-y-1.5 bg-purple-400' : ''
-          }`} />
+        <div className="w-5 h-5 flex flex-col justify-center items-center">
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? 'rotate-45 translate-y-0.5' : 'mb-1'
+            }`}
+          />
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? 'opacity-0' : ''
+            }`}
+          />
+          <span 
+            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
+              isOpen ? '-rotate-45 -translate-y-0.5' : 'mt-1'
+            }`}
+          />
         </div>
       </button>
 
-      {/* Mobile Menu Overlay - NO BLUR */}
+      {/* Overlay with Blur */}
       <div 
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-out ${
-          isOpen ? '' : 'pointer-events-none'
-        }`} 
-        style={{
-          backgroundColor: isOpen ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none'
-        }}
-        onClick={handleLinkClick} 
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 md:hidden z-40 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={handleLinkClick}
+        aria-hidden="true"
       />
 
-      {/* Mobile Menu Panel - FORCE SOLID BACKGROUND */}
+      {/* Beautiful Centered Modal */}
       <div 
-        className={`fixed top-0 right-0 h-full w-72 sm:w-80 shadow-2xl transform transition-all duration-300 ease-out md:hidden ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`} 
-        style={{ 
-          backgroundColor: '#1a1a2e',
-          background: '#1a1a2e',
-          zIndex: 9999,
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          opacity: 1
-        }}
+        className={`fixed inset-0 flex items-center justify-center p-4 md:hidden z-50 pointer-events-none ${
+          isOpen ? '' : ''
+        }`}
+        role="dialog"
+        aria-label="Navigation menu"
       >
-        <div 
-          className="flex flex-col h-full" 
-          style={{ 
-            backgroundColor: '#1a1a2e',
-            background: '#1a1a2e' 
-          }}
-        >
-          {/* Header */}
-          <div className={`flex items-center justify-between p-6 border-b border-gray-700 transition-all duration-500 ${
-            animateItems ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
-          }`}>
-            <div className="flex items-center space-x-3">
-              <div className="w-16 h-16 flex items-center justify-center">
-                <Image
-                  src="/logo.png"
-                  alt="thehackai logo"
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-contain"
-                  priority
-                />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">thehackai</span>
-            </div>
+        <div className={`
+          w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/10 
+          rounded-3xl shadow-2xl shadow-purple-500/10 transform transition-all duration-300 ease-out
+          ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none'}
+        `}>
+          {/* Header with Close Button */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Navigation
+            </h2>
             <button
-              onClick={toggleMenu}
-              className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-gray-700 hover:scale-110 active:scale-95 transition-all duration-200"
+              onClick={handleLinkClick}
+              className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 group"
               aria-label="Close menu"
             >
-              <span className="text-xl text-gray-300">✕</span>
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-6 py-6">
-            <div className="space-y-2">
+          <div className="px-6 py-4">
+            <nav className="space-y-2">
               {[
-                { action: handleFeatureClick, icon: '✨', label: 'Features', delay: 'delay-200', type: 'button' as const },
-                { action: handlePricingClick, icon: '💜', label: 'Pricing', delay: 'delay-300', type: 'button' as const },
-                { href: '/blog', icon: '📝', label: 'Blog', delay: 'delay-400', type: 'link' as const },
-                { href: '/login', icon: '👋', label: 'Sign In', delay: 'delay-500', type: 'link' as const, special: true }
-              ].map((item, index) => (
+                { action: handleFeatureClick, icon: '⚡', label: 'Features', type: 'button' as const },
+                { action: handlePricingClick, icon: '💰', label: 'Pricing', type: 'button' as const },
+                { href: '/blog', icon: '✍️', label: 'Blog', type: 'link' as const }
+              ].map((item) => (
                 item.type === 'button' ? (
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className={`group flex items-center text-lg py-4 px-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 w-full text-left ${
-                      item.special
-                        ? 'text-purple-400 hover:text-purple-300 hover:bg-purple-900/20'
-                        : 'text-gray-200 hover:text-purple-400 hover:bg-purple-900/20'
-                    } ${animateItems ? `translate-x-0 opacity-100 ${item.delay}` : 'translate-x-8 opacity-0'}`}
+                    className="relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] w-full text-left text-gray-300 hover:text-white hover:bg-white/10"
                   >
-                    <span className={`mr-4 text-2xl transition-transform duration-200 group-hover:scale-110`}>
-                      {item.icon}
-                    </span>
-                    <span className="font-medium">{item.label}</span>
+                    <div className="flex items-center space-x-3">
+                      <span className="transition-transform duration-300 group-hover:scale-105">
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
                   </button>
                 ) : (
                   <Link
                     key={item.href}
                     href={item.href!}
                     onClick={handleLinkClick}
-                    className={`group flex items-center text-lg py-4 px-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-sm active:scale-95 ${
+                    className={`relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] ${
                       isActivePage(item.href!)
-                        ? 'bg-purple-900/20 text-purple-300 border-l-4 border-purple-500 font-medium shadow-sm'
-                        : item.special
-                          ? 'text-purple-400 hover:text-purple-300 hover:bg-purple-900/20'
-                          : 'text-gray-200 hover:text-purple-400 hover:bg-purple-900/20'
-                    } ${animateItems ? `translate-x-0 opacity-100 ${item.delay}` : 'translate-x-8 opacity-0'}`}
+                        ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/25'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
                   >
-                    <span className={`mr-4 text-2xl transition-transform duration-200 ${
-                      isActivePage(item.href!) ? 'scale-110' : 'group-hover:scale-110'
-                    }`}>
-                      {item.icon}
-                    </span>
-                    <span className="font-medium">{item.label}</span>
+                    <div className="flex items-center space-x-3">
+                      <span className={`transition-transform duration-300 ${
+                        isActivePage(item.href!) ? 'scale-110' : 'group-hover:scale-105'
+                      }`}>
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </div>
                     {isActivePage(item.href!) && (
-                      <div className="ml-auto w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                    )}
+                    {!isActivePage(item.href!) && (
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
                     )}
                   </Link>
                 )
               ))}
-            </div>
-          </nav>
+            </nav>
+          </div>
 
-          {/* CTA Button */}
-          <div className={`p-6 border-t border-gray-700 bg-gray-700/50 transition-all duration-500 delay-600 ${
-            animateItems ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}>
+          {/* Auth Actions */}
+          <div className="border-t border-white/10 px-6 py-4 space-y-3">
+            <Link
+              href="/login"
+              onClick={handleLinkClick}
+              className="relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] text-gray-300 hover:text-white hover:bg-white/10"
+            >
+              <div className="flex items-center space-x-3">
+                <span className="transition-transform duration-300 group-hover:scale-105">🔑</span>
+                <span>Sign In</span>
+              </div>
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
+            </Link>
+            
             <Link
               href="/signup"
               onClick={handleLinkClick}
-              className="group flex items-center justify-center w-full gradient-purple text-white py-4 px-6 rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[56px]"
+              className="w-full flex items-center px-4 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 group min-h-[44px] justify-center"
             >
-              <span className="mr-3 text-xl transition-transform duration-200 group-hover:scale-110">🚀</span>
-              Get Started
+              <div className="flex items-center space-x-3">
+                <span className="transition-transform duration-300 group-hover:scale-105">🚀</span>
+                <span>Get Started</span>
+              </div>
             </Link>
           </div>
         </div>

@@ -32,6 +32,20 @@ export default function InternalMobileNavigation({
     setIsOpen(false)
   }, [pathname])
 
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
   const isActivePage = (path: string) => {
     if (path === '/' && pathname === '/') return true
     if (path !== '/' && pathname.startsWith(path)) return true
@@ -69,27 +83,46 @@ export default function InternalMobileNavigation({
         </div>
       </button>
 
-      {/* Overlay */}
+      {/* Overlay with Blur */}
       <div 
-        className={`fixed inset-0 bg-black/50 transition-opacity duration-300 md:hidden z-40 ${
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 md:hidden z-40 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleLinkClick}
         aria-hidden="true"
       />
 
-      {/* Mobile Sidebar Panel */}
+      {/* Beautiful Centered Modal */}
       <div 
-        className={`fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-slate-900 shadow-2xl transform transition-transform duration-300 ease-out md:hidden z-50 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-0 flex items-center justify-center p-4 md:hidden z-50 pointer-events-none ${
+          isOpen ? '' : ''
         }`}
         role="dialog"
         aria-label="Navigation menu"
       >
-        <div className="flex flex-col h-full">
-          
+        <div className={`
+          w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/10 
+          rounded-3xl shadow-2xl shadow-purple-500/10 transform transition-all duration-300 ease-out
+          ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none'}
+        `}>
+          {/* Header with Close Button */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Navigation
+            </h2>
+            <button
+              onClick={handleLinkClick}
+              className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
           {/* User Profile Section */}
-          <div className="p-6 border-b border-gray-700">
+          <div className="p-6 border-b border-white/10">
             <div className="flex items-center space-x-3">
               {/* Avatar */}
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
@@ -104,34 +137,28 @@ export default function InternalMobileNavigation({
                   {displayName}
                 </h3>
                 <div className="flex items-center space-x-2 mt-1">
-                  <div className={`px-2 py-1 rounded-md text-xs font-medium ${
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 ${
                     userTier === 'ultra'
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25'
                       : userTier === 'pro'
-                        ? 'bg-purple-900/50 text-purple-300'
-                        : 'bg-gray-700 text-gray-300'
+                        ? 'bg-purple-900/50 text-purple-200 border border-purple-500/30'
+                        : 'bg-gray-800/50 text-gray-300 border border-gray-600/30'
                   }`}>
-                    {userTier === 'ultra' ? '🚀 ULTRA' : userTier === 'pro' ? '✨ PRO' : '🆓 FREE'}
+                    <span>
+                      {userTier === 'ultra' ? '🚀' : userTier === 'pro' ? '✨' : '🆓'}
+                    </span>
+                    <span>
+                      {userTier === 'ultra' ? 'Ultra' : userTier === 'pro' ? 'Pro' : 'Free'}
+                    </span>
                   </div>
                 </div>
               </div>
-              
-              {/* Close Button */}
-              <button
-                onClick={handleLinkClick}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                aria-label="Close menu"
-              >
-                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
           </div>
           
           {/* Main Navigation */}
-          <div className="flex-1 px-4 py-6 overflow-y-auto">
-            <nav className="space-y-1">
+          <div className="px-6 py-4">
+            <nav className="space-y-2">
               {[
                 { href: '/', icon: '🏠', label: 'Home' },
                 { href: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -143,18 +170,25 @@ export default function InternalMobileNavigation({
                   key={item.href}
                   href={item.href}
                   onClick={handleLinkClick}
-                  className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group ${
+                  className={`relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] ${
                     isActivePage(item.href)
-                      ? 'bg-purple-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                      ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/25'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
-                    {item.icon}
-                  </span>
-                  <span className="font-medium">{item.label}</span>
+                  <div className="flex items-center space-x-3">
+                    <span className={`transition-transform duration-300 ${
+                      isActivePage(item.href) ? 'scale-110' : 'group-hover:scale-105'
+                    }`}>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </div>
                   {isActivePage(item.href) && (
-                    <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                  )}
+                  {!isActivePage(item.href) && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
                   )}
                 </Link>
               ))}
@@ -162,49 +196,49 @@ export default function InternalMobileNavigation({
             
             {/* Admin Section */}
             {showAdminLink && (
-              <div className="mt-6 pt-6 border-t border-gray-700">
-                <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3 px-3">
+              <div className="mt-6 pt-4 border-t border-white/10">
+                <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3 px-4">
                   Admin
                 </div>
                 <Link
                   href="/admin"
                   onClick={handleLinkClick}
-                  className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group ${
-                    isActivePage('/admin')
-                      ? 'bg-purple-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                  }`}
+                  className="relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] ml-2 bg-red-900/30 text-red-200 border border-red-500/40 hover:bg-red-900/40 hover:border-red-400/60"
                 >
-                  <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
-                    ⚙️
-                  </span>
-                  <span className="font-medium">Admin Panel</span>
-                  {isActivePage('/admin') && (
-                    <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
-                  )}
+                  <div className="flex items-center space-x-3">
+                    <span className="group-hover:scale-105 transition-transform duration-300">🔧</span>
+                    <span>Admin Panel</span>
+                  </div>
                 </Link>
               </div>
             )}
           </div>
           
           {/* Account Section */}
-          <div className="border-t border-gray-700 p-4 space-y-3">
+          <div className="border-t border-white/10 px-6 py-4 space-y-3">
             {/* Settings Link */}
             <Link
               href="/settings"
               onClick={handleLinkClick}
-              className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group ${ 
+              className={`relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] ${
                 isActivePage('/settings')
-                  ? 'bg-purple-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/25'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
-              <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
-                ⚙️
-              </span>
-              <span className="font-medium">Settings</span>
+              <div className="flex items-center space-x-3">
+                <span className={`transition-transform duration-300 ${
+                  isActivePage('/settings') ? 'scale-110' : 'group-hover:scale-105'
+                }`}>
+                  ⚙️
+                </span>
+                <span>Settings</span>
+              </div>
               {isActivePage('/settings') && (
-                <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
+                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+              )}
+              {!isActivePage('/settings') && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
               )}
             </Link>
             
@@ -238,12 +272,14 @@ export default function InternalMobileNavigation({
                   window.location.href = '/'
                 }
               }}
-              className="w-full flex items-center px-3 py-3 rounded-lg transition-all duration-200 min-h-[44px] group text-red-300 hover:text-white hover:bg-red-600/20"
+              className="w-full flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] text-red-300 hover:text-white hover:bg-red-600/20 border border-red-500/20 hover:border-red-400/40"
             >
-              <span className="text-lg mr-3 transition-transform duration-200 group-hover:scale-110">
-                👋
-              </span>
-              <span className="font-medium">Sign Out</span>
+              <div className="flex items-center space-x-3">
+                <span className="transition-transform duration-200 group-hover:scale-110">
+                  👋
+                </span>
+                <span>Sign Out</span>
+              </div>
             </button>
           </div>
 
