@@ -356,10 +356,20 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
-            {/* Debug mobile auth state */}
-            <div className="text-xs bg-red-500 text-white p-1 rounded mb-2">
-              Auth Debug: User={!!currentUser} Effective={!!effectiveUser} Email={currentUser?.email || 'none'}
-            </div>
+            {/* Visual auth state indicator */}
+            {!authChecked ? (
+              <div className="text-xs bg-yellow-500 text-black p-2 rounded mb-2 font-bold">
+                🔄 CHECKING AUTHENTICATION...
+              </div>
+            ) : (effectiveUser || currentUser) ? (
+              <div className="text-xs bg-green-500 text-white p-2 rounded mb-2 font-bold">
+                ✅ SIGNED IN: {(effectiveUser || currentUser)?.email}
+              </div>
+            ) : (
+              <div className="text-xs bg-red-500 text-white p-2 rounded mb-2 font-bold">
+                ❌ NOT SIGNED IN
+              </div>
+            )}
             {/* Simplified Mobile Navigation - Remove debug, fix logic */}
             {effectiveUser || currentUser ? (
               <InternalMobileNavigation 
