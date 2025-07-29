@@ -120,7 +120,7 @@ export default function SettingsPage() {
     <DarkThemeBackground>
       <SmartNavigation user={user} currentPage="settings" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Account Settings</h1>
           <p className="text-gray-100">Manage your account preferences and data</p>

@@ -20,7 +20,7 @@ interface SmartNavigationProps {
 export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick, loading = false }: SmartNavigationProps) {
   const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
   const router = useRouter()
-  const [localUser, setLocalUser] = useState<UserProfile | null>(user)
+  const [localUser, setLocalUser] = useState<UserProfile | null>(user)\n  const [authChecked, setAuthChecked] = useState(false)
   
   // Use local user state or prop user, whichever is more recent
   const currentUser = localUser || user
@@ -32,6 +32,31 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   useEffect(() => {
     setLocalUser(user)
   }, [user])
+  
+  // Initial auth check on component mount to fix redirect timing issues
+  useEffect(() => {
+    const checkInitialAuth = async () => {
+      if (!user && !authChecked) {
+        try {
+          const { user: authUser } = await auth.getUser()
+          if (authUser) {
+            let userProfile = await userService.getProfile(authUser.id)
+            if (!userProfile) {
+              userProfile = await userService.createProfile(authUser.id, authUser.email || '')
+            }
+            setLocalUser(userProfile)
+            console.log('SmartNavigation: Initial auth check found user:', userProfile.email)
+          }
+        } catch (error) {
+          console.error('SmartNavigation: Initial auth check failed:', error)
+        } finally {
+          setAuthChecked(true)
+        }
+      }
+    }
+    
+    checkInitialAuth()
+  }, [user, authChecked])
   
   // Listen for auth state changes to update mobile navigation immediately
   useEffect(() => {

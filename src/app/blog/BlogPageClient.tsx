@@ -116,7 +116,7 @@ export default function BlogPageClient() {
     <DarkThemeBackground>
       <SmartNavigation user={user} currentPage="blog" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-12">
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-white mb-6">
