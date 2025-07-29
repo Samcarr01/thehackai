@@ -24,16 +24,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   const [localUser, setLocalUser] = useState<UserProfile | null>(user)
   const [authChecked, setAuthChecked] = useState(false)
   
-  // Use local user state or prop user, whichever is more recent
-  const currentUser = localUser || user
+  // Use only local user state (ignore prop user to avoid conflicts)
+  const currentUser = localUser
   
   // Get effective user for display (applies global admin toggle)
   const effectiveUser = getEffectiveUser(currentUser)
-  
-  // Update local user when prop changes
-  useEffect(() => {
-    setLocalUser(user)
-  }, [user])
   
   // Aggressive auth check that polls until user is found or timeout
   useEffect(() => {
