@@ -332,22 +332,9 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
             ) : (
               // Public mobile navigation - only show when truly no user
               <div className="flex items-center space-x-3">
-                {/* DEBUG INDICATOR */}
-                <div className="bg-red-500 text-white p-1 text-xs rounded mr-2">
-                  PUBLIC NAV
+                <div className="bg-red-500 text-white p-2 text-center font-bold w-full rounded">
+                  🚨 PUBLIC NAVIGATION - NO USER DETECTED! 🚨
                 </div>
-                <Link
-                  href="/login"
-                  className="text-sm text-gray-300 hover:text-purple-400 transition-colors font-medium"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
-                >
-                  Get Started
-                </Link>
               </div>
             )}
           </div>
