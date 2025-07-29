@@ -30,91 +30,75 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
   // Get effective user for display (applies global admin toggle)
   const effectiveUser = getEffectiveUser(currentUser)
   
-  // Aggressive auth check that polls until user is found or timeout
+  // Simplified auth check with immediate retry
   useEffect(() => {
-    let attempts = 0
-    const maxAttempts = 10
-    const pollInterval = 500 // Poll every 500ms
+    let isMounted = true
     
-    const pollForAuth = async () => {
+    const checkAuth = async () => {
       try {
-        attempts++
-        console.log(`SmartNavigation: Auth check attempt ${attempts}/${maxAttempts}`)
-        
         const { user: authUser } = await auth.getUser()
-        console.log('SmartNavigation: Auth result:', !!authUser, authUser?.email)
+        
+        if (!isMounted) return
         
         if (authUser) {
           let userProfile = await userService.getProfile(authUser.id)
           if (!userProfile) {
             userProfile = await userService.createProfile(authUser.id, authUser.email || '')
           }
-          console.log('SmartNavigation: SUCCESS - Setting user profile:', userProfile?.email)
-          setLocalUser(userProfile)
-          setAuthChecked(true)
-          return true // Success - stop polling
-        } else if (attempts >= maxAttempts) {
-          console.log('SmartNavigation: Max attempts reached - assuming no user')
-          setLocalUser(null)
-          setAuthChecked(true)
-          return true // Stop polling
+          
+          if (isMounted) {
+            setLocalUser(userProfile)
+            setAuthChecked(true)
+          }
         } else {
-          console.log('SmartNavigation: No user found, will retry...')
-          return false // Continue polling
+          if (isMounted) {
+            setLocalUser(null)
+            setAuthChecked(true)
+          }
         }
       } catch (error) {
         console.error('SmartNavigation: Auth check failed:', error)
-        if (attempts >= maxAttempts) {
+        if (isMounted) {
           setLocalUser(null)
           setAuthChecked(true)
-          return true // Stop polling
         }
-        return false // Continue polling
       }
     }
     
-    const startPolling = async () => {
-      const success = await pollForAuth()
-      if (!success) {
-        const interval = setInterval(async () => {
-          const shouldStop = await pollForAuth()
-          if (shouldStop) {
-            clearInterval(interval)
-          }
-        }, pollInterval)
-        
-        // Cleanup interval after max time
-        setTimeout(() => clearInterval(interval), maxAttempts * pollInterval)
-      }
-    }
+    // Initial check
+    checkAuth()
     
-    startPolling()
-  }, []) // Run once on mount
+    // Retry after a short delay if needed
+    const retryTimeout = setTimeout(() => {
+      if (!authChecked && isMounted) {
+        checkAuth()
+      }
+    }, 1000)
+    
+    return () => {
+      isMounted = false
+      clearTimeout(retryTimeout)
+    }
+  }, [authChecked])
   
-  // Listen for auth state changes to update mobile navigation immediately
+  // Listen for auth state changes for real-time updates
   useEffect(() => {
     const { supabase } = auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('SmartNavigation: Auth state changed:', event, !!session?.user)
-      
       if (event === 'SIGNED_IN' && session?.user) {
-        console.log('SmartNavigation: User signed in, updating profile')
-        let userProfile = await userService.getProfile(session.user.id)
-        if (!userProfile) {
-          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
-        }
-        console.log('SmartNavigation: Profile updated:', userProfile?.email)
-        setLocalUser(userProfile)
-      } else if (event === 'SIGNED_OUT') {
-        console.log('SmartNavigation: User signed out')
-        setLocalUser(null)
-      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-        // Also check on token refresh to catch any missed updates
-        console.log('SmartNavigation: Token refreshed, checking user')
-        let userProfile = await userService.getProfile(session.user.id)
-        if (userProfile) {
+        try {
+          let userProfile = await userService.getProfile(session.user.id)
+          if (!userProfile) {
+            userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+          }
           setLocalUser(userProfile)
+          setAuthChecked(true)
+        } catch (error) {
+          console.error('SmartNavigation: Error on sign in:', error)
         }
+      } else if (event === 'SIGNED_OUT') {
+        setLocalUser(null)
+        setAuthChecked(true)
       }
     })
     
@@ -351,6 +335,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
 
           {/* Mobile Navigation */}
           <div className="md:hidden relative">
+            {/* Debug indicator */}
+            <div className="absolute top-0 right-0 z-50 text-xs p-1 rounded bg-blue-500 text-white">
+              {localUser ? `Auth: ${localUser.email}` : 'Public'}
+            </div>
+            
             {/* Mobile Navigation - Fixed logic */}
             {localUser ? (
               <InternalMobileNavigation 

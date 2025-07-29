@@ -58,7 +58,7 @@ function CheckoutSuccessContent() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
       <SmartNavigation user={userProfile} />
       
-      <div className="pt-24 pb-16">
+      <div className="pt-16 sm:pt-20 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Success Header */}
           <div className="text-center mb-16">
