@@ -12,43 +12,14 @@ interface MobileNavigationProps {
 
 export default function MobileNavigation({ onFeatureClick, onPricingClick }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [animationClass, setAnimationClass] = useState('')
   const pathname = usePathname()
 
   const toggleMenu = () => {
-    if (!isOpen) {
-      // Opening: hamburger → X + bubble burst
-      setAnimationClass('') // Clear first
-      // Force reflow then apply animation
-      requestAnimationFrame(() => {
-        setAnimationClass('opening')
-        setIsOpen(true)
-      })
-      // Clear animation class after animation completes
-      setTimeout(() => setAnimationClass(''), 600)
-    } else {
-      // Closing: X → hamburger + cool bubble reappear
-      setAnimationClass('') // Clear first
-      // Force reflow then apply animation
-      requestAnimationFrame(() => {
-        setAnimationClass('closing')
-        setIsOpen(false)
-      })
-      // Clear animation class after animation completes
-      setTimeout(() => setAnimationClass(''), 600)
-    }
+    setIsOpen(!isOpen)
   }
   
   const handleLinkClick = () => {
-    // Closing: X → hamburger + cool bubble reappear
-    setAnimationClass('') // Clear first
-    // Force reflow then apply animation
-    requestAnimationFrame(() => {
-      setAnimationClass('closing')
-      setIsOpen(false)
-    })
-    // Clear animation class after animation completes
-    setTimeout(() => setAnimationClass(''), 600)
+    setIsOpen(false)
   }
 
   const handleFeatureClick = () => {
@@ -106,8 +77,6 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
         onClick={toggleMenu}
         className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transform hover:scale-110 active:scale-95 z-[100] morph-circle ${
           isOpen ? 'open morph-pulse' : ''
-        } ${
-          animationClass
         } ${
           isOpen 
             ? 'bg-gradient-to-br from-red-500 to-red-600 shadow-2xl shadow-red-500/50' 
