@@ -97,15 +97,10 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
       >
         <div className="relative w-full h-full flex items-center justify-center">
           {isOpen ? (
-            <svg 
-              className="w-6 h-6 text-white transition-all duration-500 rotate-0" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-              strokeWidth={3}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <div className="absolute w-6 h-0.5 bg-white rounded-full transform rotate-45"></div>
+              <div className="absolute w-6 h-0.5 bg-white rounded-full transform -rotate-45"></div>
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center space-y-1">
               <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
@@ -165,7 +160,8 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                   transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  zIndex: 9999
                 }}
               >
                 <span className="text-2xl hover:scale-105 transition-all duration-300">
@@ -215,7 +211,8 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                   : '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: (isActive || item.special)
                   ? '0 8px 32px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                  : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                zIndex: 9999
               }}
             >
               <span className={`text-2xl transition-all duration-300 ${

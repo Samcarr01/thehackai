@@ -95,15 +95,10 @@ export default function InternalMobileNavigation({
       >
         <div className="relative w-full h-full flex items-center justify-center">
           {isOpen ? (
-            <svg 
-              className="w-6 h-6 text-white transition-all duration-500 rotate-0" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-              strokeWidth={3}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <div className="absolute w-6 h-0.5 bg-white rounded-full transform rotate-45"></div>
+              <div className="absolute w-6 h-0.5 bg-white rounded-full transform -rotate-45"></div>
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center space-y-1">
               <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
@@ -116,7 +111,7 @@ export default function InternalMobileNavigation({
 
       {/* 🎭 EPIC HUD OVERLAY */}
       <div 
-        className={`fixed inset-0 transition-all duration-700 md:hidden z-50 ${
+        className={`fixed inset-0 transition-all duration-700 md:hidden z-40 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleLinkClick}
@@ -172,7 +167,7 @@ export default function InternalMobileNavigation({
                 boxShadow: isActive
                   ? '0 12px 40px rgba(139, 92, 246, 0.8), inset 0 2px 0 rgba(255, 255, 255, 0.4)'
                   : '0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                zIndex: 70
+                zIndex: 9999
               }}
             >
               <span className={`text-2xl transition-all duration-300 ${
@@ -215,7 +210,8 @@ export default function InternalMobileNavigation({
               transitionDelay: isOpen ? '700ms' : '0ms',
               backdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.3)',
-              boxShadow: '0 8px 32px rgba(220, 38, 38, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+              boxShadow: '0 8px 32px rgba(220, 38, 38, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+              zIndex: 9999
             }}
           >
             <span className="text-2xl">🔧</span>
@@ -261,7 +257,8 @@ export default function InternalMobileNavigation({
             transitionDelay: isOpen ? '800ms' : '0ms',
             backdropFilter: 'blur(20px)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+            zIndex: 9999
           }}
         >
           <span className="text-2xl">👋</span>
