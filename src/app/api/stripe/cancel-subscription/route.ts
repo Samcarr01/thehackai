@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Subscription cancelled successfully. You will retain access until the end of your current billing period.',
       cancel_at_period_end: cancelledSubscription.cancel_at_period_end,
-      current_period_end: new Date(cancelledSubscription.current_period_end * 1000).toISOString()
+      current_period_end: cancelledSubscription.current_period_end ? new Date((cancelledSubscription as any).current_period_end * 1000).toISOString() : null
     })
 
   } catch (error: any) {
