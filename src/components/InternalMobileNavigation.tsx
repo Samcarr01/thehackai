@@ -128,12 +128,12 @@ export default function InternalMobileNavigation({
       {/* 🌀 FLOATING RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
         {[
-          { href: '/', icon: '🏠', label: 'Home', angle: -140, delay: 100 },
-          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: -110, delay: 200 },
-          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: -80, delay: 300 },
-          { href: '/documents', icon: '📚', label: 'Playbooks', angle: -50, delay: 400 },
-          { href: '/blog', icon: '✍️', label: 'Blog', angle: -20, delay: 500 },
-          { href: '/settings', icon: '⚙️', label: 'Settings', angle: 10, delay: 600 }
+          { href: '/', icon: '🏠', label: 'Home', angle: 45, delay: 100 },
+          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: 75, delay: 200 },
+          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: 105, delay: 300 },
+          { href: '/documents', icon: '📚', label: 'Playbooks', angle: 135, delay: 400 },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: 165, delay: 500 },
+          { href: '/settings', icon: '⚙️', label: 'Settings', angle: 195, delay: 600 }
         ].map((item, index) => {
           const isActive = isActivePage(item.href)
           const radius = 120
@@ -205,8 +205,8 @@ export default function InternalMobileNavigation({
                 : 'scale-0 opacity-0 pointer-events-none'
             }`}
             style={{
-              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((40 * Math.PI) / 180) * 120 - 32}px`,
-              top: `${16 + 28 + Math.sin((40 * Math.PI) / 180) * 120 - 32}px`,
+              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((225 * Math.PI) / 180) * 120 - 32}px`,
+              top: `${16 + 28 + Math.sin((225 * Math.PI) / 180) * 120 - 32}px`,
               transitionDelay: isOpen ? '700ms' : '0ms',
               backdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -252,8 +252,8 @@ export default function InternalMobileNavigation({
               : 'scale-0 opacity-0 pointer-events-none'
           }`}
           style={{
-            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((70 * Math.PI) / 180) * 120 - 32}px`,
-            top: `${16 + 28 + Math.sin((70 * Math.PI) / 180) * 120 - 32}px`,
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((255 * Math.PI) / 180) * 120 - 32}px`,
+            top: `${16 + 28 + Math.sin((255 * Math.PI) / 180) * 120 - 32}px`,
             transitionDelay: isOpen ? '800ms' : '0ms',
             backdropFilter: 'blur(20px)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
