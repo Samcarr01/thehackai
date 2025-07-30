@@ -44,7 +44,6 @@ export default function InternalMobileNavigation({
       document.body.style.width = 'unset'
     }
     
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = 'unset'
       document.body.style.position = 'unset'
@@ -58,7 +57,6 @@ export default function InternalMobileNavigation({
     return false
   }
 
-  // Get user's display name from email
   const displayName = userEmail ? userEmail.split('@')[0] : 'User'
 
   const menuItems = [
@@ -71,73 +69,68 @@ export default function InternalMobileNavigation({
 
   return (
     <>
-      {/* 🌀 EPIC IRON MAN FLOATING ACTION BUTTON */}
+      {/* FLOATING ACTION BUTTON */}
       <button
         onClick={toggleMenu}
-        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transition-all duration-700 transform hover:scale-110 active:scale-95 z-[100] animate-hud-glow ${
+        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 z-[100] ${
           isOpen 
-            ? 'bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 shadow-2xl shadow-red-500/50 rotate-45 scale-110' 
-            : 'bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60'
+            ? 'bg-gradient-to-br from-red-500 to-red-600 shadow-2xl shadow-red-500/50' 
+            : 'bg-gradient-to-br from-purple-600 to-purple-700 shadow-xl shadow-purple-500/40'
         }`}
         style={{
           backdropFilter: 'blur(20px)',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
-          boxShadow: isOpen 
-            ? '0 20px 40px rgba(239, 68, 68, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-            : '0 12px 24px rgba(139, 92, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          border: '2px solid rgba(255, 255, 255, 0.2)',
         }}
         aria-label="Toggle Menu"
         aria-expanded={isOpen}
       >
         <div className="relative w-full h-full flex items-center justify-center">
           {isOpen ? (
-            <div className="relative w-8 h-8 flex items-center justify-center">
-              <div className="absolute w-6 h-0.5 bg-white rounded-full transform rotate-45"></div>
-              <div className="absolute w-6 h-0.5 bg-white rounded-full transform -rotate-45"></div>
+            // X icon when open
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <div className="absolute w-4 h-0.5 bg-white rounded-full transform rotate-45"></div>
+              <div className="absolute w-4 h-0.5 bg-white rounded-full transform -rotate-45"></div>
             </div>
           ) : (
+            // Hamburger icon when closed
             <div className="flex flex-col items-center justify-center space-y-1">
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
             </div>
           )}
         </div>
       </button>
 
-      {/* 🎭 EPIC HUD OVERLAY */}
+      {/* OVERLAY */}
       <div 
-        className={`fixed inset-0 transition-all duration-700 md:hidden z-40 ${
+        className={`fixed inset-0 transition-opacity duration-300 md:hidden z-40 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleLinkClick}
-        aria-hidden="true"
         style={{
-          background: isOpen 
-            ? 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, rgba(0, 0, 0, 0.85) 70%)'
-            : 'transparent',
-          backdropFilter: isOpen ? 'blur(30px) saturate(150%) brightness(0.8)' : 'blur(0px)',
-          WebkitBackdropFilter: isOpen ? 'blur(30px) saturate(150%) brightness(0.8)' : 'blur(0px)'
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(10px)',
         }}
       />
 
-      {/* 🌀 EPIC HUD DROPDOWN MENU */}
+      {/* DROPDOWN MENU */}
       <div 
-        className={`md:hidden fixed top-20 right-4 w-48 transition-all duration-700 z-50 animate-arc-entrance ${
+        className={`md:hidden fixed top-20 right-4 w-52 transition-all duration-300 z-50 ${
           isOpen 
-            ? 'opacity-100 translate-y-0 scale-100' 
-            : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 30, 60, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%)',
+          background: 'rgba(20, 20, 30, 0.95)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          borderRadius: '16px',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
         }}
       >
-        {/* Menu Items */}
-        <div className="p-2">
+        {/* Main Menu Items */}
+        <div className="p-3">
           {menuItems.map((item, index) => {
             const isActive = isActivePage(item.href)
             return (
@@ -145,50 +138,32 @@ export default function InternalMobileNavigation({
                 key={item.href}
                 href={item.href}
                 onClick={handleLinkClick}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-700 transform hover:scale-125 active:scale-95 animate-bounce-in ${
+                className={`flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg transition-colors duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 shadow-lg shadow-purple-500/40'
-                    : 'hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/20'
+                    ? 'bg-purple-600/20 text-purple-200'
+                    : 'text-white hover:bg-white/10'
                 }`}
-                style={{
-                  transitionDelay: isOpen ? `${index * 100}ms` : '0ms',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: isActive 
-                    ? '0 8px 32px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                    : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                }}
               >
-                <span className={`text-2xl transition-all duration-300 ${
-                  isActive ? 'scale-110 drop-shadow-lg animate-pulse-purple' : 'hover:scale-105'
-                }`}>{item.icon}</span>
-                <span className={`text-sm font-semibold ${
-                  isActive ? 'text-purple-200' : 'text-white'
-                }`}>
-                  {item.label}
-                </span>
+                <span className="text-lg">{item.icon}</span>
+                <span className="text-sm font-medium">{item.label}</span>
               </Link>
             )
           })}
         </div>
 
         {/* Divider */}
-        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        <div className="mx-3 h-px bg-white/10"></div>
 
         {/* Secondary Actions */}
-        <div className="p-2 space-y-1">
+        <div className="p-3 space-y-1">
           {showAdminLink && (
             <Link
               href="/admin"
               onClick={handleLinkClick}
-              className="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-700 transform hover:scale-125 active:scale-95 hover:bg-red-500/10 animate-bounce-in"
-            style={{
-              transitionDelay: isOpen ? '600ms' : '0ms',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 4px 16px rgba(220, 38, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-            }}
+              className="flex items-center space-x-3 px-3 py-3 rounded-lg text-orange-300 hover:bg-orange-500/10 transition-colors duration-200"
             >
-              <span className="text-xl">🔧</span>
-              <span className="text-sm font-semibold text-red-300">Admin</span>
+              <span className="text-lg">🔧</span>
+              <span className="text-sm font-medium">Admin</span>
             </Link>
           )}
           
@@ -206,54 +181,39 @@ export default function InternalMobileNavigation({
                 window.location.href = '/'
               }
             }}
-            className="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-700 transform hover:scale-125 active:scale-95 hover:bg-red-500/10 w-full text-left animate-bounce-in"
-            style={{
-              transitionDelay: isOpen ? '700ms' : '0ms',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-            }}
+            className="flex items-center space-x-3 px-3 py-3 rounded-lg text-red-300 hover:bg-red-500/10 transition-colors duration-200 w-full text-left"
           >
-            <span className="text-xl">👋</span>
-            <span className="text-sm font-semibold text-red-300">Sign Out</span>
+            <span className="text-lg">👋</span>
+            <span className="text-sm font-medium">Sign Out</span>
           </button>
         </div>
       </div>
 
-      {/* 🎯 EPIC USER INFO HUD */}
+      {/* USER INFO */}
       <div 
-        className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-2xl backdrop-blur-xl transition-all duration-700 md:hidden z-50 animate-bounce-in ${
-          isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+        className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-xl transition-all duration-300 md:hidden z-50 ${
+          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
         }`}
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 30, 60, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%)',
-          border: '1px solid rgba(139, 92, 246, 0.4)',
-          boxShadow: '0 20px 40px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-          transitionDelay: isOpen ? '800ms' : '0ms'
+          background: 'rgba(20, 20, 30, 0.95)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
         }}
       >
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-sm">
               {displayName.charAt(0).toUpperCase()}
             </span>
           </div>
           <div>
-            <div className="text-white font-semibold text-sm truncate max-w-32">
+            <div className="text-white font-medium text-sm">
               {displayName}
             </div>
-            <div className={`text-xs font-semibold flex items-center space-x-1 ${
-              userTier === 'ultra'
-                ? 'text-purple-300'
-                : userTier === 'pro'
-                  ? 'text-purple-200'
-                  : 'text-gray-300'
-            }`}>
-              <span>
-                {userTier === 'ultra' ? '🚀' : userTier === 'pro' ? '✨' : '🆓'}
-              </span>
-              <span>
-                {userTier === 'ultra' ? 'Ultra' : userTier === 'pro' ? 'Pro' : 'Free'}
-              </span>
+            <div className="text-xs text-gray-300 flex items-center space-x-1">
+              <span>{userTier === 'pro' ? '✨' : '🆓'}</span>
+              <span>{userTier === 'pro' ? 'Pro' : 'Free'}</span>
             </div>
           </div>
         </div>

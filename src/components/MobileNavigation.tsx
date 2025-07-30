@@ -49,7 +49,6 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
       document.body.style.width = 'unset'
     }
     
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = 'unset'
       document.body.style.position = 'unset'
@@ -73,69 +72,68 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
   return (
     <>
-      {/* 🌟 FLOATING ACTION BUTTON */}
+      {/* FLOATING ACTION BUTTON */}
       <button
         onClick={toggleMenu}
         className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 z-[100] ${
           isOpen 
-            ? 'bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 shadow-2xl shadow-red-500/50' 
-            : 'bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60'
+            ? 'bg-gradient-to-br from-red-500 to-red-600 shadow-2xl shadow-red-500/50' 
+            : 'bg-gradient-to-br from-purple-600 to-purple-700 shadow-xl shadow-purple-500/40'
         }`}
         style={{
           backdropFilter: 'blur(20px)',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
+          border: '2px solid rgba(255, 255, 255, 0.2)',
         }}
         aria-label="Toggle Menu"
         aria-expanded={isOpen}
       >
         <div className="relative w-full h-full flex items-center justify-center">
           {isOpen ? (
-            <div className="relative w-8 h-8 flex items-center justify-center">
-              <div className="absolute w-6 h-0.5 bg-white rounded-full transform rotate-45"></div>
-              <div className="absolute w-6 h-0.5 bg-white rounded-full transform -rotate-45"></div>
+            // X icon when open
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <div className="absolute w-4 h-0.5 bg-white rounded-full transform rotate-45"></div>
+              <div className="absolute w-4 h-0.5 bg-white rounded-full transform -rotate-45"></div>
             </div>
           ) : (
+            // Hamburger icon when closed
             <div className="flex flex-col items-center justify-center space-y-1">
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
-              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
+              <div className="w-4 h-0.5 bg-white rounded-full"></div>
             </div>
           )}
         </div>
       </button>
 
-      {/* 🎭 OVERLAY */}
+      {/* OVERLAY */}
       <div 
-        className={`fixed inset-0 transition-all duration-300 md:hidden z-40 ${
+        className={`fixed inset-0 transition-opacity duration-300 md:hidden z-40 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleLinkClick}
-        aria-hidden="true"
         style={{
-          background: isOpen 
-            ? 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, rgba(0, 0, 0, 0.85) 70%)'
-            : 'transparent',
-          backdropFilter: isOpen ? 'blur(30px) saturate(150%) brightness(0.8)' : 'blur(0px)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(10px)',
         }}
       />
 
-      {/* 📱 DROPDOWN MENU */}
+      {/* DROPDOWN MENU */}
       <div 
-        className={`md:hidden fixed top-20 right-4 w-48 transition-all duration-300 z-50 ${
+        className={`md:hidden fixed top-20 right-4 w-52 transition-all duration-300 z-50 ${
           isOpen 
-            ? 'opacity-100 translate-y-0 scale-100' 
-            : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 30, 60, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%)',
+          background: 'rgba(20, 20, 30, 0.95)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          borderRadius: '16px',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
         }}
       >
         {/* Menu Items */}
-        <div className="p-2">
+        <div className="p-3">
           {menuItems.map((item, index) => {
             const isActive = item.type === 'link' && isActivePage(item.href!)
             
@@ -144,17 +142,10 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                 <button
                   key={item.label}
                   onClick={item.action}
-                  className="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 hover:scale-105 hover:bg-white/10 w-full text-left"
-                  style={{
-                    transitionDelay: isOpen ? `${index * 50}ms` : '0ms'
-                  }}
+                  className="flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg text-white hover:bg-white/10 transition-colors duration-200 w-full text-left"
                 >
-                  <span className={`text-2xl transition-all duration-300 ${
-                  (isActive || item.special) ? 'scale-110 drop-shadow-lg animate-pulse-purple' : 'hover:scale-105'
-                }`}>{item.icon}</span>
-                  <span className="text-sm font-semibold text-white">
-                    {item.label}
-                  </span>
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-sm font-medium">{item.label}</span>
                 </button>
               )
             }
@@ -164,25 +155,16 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                 key={item.href}
                 href={item.href!}
                 onClick={handleLinkClick}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 hover:scale-105 ${
+                className={`flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg transition-colors duration-200 ${
                   item.special
-                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30'
+                    ? 'bg-purple-600/20 text-purple-200'
                     : isActive 
-                      ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30'
-                      : 'hover:bg-white/10'
+                      ? 'bg-purple-600/20 text-purple-200'
+                      : 'text-white hover:bg-white/10'
                 }`}
-                style={{
-                  transitionDelay: isOpen ? `${index * 50}ms` : '0ms'
-                }}
               >
-                <span className={`text-2xl transition-all duration-300 ${
-                  (isActive || item.special) ? 'scale-110 drop-shadow-lg animate-pulse-purple' : 'hover:scale-105'
-                }`}>{item.icon}</span>
-                <span className={`text-sm font-semibold ${
-                  (isActive || item.special) ? 'text-purple-200' : 'text-white'
-                }`}>
-                  {item.label}
-                </span>
+                <span className="text-lg">{item.icon}</span>
+                <span className="text-sm font-medium">{item.label}</span>
               </Link>
             )
           })}
