@@ -217,6 +217,7 @@ export default function AdminPage() {
           description: analyzedContent.description,
           chatgpt_url: gptUrl,
           category: analyzedContent.category,
+          required_tier: 'pro', // 🔒 CRITICAL FIX: Ensure all GPTs require Pro subscription
         })
       } else if (uploadType === 'document' && documentFile) {
         await documentsService.createDocument({
@@ -224,6 +225,7 @@ export default function AdminPage() {
           description: analyzedContent.description,
           file: documentFile,
           category: analyzedContent.category,
+          required_tier: 'pro', // 🔒 CRITICAL FIX: Ensure all Documents require Pro subscription
         })
       }
 
