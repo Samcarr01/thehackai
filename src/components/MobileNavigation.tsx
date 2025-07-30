@@ -130,11 +130,11 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
       {/* 🌀 PUBLIC RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
         {[
-          { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: 60, delay: 100, type: 'button' as const },
-          { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: 90, delay: 200, type: 'button' as const },
-          { href: '/blog', icon: '✍️', label: 'Blog', angle: 120, delay: 300, type: 'link' as const },
-          { href: '/login', icon: '🔑', label: 'Sign In', angle: 150, delay: 400, type: 'link' as const },
-          { href: '/signup', icon: '🚀', label: 'Get Started', angle: 180, delay: 500, type: 'link' as const, special: true }
+          { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: 75, delay: 100, type: 'button' as const },
+          { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: 105, delay: 200, type: 'button' as const },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: 135, delay: 300, type: 'link' as const },
+          { href: '/login', icon: '🔑', label: 'Sign In', angle: 165, delay: 400, type: 'link' as const },
+          { href: '/signup', icon: '🚀', label: 'Get Started', angle: 195, delay: 500, type: 'link' as const, special: true }
         ].map((item, index) => {
           const isActive = item.type === 'link' && isActivePage(item.href!)
           const radius = 120
