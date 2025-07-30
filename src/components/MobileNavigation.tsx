@@ -149,7 +149,9 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                     transitionDelay: isOpen ? `${index * 50}ms` : '0ms'
                   }}
                 >
-                  <span className="text-2xl">{item.icon}</span>
+                  <span className={`text-2xl transition-all duration-300 ${
+                  (isActive || item.special) ? 'scale-110 drop-shadow-lg animate-pulse-purple' : 'hover:scale-105'
+                }`}>{item.icon}</span>
                   <span className="text-sm font-semibold text-white">
                     {item.label}
                   </span>
@@ -173,7 +175,9 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                   transitionDelay: isOpen ? `${index * 50}ms` : '0ms'
                 }}
               >
-                <span className="text-2xl">{item.icon}</span>
+                <span className={`text-2xl transition-all duration-300 ${
+                  (isActive || item.special) ? 'scale-110 drop-shadow-lg animate-pulse-purple' : 'hover:scale-105'
+                }`}>{item.icon}</span>
                 <span className={`text-sm font-semibold ${
                   (isActive || item.special) ? 'text-purple-200' : 'text-white'
                 }`}>
