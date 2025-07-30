@@ -128,15 +128,15 @@ export default function InternalMobileNavigation({
       {/* 🌀 FLOATING RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
         {[
-          { href: '/', icon: '🏠', label: 'Home', angle: 60, delay: 100 },
-          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: 90, delay: 200 },
-          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: 120, delay: 300 },
-          { href: '/documents', icon: '📚', label: 'Playbooks', angle: 150, delay: 400 },
-          { href: '/blog', icon: '✍️', label: 'Blog', angle: 180, delay: 500 },
-          { href: '/settings', icon: '⚙️', label: 'Settings', angle: 210, delay: 600 }
+          { href: '/', icon: '🏠', label: 'Home', angle: 90, delay: 100 },
+          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: 135, delay: 200 },
+          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: 180, delay: 300 },
+          { href: '/documents', icon: '📚', label: 'Playbooks', angle: 225, delay: 400 },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: 270, delay: 500 },
+          { href: '/settings', icon: '⚙️', label: 'Settings', angle: 315, delay: 600 }
         ].map((item, index) => {
           const isActive = isActivePage(item.href)
-          const radius = 120
+          const radius = 140
           const centerX = (windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 // Safe fallback
           const centerY = 16 + 28 // 16px from top + 28px button center
           const angleRad = (item.angle * Math.PI) / 180
@@ -205,8 +205,8 @@ export default function InternalMobileNavigation({
                 : 'scale-0 opacity-0 pointer-events-none'
             }`}
             style={{
-              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((240 * Math.PI) / 180) * 120 - 32}px`,
-              top: `${16 + 28 + Math.sin((240 * Math.PI) / 180) * 120 - 32}px`,
+              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((315 * Math.PI) / 180) * 100 - 32}px`,
+              top: `${16 + 28 + Math.sin((315 * Math.PI) / 180) * 100 - 32}px`,
               transitionDelay: isOpen ? '700ms' : '0ms',
               backdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -252,8 +252,8 @@ export default function InternalMobileNavigation({
               : 'scale-0 opacity-0 pointer-events-none'
           }`}
           style={{
-            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((270 * Math.PI) / 180) * 120 - 32}px`,
-            top: `${16 + 28 + Math.sin((270 * Math.PI) / 180) * 120 - 32}px`,
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((0 * Math.PI) / 180) * 100 - 32}px`,
+            top: `${16 + 28 + Math.sin((0 * Math.PI) / 180) * 100 - 32}px`,
             transitionDelay: isOpen ? '800ms' : '0ms',
             backdropFilter: 'blur(20px)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
