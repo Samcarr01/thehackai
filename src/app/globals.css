@@ -414,136 +414,126 @@
       0 0 80px rgba(239, 68, 68, 0.3);
   }
 
-  /* 🎆 EPIC PURPLE BUBBLE BURST ON CLICK */
+  /* 🌟 COOL PURPLE CIRCLE ANIMATION */
   .morph-circle::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%;
-    height: 100%;
+    width: 120%;
+    height: 120%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(147, 51, 234, 0.6) 0%, rgba(147, 51, 234, 0.3) 40%, transparent 70%);
-    transform: translate(-50%, -50%) scale(0);
+    border: 2px solid rgba(147, 51, 234, 0.4);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 0;
     pointer-events: none;
     z-index: -1;
   }
 
-  /* Ripple wave */
+  /* Secondary ring */
   .morph-circle::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%;
-    height: 100%;
+    width: 140%;
+    height: 140%;
     border-radius: 50%;
-    border: 2px solid rgba(147, 51, 234, 0.8);
-    transform: translate(-50%, -50%) scale(0);
+    border: 1px solid rgba(147, 51, 234, 0.6);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 0;
     pointer-events: none;
     z-index: -1;
   }
 
-  /* 💥 BUBBLE BURST WHEN OPENING (hamburger → X) */
+  /* 🌟 COOL RIPPLE RINGS WHEN OPENING (hamburger → X) */
   .morph-circle.opening::before {
-    animation: purple-burst-out 0.5s ease-out forwards;
-    opacity: 1 !important;
-    transform: translate(-50%, -50%) scale(0) !important;
+    animation: cool-ripple-1 0.6s ease-out forwards;
   }
 
   .morph-circle.opening::after {
-    animation: ripple-out 0.6s ease-out forwards;
-    opacity: 1 !important;
-    transform: translate(-50%, -50%) scale(0) !important;
+    animation: cool-ripple-2 0.8s ease-out forwards;
   }
 
-  /* 🌟 COOL BUBBLE REAPPEAR WHEN CLOSING (X → hamburger) */
+  /* ✨ COOL RINGS COLLAPSE WHEN CLOSING (X → hamburger) */
   .morph-circle.closing::before {
-    animation: purple-bubble-in 0.5s ease-out forwards;
-    opacity: 1 !important;
-    transform: translate(-50%, -50%) scale(2) !important;
+    animation: cool-collapse-1 0.5s ease-out forwards;
   }
 
   .morph-circle.closing::after {
-    animation: ripple-in 0.6s ease-out forwards;
-    opacity: 1 !important;
-    transform: translate(-50%, -50%) scale(2.5) !important;
+    animation: cool-collapse-2 0.6s ease-out forwards;
   }
 
-  /* 💥 BURST OUT ANIMATIONS (hamburger → X) */
-  @keyframes purple-burst-out {
+  /* 🌟 COOL RIPPLE ANIMATIONS (hamburger → X) */
+  @keyframes cool-ripple-1 {
     0% {
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-    }
-    30% {
-      transform: translate(-50%, -50%) scale(1.2);
-      opacity: 1;
-    }
-    100% {
-      transform: translate(-50%, -50%) scale(2.5);
-      opacity: 0;
-    }
-  }
-
-  @keyframes ripple-out {
-    0% {
-      transform: translate(-50%, -50%) scale(0);
+      transform: translate(-50%, -50%) scale(0.8);
       opacity: 0;
       border-width: 3px;
     }
-    50% {
+    20% {
       opacity: 1;
       border-width: 2px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(3);
-      opacity: 0;
-      border-width: 0px;
-    }
-  }
-
-  /* 🌟 COOL BUBBLE IN ANIMATIONS (X → hamburger) */
-  @keyframes purple-bubble-in {
-    0% {
-      transform: translate(-50%, -50%) scale(2);
-      opacity: 0;
-    }
-    20% {
-      transform: translate(-50%, -50%) scale(1.5);
-      opacity: 0.3;
-    }
-    60% {
-      transform: translate(-50%, -50%) scale(0.8);
-      opacity: 1;
-    }
-    100% {
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-    }
-  }
-
-  @keyframes ripple-in {
-    0% {
       transform: translate(-50%, -50%) scale(2.5);
       opacity: 0;
       border-width: 0px;
+    }
+  }
+
+  @keyframes cool-ripple-2 {
+    0% {
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      border-width: 2px;
+    }
+    15% {
+      opacity: 0;
     }
     30% {
       opacity: 0.8;
-      border-width: 2px;
-    }
-    80% {
-      transform: translate(-50%, -50%) scale(0.5);
-      opacity: 1;
-      border-width: 3px;
+      border-width: 1px;
     }
     100% {
-      transform: translate(-50%, -50%) scale(0);
+      transform: translate(-50%, -50%) scale(3.2);
       opacity: 0;
       border-width: 0px;
+    }
+  }
+
+  /* ✨ COOL COLLAPSE ANIMATIONS (X → hamburger) */
+  @keyframes cool-collapse-1 {
+    0% {
+      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 0;
+      border-width: 0px;
+    }
+    30% {
+      opacity: 1;
+      border-width: 2px;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+      border-width: 3px;
+    }
+  }
+
+  @keyframes cool-collapse-2 {
+    0% {
+      transform: translate(-50%, -50%) scale(3.2);
+      opacity: 0;
+      border-width: 0px;
+    }
+    20% {
+      opacity: 0.8;
+      border-width: 1px;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      border-width: 2px;
     }
   }
 
