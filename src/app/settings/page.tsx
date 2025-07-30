@@ -15,6 +15,13 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [error, setError] = useState('')
+  const [showChangePassword, setShowChangePassword] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+  const [changePasswordLoading, setChangePasswordLoading] = useState(false)
+  const [changePasswordError, setChangePasswordError] = useState('')
+  const [changePasswordSuccess, setChangePasswordSuccess] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -71,6 +78,60 @@ export default function SettingsPage() {
       subscription.unsubscribe()
     }
   }, [router])
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setChangePasswordLoading(true)
+    setChangePasswordError('')
+    setChangePasswordSuccess('')
+
+    // Validation
+    if (newPassword.length < 8) {
+      setChangePasswordError('New password must be at least 8 characters long')
+      setChangePasswordLoading(false)
+      return
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setChangePasswordError('New passwords do not match')
+      setChangePasswordLoading(false)
+      return
+    }
+
+    try {
+      // First verify current password by attempting to sign in
+      const { error: signInError } = await auth.signIn(user!.email, currentPassword)
+      
+      if (signInError) {
+        setChangePasswordError('Current password is incorrect')
+        setChangePasswordLoading(false)
+        return
+      }
+
+      // Update password
+      const { error: updateError } = await auth.updatePassword(newPassword)
+      
+      if (updateError) {
+        setChangePasswordError(updateError.message)
+      } else {
+        setChangePasswordSuccess('Password updated successfully!')
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmNewPassword('')
+        setShowChangePassword(false)
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          setChangePasswordSuccess('')
+        }, 5000)
+      }
+    } catch (err) {
+      setChangePasswordError('An unexpected error occurred')
+      console.error('Change password error:', err)
+    } finally {
+      setChangePasswordLoading(false)
+    }
+  }
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'DELETE MY ACCOUNT') {
@@ -174,18 +235,138 @@ export default function SettingsPage() {
         <div className="bg-slate-800/80 rounded-2xl p-6 mb-8 border border-purple-100/50">
           <h2 className="text-xl font-semibold text-white mb-4">Security</h2>
           
+          {changePasswordSuccess && (
+            <div className="mb-4 p-4 rounded-xl bg-green-900/20 border border-green-500/30">
+              <p className="text-sm text-green-200">{changePasswordSuccess}</p>
+            </div>
+          )}
+          
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-100 mb-2">Password</label>
               <p className="text-gray-300 text-sm mb-3">
                 Update your password to keep your account secure
               </p>
-              <button
-                onClick={() => window.location.href = '/forgot-password'}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-              >
-                🔐 Reset Password
-              </button>
+              
+              {!showChangePassword ? (
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => setShowChangePassword(true)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    🔐 Change Password
+                  </button>
+                  <button
+                    onClick={() => window.location.href = '/forgot-password'}
+                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    📧 Reset via Email
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4 bg-gray-800/50 rounded-xl p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-100">Change Password</h3>
+                    <button
+                      onClick={() => {
+                        setShowChangePassword(false)
+                        setCurrentPassword('')
+                        setNewPassword('')
+                        setConfirmNewPassword('')
+                        setChangePasswordError('')
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  {changePasswordError && (
+                    <div className="p-3 rounded-lg bg-red-900/20 border border-red-500/30">
+                      <p className="text-sm text-red-200">{changePasswordError}</p>
+                    </div>
+                  )}
+                  
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
+                        Current Password
+                      </label>
+                      <input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter current password"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter new password"
+                        required
+                        minLength={8}
+                      />
+                      <p className="mt-1 text-xs text-gray-400">Must be at least 8 characters</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Confirm new password"
+                        required
+                      />
+                      {newPassword && confirmNewPassword && newPassword !== confirmNewPassword && (
+                        <p className="mt-1 text-xs text-red-200">Passwords do not match</p>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <button
+                        type="submit"
+                        disabled={changePasswordLoading || !currentPassword || !newPassword || !confirmNewPassword || newPassword !== confirmNewPassword}
+                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {changePasswordLoading ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Updating...</span>
+                          </div>
+                        ) : (
+                          'Update Password'
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowChangePassword(false)
+                          setCurrentPassword('')
+                          setNewPassword('')
+                          setConfirmNewPassword('')
+                          setChangePasswordError('')
+                        }}
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
         </div>

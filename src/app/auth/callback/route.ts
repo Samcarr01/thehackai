@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const type = searchParams.get('type') // Check if this is a password reset
   const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
@@ -13,12 +14,28 @@ export async function GET(request: NextRequest) {
     console.log('Auth callback - Code exchange result:', { 
       hasSession: !!data?.session, 
       hasUser: !!data?.user, 
+      type,
       error: error?.message 
     })
     
     // Check if we have a valid session (this means confirmation worked)
     if (data?.session && data?.user) {
-      // Success - redirect to dashboard
+      // Check if this is a password reset callback
+      if (type === 'recovery') {
+        console.log('Auth callback - Password reset, redirecting to reset page')
+        const forwardedHost = request.headers.get('x-forwarded-host')
+        const isLocalEnv = process.env.NODE_ENV === 'development'
+        
+        if (isLocalEnv) {
+          return NextResponse.redirect(`${origin}/auth/reset-password`)
+        } else if (forwardedHost) {
+          return NextResponse.redirect(`https://${forwardedHost}/auth/reset-password`)
+        } else {
+          return NextResponse.redirect(`${origin}/auth/reset-password`)
+        }
+      }
+      
+      // Regular email confirmation - redirect to dashboard
       console.log('Auth callback - Success, redirecting to:', next)
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'

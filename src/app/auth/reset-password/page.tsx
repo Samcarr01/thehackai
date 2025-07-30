@@ -111,13 +111,13 @@ function ResetPasswordContent() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="glass rounded-2xl px-8 py-8 shadow-xl border border-purple-100">
           {error && (
-            <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-200">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mb-4 p-4 rounded-xl bg-red-900/20 border border-red-500/30">
+              <p className="text-sm text-red-200">{error}</p>
               {error.includes('Invalid or expired') && (
                 <div className="mt-3">
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-purple-600 hover:text-purple-500 font-medium"
+                    className="text-sm text-purple-400 hover:text-purple-300 font-medium"
                   >
                     Request new reset link →
                   </Link>
@@ -133,10 +133,10 @@ function ResetPasswordContent() {
               </div>
               
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-200">
                   Your password has been successfully updated!
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-300">
                   Redirecting to dashboard in 3 seconds...
                 </p>
               </div>
@@ -153,7 +153,7 @@ function ResetPasswordContent() {
           ) : validToken ? (
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
                   New Password
                 </label>
                 <input
@@ -164,16 +164,16 @@ function ResetPasswordContent() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 border border-gray-600 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-800 text-gray-100"
                   placeholder="Enter your new password"
                 />
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-gray-300">
                   Must be at least 8 characters long
                 </p>
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-2">
                   Confirm New Password
                 </label>
                 <input
@@ -184,11 +184,11 @@ function ResetPasswordContent() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 border border-gray-600 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-800 text-gray-100"
                   placeholder="Confirm your new password"
                 />
                 {password && confirmPassword && password !== confirmPassword && (
-                  <p className="mt-2 text-xs text-red-600">
+                  <p className="mt-2 text-xs text-red-200">
                     Passwords do not match
                   </p>
                 )}
@@ -216,11 +216,11 @@ function ResetPasswordContent() {
             </form>
           ) : (
             <div className="text-center space-y-6">
-              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-red-900/20 border border-red-500/30 rounded-2xl flex items-center justify-center mx-auto">
                 <span className="text-3xl">❌</span>
               </div>
               
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-200">
                 This reset link is invalid or has expired.
               </p>
               
@@ -234,9 +234,9 @@ function ResetPasswordContent() {
           )}
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-100">
               Remember your password?{' '}
-              <Link href="/login" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
+              <Link href="/login" className="font-medium text-purple-400 hover:text-purple-300 transition-colors">
                 Sign in here 👋
               </Link>
             </p>
