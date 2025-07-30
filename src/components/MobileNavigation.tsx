@@ -18,25 +18,37 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
   const toggleMenu = () => {
     if (!isOpen) {
       // Opening: hamburger → X + bubble burst
-      setAnimationClass('opening')
-      setIsOpen(true)
+      setAnimationClass('') // Clear first
+      // Force reflow then apply animation
+      requestAnimationFrame(() => {
+        setAnimationClass('opening')
+        setIsOpen(true)
+      })
       // Clear animation class after animation completes
-      setTimeout(() => setAnimationClass(''), 500)
+      setTimeout(() => setAnimationClass(''), 600)
     } else {
       // Closing: X → hamburger + cool bubble reappear
-      setAnimationClass('closing')
-      setIsOpen(false)
+      setAnimationClass('') // Clear first
+      // Force reflow then apply animation
+      requestAnimationFrame(() => {
+        setAnimationClass('closing')
+        setIsOpen(false)
+      })
       // Clear animation class after animation completes
-      setTimeout(() => setAnimationClass(''), 500)
+      setTimeout(() => setAnimationClass(''), 600)
     }
   }
   
   const handleLinkClick = () => {
     // Closing: X → hamburger + cool bubble reappear
-    setAnimationClass('closing')
-    setIsOpen(false)
+    setAnimationClass('') // Clear first
+    // Force reflow then apply animation
+    requestAnimationFrame(() => {
+      setAnimationClass('closing')
+      setIsOpen(false)
+    })
     // Clear animation class after animation completes
-    setTimeout(() => setAnimationClass(''), 500)
+    setTimeout(() => setAnimationClass(''), 600)
   }
 
   const handleFeatureClick = () => {
