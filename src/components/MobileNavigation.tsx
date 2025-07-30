@@ -12,22 +12,15 @@ interface MobileNavigationProps {
 
 export default function MobileNavigation({ onFeatureClick, onPricingClick }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [animateItems, setAnimateItems] = useState(false)
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
   const pathname = usePathname()
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
-    if (!isOpen) {
-      // Start item animations after menu opens
-      setTimeout(() => setAnimateItems(true), 100)
-    } else {
-      setAnimateItems(false)
-    }
   }
   
   const handleLinkClick = () => {
-    setAnimateItems(false)
-    setTimeout(() => setIsOpen(false), 150)
+    setIsOpen(false)
   }
 
   const handleFeatureClick = () => {
@@ -40,9 +33,19 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
     handleLinkClick()
   }
 
+  // Handle window resizing for dynamic positioning
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
+    }
+    
+    handleResize() // Set initial size
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Close menu on route change
   useEffect(() => {
-    setAnimateItems(false)
     setIsOpen(false)
   }, [pathname])
 
@@ -50,13 +53,19 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
     } else {
       document.body.style.overflow = 'unset'
+      document.body.style.position = 'unset'
+      document.body.style.width = 'unset'
     }
     
     // Cleanup on unmount
     return () => {
       document.body.style.overflow = 'unset'
+      document.body.style.position = 'unset'
+      document.body.style.width = 'unset'
     }
   }, [isOpen])
 
@@ -68,149 +77,172 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
   return (
     <>
-      {/* Hamburger Menu Button */}
+      {/* 🌀 IRON MAN FLOATING ACTION BUTTON - PUBLIC */}
       <button
         onClick={toggleMenu}
-        className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-purple-900/20 transition-all duration-200"
-        aria-label="Toggle navigation menu"
+        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transition-all duration-700 transform hover:scale-110 active:scale-95 z-[100] ${
+          isOpen 
+            ? 'bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 shadow-2xl shadow-red-500/50 rotate-45 scale-110' 
+            : 'bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60'
+        }`}
+        style={{
+          backdropFilter: 'blur(20px)',
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: isOpen 
+            ? '0 20px 40px rgba(239, 68, 68, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+            : '0 12px 24px rgba(139, 92, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+        }}
+        aria-label="Toggle Arc Menu"
         aria-expanded={isOpen}
       >
-        <div className="w-5 h-5 flex flex-col justify-center items-center">
-          <span 
-            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
-              isOpen ? 'rotate-45 translate-y-0.5' : 'mb-1'
-            }`}
-          />
-          <span 
-            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
-              isOpen ? 'opacity-0' : ''
-            }`}
-          />
-          <span 
-            className={`w-full h-0.5 bg-gray-300 transition-all duration-300 ${
-              isOpen ? '-rotate-45 -translate-y-0.5' : 'mt-1'
-            }`}
-          />
+        <div className="relative w-full h-full flex items-center justify-center">
+          {isOpen ? (
+            <svg 
+              className="w-6 h-6 text-white transition-all duration-500 rotate-0" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <div className="flex flex-col items-center justify-center space-y-1">
+              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
+              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
+              <div className="w-5 h-0.5 bg-white rounded-full shadow-sm"></div>
+            </div>
+          )}
         </div>
       </button>
 
-      {/* Overlay with Blur */}
+      {/* 🎭 EPIC HUD OVERLAY */}
       <div 
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 md:hidden z-40 ${
+        className={`fixed inset-0 transition-all duration-700 md:hidden z-50 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={handleLinkClick}
         aria-hidden="true"
+        style={{
+          background: isOpen 
+            ? 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, rgba(0, 0, 0, 0.85) 70%)'
+            : 'transparent',
+          backdropFilter: isOpen ? 'blur(30px) saturate(150%) brightness(0.8)' : 'blur(0px)',
+          WebkitBackdropFilter: isOpen ? 'blur(30px) saturate(150%) brightness(0.8)' : 'blur(0px)'
+        }}
       />
 
-      {/* Beautiful Centered Modal */}
-      <div 
-        className={`fixed inset-0 flex items-center justify-center p-4 md:hidden z-50 pointer-events-none ${
-          isOpen ? '' : ''
-        }`}
-        role="dialog"
-        aria-label="Navigation menu"
-      >
-        <div className={`
-          w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border border-white/10 
-          rounded-3xl shadow-2xl shadow-purple-500/10 transform transition-all duration-300 ease-out
-          ${isOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none'}
-        `}>
-          {/* Header with Close Button */}
-          <div className="flex items-center justify-between p-6 border-b border-white/10">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Navigation
-            </h2>
-            <button
-              onClick={handleLinkClick}
-              className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 group"
-              aria-label="Close menu"
-            >
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+      {/* 🌀 PUBLIC RADIAL ARC MENU */}
+      <div className="md:hidden z-[60]">
+        {windowSize.width > 0 && [
+          { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: -120, delay: 100, type: 'button' as const },
+          { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: -90, delay: 200, type: 'button' as const },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: -60, delay: 300, type: 'link' as const },
+          { href: '/login', icon: '🔑', label: 'Sign In', angle: -30, delay: 400, type: 'link' as const },
+          { href: '/signup', icon: '🚀', label: 'Get Started', angle: 0, delay: 500, type: 'link' as const, special: true }
+        ].map((item, index) => {
+          const isActive = item.type === 'link' && isActivePage(item.href!)
+          const radius = 120
+          const centerX = windowSize.width - 32 - 28 // 32px from right + 28px button center
+          const centerY = 16 + 28 // 16px from top + 28px button center
+          const angleRad = (item.angle * Math.PI) / 180
+          const x = centerX + Math.cos(angleRad) * radius
+          const y = centerY + Math.sin(angleRad) * radius
+          
+          if (item.type === 'button') {
+            return (
+              <button
+                key={item.label}
+                onClick={item.action}
+                className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-slate-800/90 to-slate-900/95 hover:from-purple-600/90 hover:to-blue-600/95 shadow-lg shadow-black/40 hover:shadow-purple-500/40 ${
+                  isOpen 
+                    ? 'scale-100 opacity-100 pointer-events-auto' 
+                    : 'scale-0 opacity-0 pointer-events-none'
+                }`}
+                style={{
+                  left: `${x - 24}px`,
+                  top: `${y - 24}px`,
+                  transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                }}
+              >
+                <span className="text-lg hover:scale-105 transition-all duration-300">
+                  {item.icon}
+                </span>
+                
+                {/* Floating Label */}
+                <div 
+                  className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
+                    isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                  }`}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 60, 0.9) 100%)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    transitionDelay: isOpen ? `${item.delay + 400}ms` : '0ms'
+                  }}
+                >
+                  {item.label}
+                </div>
+              </button>
+            )
+          }
 
-          {/* Navigation Links */}
-          <div className="px-6 py-4">
-            <nav className="space-y-2">
-              {[
-                { action: handleFeatureClick, icon: '⚡', label: 'Features', type: 'button' as const },
-                { action: handlePricingClick, icon: '💰', label: 'Pricing', type: 'button' as const },
-                { href: '/blog', icon: '✍️', label: 'Blog', type: 'link' as const }
-              ].map((item) => (
-                item.type === 'button' ? (
-                  <button
-                    key={item.label}
-                    onClick={item.action}
-                    className="relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] w-full text-left text-gray-300 hover:text-white hover:bg-white/10"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className="transition-transform duration-300 group-hover:scale-105">
-                        {item.icon}
-                      </span>
-                      <span>{item.label}</span>
-                    </div>
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
-                  </button>
-                ) : (
-                  <Link
-                    key={item.href}
-                    href={item.href!}
-                    onClick={handleLinkClick}
-                    className={`relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] ${
-                      isActivePage(item.href!)
-                        ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/25'
-                        : 'text-gray-300 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className={`transition-transform duration-300 ${
-                        isActivePage(item.href!) ? 'scale-110' : 'group-hover:scale-105'
-                      }`}>
-                        {item.icon}
-                      </span>
-                      <span>{item.label}</span>
-                    </div>
-                    {isActivePage(item.href!) && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
-                    )}
-                    {!isActivePage(item.href!) && (
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
-                    )}
-                  </Link>
-                )
-              ))}
-            </nav>
-          </div>
-
-          {/* Auth Actions */}
-          <div className="border-t border-white/10 px-6 py-4 space-y-3">
+          return (
             <Link
-              href="/login"
+              key={item.href}
+              href={item.href!}
               onClick={handleLinkClick}
-              className="relative flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-300 group min-h-[44px] text-gray-300 hover:text-white hover:bg-white/10"
+              className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 ${
+                item.special
+                  ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-xl shadow-purple-500/60'
+                  : isActive 
+                    ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-xl shadow-purple-500/60' 
+                    : 'bg-gradient-to-br from-slate-800/90 to-slate-900/95 hover:from-purple-600/90 hover:to-blue-600/95 shadow-lg shadow-black/40 hover:shadow-purple-500/40'
+              } ${isOpen 
+                ? 'scale-100 opacity-100 pointer-events-auto' 
+                : 'scale-0 opacity-0 pointer-events-none'
+              }`}
+              style={{
+                left: `${x - 24}px`,
+                top: `${y - 24}px`,
+                transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
+                backdropFilter: 'blur(20px)',
+                border: (isActive || item.special)
+                  ? '2px solid rgba(255, 255, 255, 0.4)' 
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: (isActive || item.special)
+                  ? '0 8px 32px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                  : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
             >
-              <div className="flex items-center space-x-3">
-                <span className="transition-transform duration-300 group-hover:scale-105">🔑</span>
-                <span>Sign In</span>
-              </div>
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 transition-all duration-300"></div>
-            </Link>
-            
-            <Link
-              href="/signup"
-              onClick={handleLinkClick}
-              className="w-full flex items-center px-4 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 group min-h-[44px] justify-center"
-            >
-              <div className="flex items-center space-x-3">
-                <span className="transition-transform duration-300 group-hover:scale-105">🚀</span>
-                <span>Get Started</span>
+              <span className={`text-lg transition-all duration-300 ${
+                (isActive || item.special) ? 'scale-110 drop-shadow-lg' : 'hover:scale-105'
+              }`}>
+                {item.icon}
+              </span>
+              
+              {/* Floating Label */}
+              <div 
+                className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
+                  isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                }`}
+                style={{
+                  background: item.special
+                    ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%)'
+                    : 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 60, 0.9) 100%)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  transitionDelay: isOpen ? `${item.delay + 400}ms` : '0ms'
+                }}
+              >
+                {item.label}
               </div>
             </Link>
-          </div>
-        </div>
+          )
+        })}
       </div>
     </>
   )

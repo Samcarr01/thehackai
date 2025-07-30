@@ -132,7 +132,7 @@ export default function InternalMobileNavigation({
 
       {/* 🌀 FLOATING RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
-        {[
+        {windowSize.width > 0 && [
           { href: '/', icon: '🏠', label: 'Home', angle: -140, delay: 100 },
           { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: -110, delay: 200 },
           { href: '/gpts', icon: '🤖', label: 'GPTs', angle: -80, delay: 300 },
@@ -200,7 +200,7 @@ export default function InternalMobileNavigation({
         })}
 
         {/* Admin Panel Button (if admin) */}
-        {showAdminLink && (
+        {showAdminLink && windowSize.width > 0 && (
           <Link
             href="/admin"
             onClick={handleLinkClick}
@@ -236,6 +236,7 @@ export default function InternalMobileNavigation({
         )}
 
         {/* Sign Out Button */}
+        {windowSize.width > 0 && (
         <button
           onClick={async () => {
             try {
@@ -279,6 +280,7 @@ export default function InternalMobileNavigation({
             Sign Out
           </div>
         </button>
+        )}
       </div>
 
       {/* 🎯 EPIC USER INFO OVERLAY */}
