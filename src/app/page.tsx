@@ -8,6 +8,7 @@ import { auth } from '@/lib/auth'
 import { userService, type UserProfile } from '@/lib/user'
 import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import GradientBackground from '@/components/NetworkBackground'
+import { globalNavigation } from '@/lib/navigation'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import AnimatedCounter from '@/components/AnimatedCounter'
@@ -98,27 +99,8 @@ function HomePageContent() {
     }
   }, [])
   
-  const handleFeatureClick = () => {
-    // Check if we're on the homepage
-    if (window.location.pathname === '/') {
-      // We're already on homepage, just scroll
-      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      // We're on another page, navigate to home with anchor
-      window.location.href = '/#features'
-    }
-  }
-
-  const handlePricingClick = () => {
-    // Check if we're on the homepage  
-    if (window.location.pathname === '/') {
-      // We're already on homepage, just scroll
-      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      // We're on another page, navigate to home with anchor
-      window.location.href = '/#pricing'
-    }
-  }
+  const handleFeatureClick = globalNavigation.goToFeatures
+  const handlePricingClick = globalNavigation.goToPricing
 
   return (
     <DarkThemeBackground>

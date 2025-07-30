@@ -119,10 +119,10 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
       {/* DROPDOWN MENU */}
       <div 
-        className={`md:hidden fixed top-20 right-4 w-52 transition-all duration-300 z-50 ${
+        className={`md:hidden fixed top-20 right-4 w-52 transition-all duration-200 ease-out z-50 ${
           isOpen 
-            ? 'opacity-100 translate-y-0' 
-            : 'opacity-0 -translate-y-2 pointer-events-none'
+            ? 'opacity-100 translate-y-0 scale-100' 
+            : 'opacity-0 -translate-y-1 scale-95 pointer-events-none'
         }`}
         style={{
           background: 'rgba(20, 20, 30, 0.95)',
@@ -142,7 +142,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                 <button
                   key={item.label}
                   onClick={item.action}
-                  className="flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg text-white hover:bg-white/10 transition-colors duration-200 w-full text-left"
+                  className="flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg text-white hover:bg-white/10 transition-all duration-150 hover:scale-105 active:scale-95 w-full text-left"
                 >
                   <span className="text-lg">{item.icon}</span>
                   <span className="text-sm font-medium">{item.label}</span>
@@ -155,7 +155,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                 key={item.href}
                 href={item.href!}
                 onClick={handleLinkClick}
-                className={`flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg transition-colors duration-200 ${
+                className={`flex items-center space-x-3 px-3 py-3 mb-1 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 ${
                   item.special
                     ? 'bg-purple-600/20 text-purple-200'
                     : isActive 

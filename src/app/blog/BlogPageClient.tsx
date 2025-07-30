@@ -9,6 +9,7 @@ import { blogService, type BlogPost } from '@/lib/blog'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
+import { globalNavigation } from '@/lib/navigation'
 
 export default function BlogPageClient() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -114,7 +115,12 @@ export default function BlogPageClient() {
 
   return (
     <DarkThemeBackground>
-      <SmartNavigation user={user} currentPage="blog" />
+      <SmartNavigation 
+        user={user} 
+        currentPage="blog"
+        onFeatureClick={globalNavigation.goToFeatures}
+        onPricingClick={globalNavigation.goToPricing}
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-12">
         {/* Header Section */}
