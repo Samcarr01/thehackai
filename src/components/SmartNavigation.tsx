@@ -19,7 +19,7 @@ interface SmartNavigationProps {
 }
 
 export default function SmartNavigation({ user, currentPage, onFeatureClick, onPricingClick, loading = false }: SmartNavigationProps) {
-  const { adminViewMode, toggleAdminView, getEffectiveUser } = useAdmin()
+  const { adminViewMode, setAdminViewMode, getEffectiveUser } = useAdmin()
   const router = useRouter()
   const [localUser, setLocalUser] = useState<UserProfile | null>(user)
   const [authChecked, setAuthChecked] = useState(false)
