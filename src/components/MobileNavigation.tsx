@@ -134,7 +134,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
       {/* 🌀 PUBLIC RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
-        {windowSize.width > 0 && [
+        {[
           { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: -120, delay: 100, type: 'button' as const },
           { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: -90, delay: 200, type: 'button' as const },
           { href: '/blog', icon: '✍️', label: 'Blog', angle: -60, delay: 300, type: 'link' as const },
@@ -143,7 +143,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
         ].map((item, index) => {
           const isActive = item.type === 'link' && isActivePage(item.href!)
           const radius = 120
-          const centerX = windowSize.width - 32 - 28 // 32px from right + 28px button center
+          const centerX = (windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 // Safe fallback
           const centerY = 16 + 28 // 16px from top + 28px button center
           const angleRad = (item.angle * Math.PI) / 180
           const x = centerX + Math.cos(angleRad) * radius
@@ -154,21 +154,21 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
               <button
                 key={item.label}
                 onClick={item.action}
-                className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-slate-800/90 to-slate-900/95 hover:from-purple-600/90 hover:to-blue-600/95 shadow-lg shadow-black/40 hover:shadow-purple-500/40 ${
+                className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-slate-800 to-slate-900 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-black/40 hover:shadow-purple-500/40 ${
                   isOpen 
                     ? 'scale-100 opacity-100 pointer-events-auto' 
                     : 'scale-0 opacity-0 pointer-events-none'
                 }`}
                 style={{
-                  left: `${x - 24}px`,
-                  top: `${y - 24}px`,
+                  left: `${x - 32}px`,
+                  top: `${y - 32}px`,
                   transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}
               >
-                <span className="text-lg hover:scale-105 transition-all duration-300">
+                <span className="text-2xl hover:scale-105 transition-all duration-300">
                   {item.icon}
                 </span>
                 
@@ -195,19 +195,19 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
               key={item.href}
               href={item.href!}
               onClick={handleLinkClick}
-              className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 ${
+              className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 ${
                 item.special
                   ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-xl shadow-purple-500/60'
                   : isActive 
                     ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-xl shadow-purple-500/60' 
-                    : 'bg-gradient-to-br from-slate-800/90 to-slate-900/95 hover:from-purple-600/90 hover:to-blue-600/95 shadow-lg shadow-black/40 hover:shadow-purple-500/40'
+                    : 'bg-gradient-to-br from-slate-800 to-slate-900 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-black/40 hover:shadow-purple-500/40'
               } ${isOpen 
                 ? 'scale-100 opacity-100 pointer-events-auto' 
                 : 'scale-0 opacity-0 pointer-events-none'
               }`}
               style={{
-                left: `${x - 24}px`,
-                top: `${y - 24}px`,
+                left: `${x - 32}px`,
+                top: `${y - 32}px`,
                 transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
                 backdropFilter: 'blur(20px)',
                 border: (isActive || item.special)
@@ -218,7 +218,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
                   : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
               }}
             >
-              <span className={`text-lg transition-all duration-300 ${
+              <span className={`text-2xl transition-all duration-300 ${
                 (isActive || item.special) ? 'scale-110 drop-shadow-lg' : 'hover:scale-105'
               }`}>
                 {item.icon}

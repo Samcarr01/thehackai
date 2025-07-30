@@ -132,7 +132,7 @@ export default function InternalMobileNavigation({
 
       {/* 🌀 FLOATING RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
-        {windowSize.width > 0 && [
+        {[
           { href: '/', icon: '🏠', label: 'Home', angle: -140, delay: 100 },
           { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: -110, delay: 200 },
           { href: '/gpts', icon: '🤖', label: 'GPTs', angle: -80, delay: 300 },
@@ -142,7 +142,7 @@ export default function InternalMobileNavigation({
         ].map((item, index) => {
           const isActive = isActivePage(item.href)
           const radius = 120
-          const centerX = windowSize.width - 32 - 28 // 32px from right + 28px button center
+          const centerX = (windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 // Safe fallback
           const centerY = 16 + 28 // 16px from top + 28px button center
           const angleRad = (item.angle * Math.PI) / 180
           const x = centerX + Math.cos(angleRad) * radius
@@ -153,29 +153,29 @@ export default function InternalMobileNavigation({
               key={item.href}
               href={item.href}
               onClick={handleLinkClick}
-              className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 ${
+              className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 ${
                 isActive 
                   ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-xl shadow-purple-500/60' 
-                  : 'bg-gradient-to-br from-slate-800/90 to-slate-900/95 hover:from-purple-600/90 hover:to-blue-600/95 shadow-lg shadow-black/40 hover:shadow-purple-500/40'
+                  : 'bg-gradient-to-br from-slate-800 to-slate-900 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-black/40 hover:shadow-purple-500/40'
               } ${isOpen 
                 ? 'scale-100 opacity-100 pointer-events-auto' 
                 : 'scale-0 opacity-0 pointer-events-none'
               }`}
               style={{
-                left: `${x - 24}px`,
-                top: `${y - 24}px`,
+                left: `${x - 32}px`, // Adjusted for 64px button (32px radius)
+                top: `${y - 32}px`, // Adjusted for 64px button (32px radius)
                 transitionDelay: isOpen ? `${item.delay}ms` : '0ms',
                 backdropFilter: 'blur(20px)',
                 border: isActive 
-                  ? '2px solid rgba(255, 255, 255, 0.4)' 
-                  : '1px solid rgba(255, 255, 255, 0.2)',
+                  ? '3px solid rgba(255, 255, 255, 0.6)' 
+                  : '2px solid rgba(255, 255, 255, 0.3)',
                 boxShadow: isActive
-                  ? '0 8px 32px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                  : '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                animation: isOpen ? `bounce-in ${item.delay + 300}ms ease-out-back` : 'none'
+                  ? '0 12px 40px rgba(139, 92, 246, 0.8), inset 0 2px 0 rgba(255, 255, 255, 0.4)'
+                  : '0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                zIndex: 70
               }}
             >
-              <span className={`text-lg transition-all duration-300 ${
+              <span className={`text-2xl transition-all duration-300 ${
                 isActive ? 'scale-110 drop-shadow-lg' : 'hover:scale-105'
               }`}>
                 {item.icon}
@@ -200,25 +200,25 @@ export default function InternalMobileNavigation({
         })}
 
         {/* Admin Panel Button (if admin) */}
-        {showAdminLink && windowSize.width > 0 && (
+        {showAdminLink && (
           <Link
             href="/admin"
             onClick={handleLinkClick}
-            className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-600/90 to-orange-600/95 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
+            className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-600 to-orange-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
               isOpen 
                 ? 'scale-100 opacity-100 pointer-events-auto' 
                 : 'scale-0 opacity-0 pointer-events-none'
             }`}
             style={{
-              left: `${windowSize.width - 32 - 28 + Math.cos((40 * Math.PI) / 180) * 120 - 24}px`,
-              top: `${16 + 28 + Math.sin((40 * Math.PI) / 180) * 120 - 24}px`,
+              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((40 * Math.PI) / 180) * 120 - 32}px`,
+              top: `${16 + 28 + Math.sin((40 * Math.PI) / 180) * 120 - 32}px`,
               transitionDelay: isOpen ? '700ms' : '0ms',
               backdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.3)',
               boxShadow: '0 8px 32px rgba(220, 38, 38, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
             }}
           >
-            <span className="text-lg">🔧</span>
+            <span className="text-2xl">🔧</span>
             <div 
               className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
                 isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
@@ -236,7 +236,6 @@ export default function InternalMobileNavigation({
         )}
 
         {/* Sign Out Button */}
-        {windowSize.width > 0 && (
         <button
           onClick={async () => {
             try {
@@ -251,21 +250,21 @@ export default function InternalMobileNavigation({
               window.location.href = '/'
             }
           }}
-          className={`fixed w-12 h-12 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-500/90 to-pink-600/95 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
+          className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-500 to-pink-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
             isOpen 
               ? 'scale-100 opacity-100 pointer-events-auto' 
               : 'scale-0 opacity-0 pointer-events-none'
           }`}
           style={{
-            left: `${windowSize.width - 32 - 28 + Math.cos((70 * Math.PI) / 180) * 120 - 24}px`,
-            top: `${16 + 28 + Math.sin((70 * Math.PI) / 180) * 120 - 24}px`,
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((70 * Math.PI) / 180) * 120 - 32}px`,
+            top: `${16 + 28 + Math.sin((70 * Math.PI) / 180) * 120 - 32}px`,
             transitionDelay: isOpen ? '800ms' : '0ms',
             backdropFilter: 'blur(20px)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
             boxShadow: '0 8px 32px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
           }}
         >
-          <span className="text-lg">👋</span>
+          <span className="text-2xl">👋</span>
           <div 
             className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
               isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
@@ -280,7 +279,6 @@ export default function InternalMobileNavigation({
             Sign Out
           </div>
         </button>
-        )}
       </div>
 
       {/* 🎯 EPIC USER INFO OVERLAY */}
