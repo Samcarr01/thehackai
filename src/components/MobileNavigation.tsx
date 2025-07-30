@@ -65,7 +65,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
   const menuItems = [
     { action: handleFeatureClick, icon: '⚡', label: 'Features', type: 'button' as const },
     { action: handlePricingClick, icon: '💰', label: 'Pricing', type: 'button' as const },
-    { href: '/blog', icon: '✍️', label: 'Blog', type: 'link' as const },
+    { href: '/blog', icon: '✍️', label: 'Blogs', type: 'link' as const },
     { href: '/login', icon: '🔑', label: 'Sign In', type: 'link' as const },
     { href: '/signup', icon: '🚀', label: 'Get Started', type: 'link' as const, special: true }
   ]

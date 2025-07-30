@@ -176,7 +176,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                     { href: "/dashboard", label: "Dashboard", page: "dashboard", icon: "📊" },
                     { href: "/gpts", label: "GPTs", page: "gpts", icon: "🤖" },
                     { href: "/documents", label: "Playbooks", page: "documents", icon: "📚" },
-                    { href: "/blog", label: "Blog", page: "blog", icon: "✍️" }
+                    { href: "/blog", label: "Blogs", page: "blog", icon: "✍️" }
                   ].map((item) => {
                     const isActive = currentPage === item.page
                     return (
@@ -310,7 +310,7 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                   >
                     <div className="flex items-center space-x-2">
                       <span className={`transition-transform duration-300 ${currentPage === 'blog' ? 'scale-110' : 'group-hover:scale-105'}`}>✍️</span>
-                      <span>Blog</span>
+                      <span>Blogs</span>
                     </div>
                   </Link>
                 </nav>

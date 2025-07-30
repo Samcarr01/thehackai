@@ -32,6 +32,20 @@ function HomePageContent() {
     }
   }, [searchParams])
 
+  // Handle scrolling to anchor sections when page loads
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash) {
+      // Wait a moment for page to fully load, then scroll
+      setTimeout(() => {
+        const element = document.getElementById(hash.substring(1))
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  }, [])
+
   // Check authentication status and get user profile
   useEffect(() => {
     const checkAuth = async () => {
@@ -85,11 +99,25 @@ function HomePageContent() {
   }, [])
   
   const handleFeatureClick = () => {
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+    // Check if we're on the homepage
+    if (window.location.pathname === '/') {
+      // We're already on homepage, just scroll
+      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      // We're on another page, navigate to home with anchor
+      window.location.href = '/#features'
+    }
   }
 
   const handlePricingClick = () => {
-    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+    // Check if we're on the homepage  
+    if (window.location.pathname === '/') {
+      // We're already on homepage, just scroll
+      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      // We're on another page, navigate to home with anchor
+      window.location.href = '/#pricing'
+    }
   }
 
   return (
