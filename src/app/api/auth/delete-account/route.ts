@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -15,9 +16,21 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    // Create service role client for admin operations
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     // Start a transaction-like cleanup process
     // 1. Delete user data from our custom tables first
-    const { error: profileError } = await supabase
+    const { error: profileError } = await serviceSupabase
       .from('users')
       .delete()
       .eq('id', user.id)
@@ -28,7 +41,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // 2. Delete the auth user (this will cascade to other auth-related tables)
-    const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id)
+    const { error: deleteError } = await serviceSupabase.auth.admin.deleteUser(user.id)
     
     if (deleteError) {
       console.error('Error deleting auth user:', deleteError)
@@ -38,7 +51,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // 3. Sign out the user session
+    // 3. Sign out the user session (using regular client)
     await supabase.auth.signOut()
 
     return NextResponse.json(
