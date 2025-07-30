@@ -360,4 +360,61 @@
   .animate-arc-entrance {
     animation: arc-entrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+
+  /* 🔥 EPIC HAMBURGER MORPHING ANIMATIONS */
+  .hamburger-line {
+    transform-origin: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hamburger-line-1 {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  .hamburger-line-1.open {
+    transform: translateY(2px) rotate(45deg);
+  }
+
+  .hamburger-line-2 {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .hamburger-line-2.open {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .hamburger-line-3 {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  .hamburger-line-3.open {
+    transform: translateY(-2px) rotate(-45deg);
+  }
+
+  /* Circle morphing animation */
+  .morph-circle {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1) rotate(0deg);
+  }
+
+  .morph-circle.open {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), 0 0 60px rgba(239, 68, 68, 0.3);
+  }
+
+  /* Pulse effect for open state */
+  .morph-pulse {
+    animation: morph-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes morph-pulse {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 0 40px rgba(239, 68, 68, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 0 60px rgba(239, 68, 68, 0.4);
+    }
+  }
 }

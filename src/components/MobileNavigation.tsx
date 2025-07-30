@@ -72,10 +72,12 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
   return (
     <>
-      {/* FLOATING ACTION BUTTON */}
+      {/* 🔥 EPIC MORPHING FLOATING ACTION BUTTON */}
       <button
         onClick={toggleMenu}
-        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 z-[100] ${
+        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transform hover:scale-110 active:scale-95 z-[100] morph-circle ${
+          isOpen ? 'open morph-pulse' : ''
+        } ${
           isOpen 
             ? 'bg-gradient-to-br from-red-500 to-red-600 shadow-2xl shadow-red-500/50' 
             : 'bg-gradient-to-br from-purple-600 to-purple-700 shadow-xl shadow-purple-500/40'
@@ -88,20 +90,15 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
         aria-expanded={isOpen}
       >
         <div className="relative w-full h-full flex items-center justify-center">
-          {isOpen ? (
-            // X icon when open
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              <div className="absolute w-4 h-0.5 bg-white rounded-full transform rotate-45"></div>
-              <div className="absolute w-4 h-0.5 bg-white rounded-full transform -rotate-45"></div>
-            </div>
-          ) : (
-            // Hamburger icon when closed
-            <div className="flex flex-col items-center justify-center space-y-1">
-              <div className="w-4 h-0.5 bg-white rounded-full"></div>
-              <div className="w-4 h-0.5 bg-white rounded-full"></div>
-              <div className="w-4 h-0.5 bg-white rounded-full"></div>
-            </div>
-          )}
+          {/* 🌟 MORPHING HAMBURGER LINES */}
+          <div className="relative w-5 h-4 flex flex-col justify-center items-center">
+            {/* Top line */}
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-1 ${isOpen ? 'open' : ''}`}></div>
+            {/* Middle line */}
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-2 ${isOpen ? 'open' : ''}`}></div>
+            {/* Bottom line */}
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-3 ${isOpen ? 'open' : ''}`}></div>
+          </div>
         </div>
       </button>
 
