@@ -130,14 +130,13 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
       {/* 🌀 PUBLIC RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
         {[
-          { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: 90, delay: 100, type: 'button' as const },
-          { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: 135, delay: 200, type: 'button' as const },
-          { href: '/blog', icon: '✍️', label: 'Blog', angle: 180, delay: 300, type: 'link' as const },
-          { href: '/login', icon: '🔑', label: 'Sign In', angle: 225, delay: 400, type: 'link' as const },
-          { href: '/signup', icon: '🚀', label: 'Get Started', angle: 270, delay: 500, type: 'link' as const, special: true }
+          { action: handleFeatureClick, icon: '⚡', label: 'Features', angle: 135, delay: 100, type: 'button' as const },
+          { action: handlePricingClick, icon: '💰', label: 'Pricing', angle: 180, delay: 200, type: 'button' as const },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: 225, delay: 300, type: 'link' as const },
+          { href: '/signup', icon: '🚀', label: 'Get Started', angle: 270, delay: 400, type: 'link' as const, special: true }
         ].map((item, index) => {
           const isActive = item.type === 'link' && isActivePage(item.href!)
-          const radius = 140
+          const radius = 100
           const centerX = (windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 // Safe fallback
           const centerY = 16 + 28 // 16px from top + 28px button center
           const angleRad = (item.angle * Math.PI) / 180
@@ -240,6 +239,28 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
             </Link>
           )
         })}
+
+        {/* Login Button - Smaller, positioned separately */}
+        <Link
+          href="/login"
+          onClick={handleLinkClick}
+          className={`fixed w-14 h-14 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-slate-800 to-slate-900 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-black/40 hover:shadow-purple-500/40 ${
+            isOpen 
+              ? 'scale-100 opacity-100 pointer-events-auto' 
+              : 'scale-0 opacity-0 pointer-events-none'
+          }`}
+          style={{
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((45 * Math.PI) / 180) * 80 - 28}px`,
+            top: `${16 + 28 + Math.sin((45 * Math.PI) / 180) * 80 - 28}px`,
+            transitionDelay: isOpen ? '500ms' : '0ms',
+            backdropFilter: 'blur(20px)',
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            zIndex: 9999
+          }}
+        >
+          <span className="text-lg">🔑</span>
+        </Link>
       </div>
     </>
   )

@@ -128,15 +128,13 @@ export default function InternalMobileNavigation({
       {/* 🌀 FLOATING RADIAL ARC MENU */}
       <div className="md:hidden z-[60]">
         {[
-          { href: '/', icon: '🏠', label: 'Home', angle: 90, delay: 100 },
-          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: 135, delay: 200 },
-          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: 180, delay: 300 },
-          { href: '/documents', icon: '📚', label: 'Playbooks', angle: 225, delay: 400 },
-          { href: '/blog', icon: '✍️', label: 'Blog', angle: 270, delay: 500 },
-          { href: '/settings', icon: '⚙️', label: 'Settings', angle: 315, delay: 600 }
+          { href: '/dashboard', icon: '📊', label: 'Dashboard', angle: 135, delay: 100 },
+          { href: '/gpts', icon: '🤖', label: 'GPTs', angle: 180, delay: 200 },
+          { href: '/documents', icon: '📚', label: 'Playbooks', angle: 225, delay: 300 },
+          { href: '/blog', icon: '✍️', label: 'Blog', angle: 270, delay: 400 }
         ].map((item, index) => {
           const isActive = isActivePage(item.href)
-          const radius = 140
+          const radius = 100
           const centerX = (windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 // Safe fallback
           const centerY = 16 + 28 // 16px from top + 28px button center
           const angleRad = (item.angle * Math.PI) / 180
@@ -194,40 +192,62 @@ export default function InternalMobileNavigation({
           )
         })}
 
+        {/* Settings Button */}
+        <Link
+          href="/settings"
+          onClick={handleLinkClick}
+          className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-slate-800 to-slate-900 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-black/40 hover:shadow-purple-500/40 ${
+            isOpen 
+              ? 'scale-100 opacity-100 pointer-events-auto' 
+              : 'scale-0 opacity-0 pointer-events-none'
+          }`}
+          style={{
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((315 * Math.PI) / 180) * 100 - 32}px`,
+            top: `${16 + 28 + Math.sin((315 * Math.PI) / 180) * 100 - 32}px`,
+            transitionDelay: isOpen ? '500ms' : '0ms',
+            backdropFilter: 'blur(20px)',
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            zIndex: 9999
+          }}
+        >
+          <span className="text-2xl">⚙️</span>
+          <div 
+            className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
+              isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 60, 0.9) 100%)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              transitionDelay: isOpen ? '900ms' : '0ms'
+            }}
+          >
+            Settings
+          </div>
+        </Link>
+
         {/* Admin Panel Button (if admin) */}
         {showAdminLink && (
           <Link
             href="/admin"
             onClick={handleLinkClick}
-            className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-600 to-orange-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
+            className={`fixed w-14 h-14 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-600 to-orange-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
               isOpen 
                 ? 'scale-100 opacity-100 pointer-events-auto' 
                 : 'scale-0 opacity-0 pointer-events-none'
             }`}
             style={{
-              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((315 * Math.PI) / 180) * 100 - 32}px`,
-              top: `${16 + 28 + Math.sin((315 * Math.PI) / 180) * 100 - 32}px`,
-              transitionDelay: isOpen ? '700ms' : '0ms',
+              left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((90 * Math.PI) / 180) * 80 - 28}px`,
+              top: `${16 + 28 + Math.sin((90 * Math.PI) / 180) * 80 - 28}px`,
+              transitionDelay: isOpen ? '600ms' : '0ms',
               backdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.3)',
               boxShadow: '0 8px 32px rgba(220, 38, 38, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
               zIndex: 9999
             }}
           >
-            <span className="text-2xl">🔧</span>
-            <div 
-              className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
-                isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-              }`}
-              style={{
-                background: 'linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(185, 28, 28, 0.9) 100%)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                transitionDelay: isOpen ? '800ms' : '0ms'
-              }}
-            >
-              Admin
-            </div>
+            <span className="text-lg">🔧</span>
           </Link>
         )}
 
@@ -246,14 +266,14 @@ export default function InternalMobileNavigation({
               window.location.href = '/'
             }
           }}
-          className={`fixed w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-500 to-pink-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
+          className={`fixed w-14 h-14 rounded-full flex items-center justify-center transition-all duration-700 transform hover:scale-125 active:scale-95 bg-gradient-to-br from-red-500 to-pink-600 shadow-lg shadow-red-500/40 hover:shadow-red-500/60 ${
             isOpen 
               ? 'scale-100 opacity-100 pointer-events-auto' 
               : 'scale-0 opacity-0 pointer-events-none'
           }`}
           style={{
-            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((0 * Math.PI) / 180) * 100 - 32}px`,
-            top: `${16 + 28 + Math.sin((0 * Math.PI) / 180) * 100 - 32}px`,
+            left: `${(windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 375) || 375) - 32 - 28 + Math.cos((45 * Math.PI) / 180) * 80 - 28}px`,
+            top: `${16 + 28 + Math.sin((45 * Math.PI) / 180) * 80 - 28}px`,
             transitionDelay: isOpen ? '800ms' : '0ms',
             backdropFilter: 'blur(20px)',
             border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -261,7 +281,7 @@ export default function InternalMobileNavigation({
             zIndex: 9999
           }}
         >
-          <span className="text-2xl">👋</span>
+          <span className="text-lg">👋</span>
           <div 
             className={`absolute left-1/2 transform -translate-x-1/2 mt-16 px-3 py-1.5 rounded-xl text-xs font-semibold text-white whitespace-nowrap transition-all duration-500 ${
               isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
