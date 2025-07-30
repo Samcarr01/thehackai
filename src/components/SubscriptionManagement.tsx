@@ -11,8 +11,10 @@ interface SubscriptionManagementProps {
 }
 
 export default function SubscriptionManagement({ user, onUpdate }: SubscriptionManagementProps) {
-  const [loading, setLoading] = useState(false)
+  const [billingLoading, setBillingLoading] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const router = useRouter()
 
   const currentTier = user.user_tier || 'free'
@@ -24,8 +26,9 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
   }
 
   const handleManageBilling = async () => {
-    setLoading(true)
+    setBillingLoading(true)
     setError('')
+    setSuccess('')
 
     try {
       const response = await fetch('/api/stripe/create-portal-session', {
@@ -47,22 +50,23 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
       console.error('Billing portal error:', error)
       setError(error.message || 'Failed to open billing portal')
     } finally {
-      setLoading(false)
+      setBillingLoading(false)
     }
   }
 
   const handleCancelSubscription = async () => {
     const confirmed = window.confirm(
-      'This will open the billing portal where you can cancel your subscription. You will continue to have access until the end of your current billing period. Continue?'
+      'Are you sure you want to cancel your subscription? You will continue to have access until the end of your current billing period.'
     )
 
     if (!confirmed) return
 
-    setLoading(true)
+    setCancelLoading(true)
     setError('')
+    setSuccess('')
 
     try {
-      const response = await fetch('/api/stripe/create-portal-session', {
+      const response = await fetch('/api/stripe/cancel-subscription', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,16 +76,24 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to open billing portal')
+        throw new Error(data.error || 'Failed to cancel subscription')
       }
 
-      // Redirect to Stripe portal where they can cancel
-      window.location.href = data.url
+      // Show success message and refresh user data
+      setSuccess(data.message || 'Subscription cancelled successfully')
+      
+      // Refresh user data after successful cancellation
+      if (onUpdate) {
+        setTimeout(() => {
+          onUpdate()
+        }, 1000)
+      }
+
     } catch (error: any) {
       console.error('Cancel subscription error:', error)
-      setError(error.message || 'Failed to open billing portal')
+      setError(error.message || 'Failed to cancel subscription')
     } finally {
-      setLoading(false)
+      setCancelLoading(false)
     }
   }
 
@@ -154,6 +166,12 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
         </div>
       )}
 
+      {success && (
+        <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-3 mb-6">
+          <p className="text-green-200 text-sm">{success}</p>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-3">
         {/* Upgrade Options */}
@@ -173,10 +191,10 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
         {/* Manage Billing Button - Show for all users */}
         <button
           onClick={handleManageBilling}
-          disabled={loading}
+          disabled={billingLoading || cancelLoading}
           className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {loading ? (
+          {billingLoading ? (
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               <span>Loading...</span>
@@ -190,13 +208,13 @@ export default function SubscriptionManagement({ user, onUpdate }: SubscriptionM
         {currentTier !== 'free' && !user.subscription_cancel_at_period_end && (
           <button
             onClick={handleCancelSubscription}
-            disabled={loading}
+            disabled={billingLoading || cancelLoading}
             className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
-            {loading ? (
+            {cancelLoading ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Loading...</span>
+                <span>Cancelling...</span>
               </div>
             ) : (
               <>❌ Cancel Subscription</>
