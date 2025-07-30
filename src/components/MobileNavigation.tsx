@@ -75,7 +75,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
       {/* 🔥 EPIC MORPHING FLOATING ACTION BUTTON */}
       <button
         onClick={toggleMenu}
-        className={`md:hidden fixed top-4 right-4 w-14 h-14 rounded-full transform hover:scale-110 active:scale-95 z-[100] morph-circle ${
+        className={`w-12 h-12 rounded-full transform hover:scale-110 active:scale-95 z-[100] morph-circle ${
           isOpen ? 'open morph-pulse' : ''
         } ${
           isOpen 
@@ -117,7 +117,7 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
 
       {/* DROPDOWN MENU */}
       <div 
-        className={`md:hidden fixed top-20 right-4 w-52 transition-all duration-200 ease-out z-50 ${
+        className={`md:hidden absolute top-16 right-0 w-52 transition-all duration-200 ease-out z-50 ${
           isOpen 
             ? 'opacity-100 translate-y-0 scale-100' 
             : 'opacity-0 -translate-y-1 scale-95 pointer-events-none'
