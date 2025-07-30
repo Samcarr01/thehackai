@@ -69,11 +69,9 @@ export default function UniversalLayout({ children, className = '' }: UniversalL
       />
       */}
       
-      {/* Main Content with proper mobile spacing */}
+      {/* Main Content */}
       <main className="w-full">
-        <div className="mobile-content-spacing md:!pt-0">
-          {children}
-        </div>
+        {children}
       </main>
     </div>
   )
