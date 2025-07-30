@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const router = useRouter()
 
   // Check for existing session and load remember me preference
@@ -37,6 +38,18 @@ export default function LoginPage() {
     }
     
     checkSession()
+    
+    // Check for URL parameters (like success messages)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const message = urlParams.get('message')
+      
+      if (message === 'already_confirmed') {
+        setSuccessMessage('✅ Your email is already confirmed! You can sign in now.')
+        // Clear the URL parameter
+        window.history.replaceState({}, '', '/login')
+      }
+    }
   }, [router])
 
   // Handle remember me checkbox change
@@ -114,6 +127,12 @@ export default function LoginPage() {
           {error && (
             <div className="mb-4 p-4 rounded-xl bg-red-900/20 border border-red-500/30">
               <p className="text-sm text-red-200">{error}</p>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="mb-4 p-4 rounded-xl bg-green-900/20 border border-green-500/30">
+              <p className="text-sm text-green-200">{successMessage}</p>
             </div>
           )}
 

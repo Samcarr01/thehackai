@@ -8,10 +8,18 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     
-    if (!error) {
+    console.log('Auth callback - Code exchange result:', { 
+      hasSession: !!data?.session, 
+      hasUser: !!data?.user, 
+      error: error?.message 
+    })
+    
+    // Check if we have a valid session (this means confirmation worked)
+    if (data?.session && data?.user) {
       // Success - redirect to dashboard
+      console.log('Auth callback - Success, redirecting to:', next)
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
       
@@ -23,12 +31,20 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(`${origin}${next}`)
       }
     } else {
-      // Auth error - redirect to error page
+      // Auth error or no session - check if it's a "already confirmed" error
       console.error('Auth callback error:', error)
+      
+      // If the error is about already being confirmed, redirect to login instead
+      if (error?.message?.includes('already') || error?.message?.includes('expired')) {
+        console.log('Auth callback - Link already used or expired, redirecting to login')
+        return NextResponse.redirect(`${origin}/login?message=already_confirmed`)
+      }
+      
       return NextResponse.redirect(`${origin}/auth/auth-code-error`)
     }
   }
 
   // No code parameter - redirect to error page
+  console.log('Auth callback - No code parameter')
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
