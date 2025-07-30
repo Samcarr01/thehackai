@@ -85,19 +85,20 @@ export default function MobileNavigation({ onFeatureClick, onPricingClick }: Mob
         style={{
           backdropFilter: 'blur(20px)',
           border: '2px solid rgba(255, 255, 255, 0.2)',
+          overflow: 'visible'
         }}
         aria-label="Toggle Menu"
         aria-expanded={isOpen}
       >
         <div className="relative w-full h-full flex items-center justify-center">
-          {/* 🌟 MORPHING HAMBURGER LINES */}
+          {/* 🌟 EPIC MORPHING HAMBURGER LINES */}
           <div className="relative w-5 h-4 flex flex-col justify-center items-center">
             {/* Top line */}
-            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-1 ${isOpen ? 'open' : ''}`}></div>
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-1 ${isOpen ? 'open' : ''}`} style={{ top: '2px' }}></div>
             {/* Middle line */}
-            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-2 ${isOpen ? 'open' : ''}`}></div>
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-2 ${isOpen ? 'open' : ''}`} style={{ top: '7px' }}></div>
             {/* Bottom line */}
-            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-3 ${isOpen ? 'open' : ''}`}></div>
+            <div className={`absolute w-4 h-0.5 bg-white rounded-full hamburger-line hamburger-line-3 ${isOpen ? 'open' : ''}`} style={{ top: '12px' }}></div>
           </div>
         </div>
       </button>
