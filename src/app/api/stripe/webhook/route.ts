@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, stripeHelpers } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { userService, type UserTier } from '@/lib/user'
+import { brevoService } from '@/lib/brevo'
 import Stripe from 'stripe'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -53,6 +54,21 @@ export async function POST(request: NextRequest) {
 
         if (success) {
           console.log(`✅ User ${userId} upgraded to ${tier}`)
+          
+          // Update user tier in Brevo
+          try {
+            const { data: userData } = await supabase
+              .from('users')
+              .select('email')
+              .eq('id', userId)
+              .single()
+            
+            if (userData?.email) {
+              await brevoService.updateContactTier(userData.email, tier as 'pro' | 'ultra')
+            }
+          } catch (brevoError) {
+            console.error('⚠️ Failed to update Brevo contact tier:', brevoError)
+          }
         } else {
           console.error(`❌ Failed to upgrade user ${userId} to ${tier}`)
         }

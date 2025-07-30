@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { brevoService } from '@/lib/brevo'
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -15,6 +16,9 @@ export async function DELETE(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Get user email for Brevo cleanup
+    const userEmail = user.email
 
     // Create service role client for admin operations
     const serviceSupabase = createServiceClient(
@@ -51,7 +55,17 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // 3. Sign out the user session (using regular client)
+    // 3. Remove user from Brevo
+    if (userEmail) {
+      try {
+        await brevoService.removeContact(userEmail)
+      } catch (brevoError) {
+        console.error('⚠️ Failed to remove user from Brevo:', brevoError)
+        // Don't fail account deletion if Brevo fails
+      }
+    }
+
+    // 4. Sign out the user session (using regular client)
     await supabase.auth.signOut()
 
     return NextResponse.json(

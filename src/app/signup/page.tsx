@@ -50,6 +50,33 @@ export default function SignupPage() {
         setError(friendlyError)
       } else if (data.user) {
         setSuccess(true)
+        
+        // Add user to Brevo email list
+        try {
+          const brevoResponse = await fetch('/api/brevo/add-contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: email,
+              firstName: '', // We could add a name field later
+              userTier: 'free',
+              sendWelcomeEmail: true
+            })
+          })
+          
+          const brevoResult = await brevoResponse.json()
+          if (brevoResult.success) {
+            console.log('✅ User added to Brevo successfully')
+          } else {
+            console.log('⚠️ Failed to add user to Brevo:', brevoResult.error)
+          }
+        } catch (brevoError) {
+          console.error('⚠️ Brevo integration error:', brevoError)
+          // Don't fail signup if Brevo fails
+        }
+        
         // Don't redirect immediately - user needs to confirm email
       }
     } catch (err) {
