@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     const result = await brevoService.addContactOnSignup(email, firstName, lastName, userTier || 'free')
 
     if (!result.success) {
-      console.error('Failed to add contact to Brevo:', result.error)
+      console.error('Failed to add contact to Brevo:', result.message || 'Unknown error')
       // Don't fail the signup process, just log the error
       return NextResponse.json(
-        { success: false, error: result.error },
+        { success: false, error: result.message || 'Unknown error' },
         { status: 200 } // Return 200 so signup doesn't fail
       )
     }
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (sendWelcomeEmail) {
       const welcomeResult = await brevoService.sendWelcomeEmail(email, firstName)
       if (!welcomeResult.success) {
-        console.error('Failed to send welcome email:', welcomeResult.error)
+        console.error('Failed to send welcome email:', welcomeResult.message || 'Unknown error')
       }
     }
 
