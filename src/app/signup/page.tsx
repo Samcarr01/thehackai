@@ -69,9 +69,16 @@ export default function SignupPage() {
         }
         setError(friendlyError)
       } else if (data.user) {
+        console.log('✅ Signup successful, user created:', {
+          userId: data.user.id,
+          email: data.user.email,
+          emailConfirmed: data.user.email_confirmed_at,
+          timestamp: new Date().toISOString()
+        })
         setSuccess(true)
         
         // Add user to Brevo email list (completely optional - doesn't block signup)
+        console.log('🔄 Starting Brevo integration for user:', data.user.email)
         const brevoPromise = (async () => {
           try {
             console.log('🔄 Starting background Brevo integration...')
@@ -95,12 +102,20 @@ export default function SignupPage() {
             
             clearTimeout(timeoutId)
             
-            // Don't check response status - just log what happens
+            // Check response and log detailed results
+            console.log('📊 Brevo API response status:', brevoResponse.status)
+            
             if (brevoResponse.ok) {
               const brevoResult = await brevoResponse.json()
-              console.log('✅ Brevo integration result:', brevoResult)
+              console.log('✅ Brevo integration success:', brevoResult)
             } else {
-              console.log('⚠️ Brevo API responded with status:', brevoResponse.status)
+              const errorText = await brevoResponse.text()
+              console.log('❌ Brevo API error:', {
+                status: brevoResponse.status,
+                statusText: brevoResponse.statusText,
+                error: errorText,
+                headers: Array.from(brevoResponse.headers.entries())
+              })
             }
           } catch (brevoError: any) {
             // Log all Brevo errors but never let them affect signup

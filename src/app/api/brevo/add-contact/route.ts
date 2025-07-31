@@ -2,11 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { brevoService } from '@/lib/brevo'
 
 export async function POST(request: NextRequest) {
-  console.log('🔄 Brevo API route called')
+  console.log('🔄 Brevo API route called at:', new Date().toISOString())
   
   try {
     const requestBody = await request.json()
-    console.log('📨 Request body:', requestBody)
+    console.log('📨 Request body received:', {
+      ...requestBody,
+      timestamp: new Date().toISOString(),
+      hasEmail: !!requestBody.email,
+      hasFirstName: !!requestBody.firstName,
+      hasLastName: !!requestBody.lastName
+    })
     
     const { email, firstName, lastName, userTier, sendWelcomeEmail } = requestBody
 
@@ -18,10 +24,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('📧 Processing Brevo contact:', { email, firstName, lastName, userTier, sendWelcomeEmail })
+    console.log('📧 Processing Brevo contact:', { 
+      email, 
+      firstName, 
+      lastName, 
+      userTier: userTier || 'free', 
+      sendWelcomeEmail,
+      processingTime: new Date().toISOString()
+    })
 
     // Add contact to Brevo
+    console.log('🔄 Calling brevoService.addContactOnSignup...')
     const result = await brevoService.addContactOnSignup(email, firstName, lastName, userTier || 'free')
+    console.log('📊 Brevo service result:', result)
 
     if (!result.success) {
       console.error('Failed to add contact to Brevo:', result.message || 'Unknown error')
