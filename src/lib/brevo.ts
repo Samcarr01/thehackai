@@ -1,5 +1,13 @@
 // Simple Brevo integration using direct API calls instead of SDK
 
+// TODO: Update these with your actual Brevo list IDs
+// Go to Brevo Dashboard → Contacts → Lists → Click each list to see ID in URL
+const BREVO_LIST_IDS = {
+  ALL_USERS: 1,    // Replace with your "All Users" list ID
+  PRO_USERS: 2,    // Replace with your "Pro Users" list ID  
+  ULTRA_USERS: 3   // Replace with your "Ultra Users" list ID
+}
+
 export const brevoService = {
   // Add contact to Brevo list on signup
   async addContactOnSignup(email: string, firstName?: string, lastName?: string, userTier: 'free' | 'pro' | 'ultra' = 'free') {
@@ -17,6 +25,22 @@ export const brevoService = {
 
     try {
       console.log('🔄 Sending contact to Brevo:', { email, firstName, lastName, userTier })
+      
+      // Determine which lists to add user to based on tier
+      let listIds: number[] = []
+      
+      // Add to "All Users" list  
+      listIds.push(BREVO_LIST_IDS.ALL_USERS)
+      
+      // Add to tier-specific list
+      if (userTier === 'pro') {
+        listIds.push(BREVO_LIST_IDS.PRO_USERS)
+      } else if (userTier === 'ultra') {
+        listIds.push(BREVO_LIST_IDS.ULTRA_USERS)
+      }
+      // Free users only go to "All Users" list
+      
+      console.log('📋 Adding to Brevo lists:', { userTier, listIds })
       
       // Add timeout to prevent hanging
       const controller = new AbortController()
@@ -38,7 +62,7 @@ export const brevoService = {
             SIGNUP_DATE: new Date().toISOString().split('T')[0],
             SIGNUP_SOURCE: 'website'
           },
-          listIds: [1] // Add to main list (update with your actual list ID)
+          listIds: listIds
         }),
         signal: controller.signal
       })
@@ -96,10 +120,60 @@ export const brevoService = {
     return { success: true, message: 'Brevo integration temporarily disabled' }
   },
 
-  // Update contact when they upgrade subscription (temporarily disabled)
+  // Update contact when they upgrade subscription
   async updateContactTier(email: string, newTier: 'pro' | 'ultra') {
-    console.log('🚧 Brevo integration temporarily disabled - would update tier:', { email, newTier })
-    return { success: true, message: 'Brevo integration temporarily disabled' }
+    const brevoApiKey = process.env.BREVO_API_KEY
+    
+    if (!brevoApiKey) {
+      console.log('🚧 Brevo API key not configured - skipping tier update')
+      return { success: true, message: 'Brevo API key not configured' }
+    }
+
+    try {
+      console.log('🔄 Updating Brevo contact tier:', { email, newTier })
+      
+      // Determine new list assignments
+      let newListIds: number[] = []
+      newListIds.push(BREVO_LIST_IDS.ALL_USERS)
+      
+      if (newTier === 'pro') {
+        newListIds.push(BREVO_LIST_IDS.PRO_USERS)
+      } else if (newTier === 'ultra') {
+        newListIds.push(BREVO_LIST_IDS.ULTRA_USERS)
+      }
+      
+      console.log('📋 Updating to Brevo lists:', { newTier, newListIds })
+      
+      // Update contact attributes and lists
+      const response = await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+        method: 'PUT',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          attributes: {
+            USER_TIER: newTier.toUpperCase(),
+            UPGRADE_DATE: new Date().toISOString().split('T')[0]
+          },
+          listIds: newListIds,
+          unlinkListIds: [] // Remove from all other lists first if needed
+        })
+      })
+
+      if (response.ok) {
+        console.log('✅ Contact tier updated in Brevo successfully:', email)
+        return { success: true, message: 'Contact tier updated in Brevo' }
+      } else {
+        const errorData = await response.text()
+        console.error('❌ Failed to update contact tier in Brevo:', errorData)
+        return { success: false, message: `Brevo tier update error: ${response.status}` }
+      }
+    } catch (error: any) {
+      console.error('❌ Error updating contact tier in Brevo:', error)
+      return { success: false, message: error.message }
+    }
   },
 
   // Send welcome email campaign
