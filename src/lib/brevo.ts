@@ -11,7 +11,7 @@ apiKey.apiKey = process.env.BREVO_API_KEY!
 
 export const brevoService = {
   // Add contact to Brevo list on signup
-  async addContactOnSignup(email: string, firstName?: string, userTier: 'free' | 'pro' | 'ultra' = 'free') {
+  async addContactOnSignup(email: string, firstName?: string, lastName?: string, userTier: 'free' | 'pro' | 'ultra' = 'free') {
     try {
       const createContact = new brevo.CreateContact()
       
@@ -19,6 +19,7 @@ export const brevoService = {
       createContact.email = email
       createContact.attributes = {
         FIRSTNAME: firstName || '',
+        LASTNAME: lastName || '',
         USER_TIER: userTier.toUpperCase(),
         SIGNUP_DATE: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
         SIGNUP_SOURCE: 'website'

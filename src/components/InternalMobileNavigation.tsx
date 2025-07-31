@@ -4,14 +4,17 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { type UserProfile, getUserDisplayName } from '@/lib/user'
 
 interface InternalMobileNavigationProps {
-  userEmail?: string
-  userTier?: 'free' | 'pro' | 'ultra'
+  user?: UserProfile | null
+  userEmail?: string // Keep for backward compatibility
+  userTier?: 'free' | 'pro' | 'ultra' // Keep for backward compatibility
   showAdminLink?: boolean
 }
 
 export default function InternalMobileNavigation({ 
+  user,
   userEmail, 
   userTier = 'free', 
   showAdminLink = false
@@ -57,7 +60,8 @@ export default function InternalMobileNavigation({
     return false
   }
 
-  const displayName = userEmail ? userEmail.split('@')[0] : 'User'
+  // Use the new display name function if we have user profile, fall back to email-based for backward compatibility
+  const displayName = user ? getUserDisplayName(user) : (userEmail ? userEmail.split('@')[0] : 'User')
 
   const menuItems = [
     { href: '/dashboard', icon: '📊', label: 'Dashboard' },

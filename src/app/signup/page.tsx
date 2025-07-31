@@ -8,6 +8,8 @@ import { auth } from '@/lib/auth'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 
 export default function SignupPage() {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -33,9 +35,15 @@ export default function SignupPage() {
       setLoading(false)
       return
     }
+
+    if (!firstName.trim() || !lastName.trim()) {
+      setError('Please enter your first and last name')
+      setLoading(false)
+      return
+    }
     
     try {
-      const { data, error } = await auth.signUp(email, password)
+      const { data, error } = await auth.signUp(email, password, firstName, lastName)
       
       if (error) {
         // Provide more user-friendly error messages
@@ -60,7 +68,8 @@ export default function SignupPage() {
             },
             body: JSON.stringify({
               email: email,
-              firstName: '', // We could add a name field later
+              firstName: firstName,
+              lastName: lastName,
               userTier: 'free',
               sendWelcomeEmail: true
             })
@@ -185,6 +194,8 @@ export default function SignupPage() {
                   <button 
                     onClick={() => {
                       setSuccess(false)
+                      setFirstName('')
+                      setLastName('')
                       setEmail('')
                       setPassword('')
                       setConfirmPassword('')
@@ -269,6 +280,41 @@ export default function SignupPage() {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-200 mb-2">
+                  First name
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-600 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-800 text-gray-100"
+                  placeholder="John"
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-200 mb-2">
+                  Last name
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-600 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-800 text-gray-100"
+                  placeholder="Smith"
+                />
+              </div>
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
                 Email address

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { type UserProfile, userService } from '@/lib/user'
+import { type UserProfile, userService, getUserDisplayName } from '@/lib/user'
 import { useAdmin } from '@/contexts/AdminContext'
 import { auth } from '@/lib/auth'
 import InternalMobileNavigation from './InternalMobileNavigation'
@@ -50,7 +50,9 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
         if (authUser) {
           let userProfile = await userService.getProfile(authUser.id)
           if (!userProfile) {
-            userProfile = await userService.createProfile(authUser.id, authUser.email || '')
+            const firstName = authUser.user_metadata?.first_name || ''
+            const lastName = authUser.user_metadata?.last_name || ''
+            userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
           }
           
           if (isMounted) {
@@ -96,7 +98,9 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
         try {
           let userProfile = await userService.getProfile(session.user.id)
           if (!userProfile) {
-            userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+            const firstName = session.user.user_metadata?.first_name || ''
+            const lastName = session.user.user_metadata?.last_name || ''
+            userProfile = await userService.createProfile(session.user.id, session.user.email || '', firstName, lastName)
           }
           setLocalUser(userProfile)
           setAuthChecked(true)
@@ -221,6 +225,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
                 
                 {/* User Profile Section */}
                 <div className="flex items-center space-x-3 pl-6 border-l border-white/10">
+                  {/* User Greeting */}
+                  <div className="text-sm text-gray-300 font-medium">
+                    Hi, {getUserDisplayName(effectiveUser)}! 👋
+                  </div>
+                  
                   {/* Tier Badge - Always show user's actual tier */}
                   <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
                     effectiveUser && effectiveUser.user_tier === 'ultra'

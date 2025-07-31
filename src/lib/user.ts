@@ -5,6 +5,8 @@ export type UserTier = 'free' | 'pro' | 'ultra'
 export interface UserProfile {
   id: string
   email: string
+  first_name?: string
+  last_name?: string
   is_pro: boolean // Keep for backward compatibility
   user_tier: UserTier
   stripe_customer_id?: string
@@ -65,6 +67,66 @@ export const TIER_FEATURES = {
   }
 } as const
 
+// Helper function to get user display name
+export const getUserDisplayName = (user: UserProfile | null): string => {
+  if (!user) return 'User'
+  
+  // If we have first and last name, use them
+  if (user.first_name && user.last_name) {
+    return `${user.first_name} ${user.last_name}`.trim()
+  }
+  
+  // If we only have first name, use it
+  if (user.first_name) {
+    return user.first_name
+  }
+  
+  // Fall back to extracting name from email
+  const email = user.email
+  const username = email.split('@')[0]
+  
+  // Remove common number patterns from the end
+  const withoutNumbers = username.replace(/\d+$/, '')
+  
+  // Try to split on common patterns
+  let parts: string[] = []
+  
+  // Check for common separators first
+  if (withoutNumbers.includes('.')) {
+    parts = withoutNumbers.split('.')
+  } else if (withoutNumbers.includes('_')) {
+    parts = withoutNumbers.split('_')
+  } else if (withoutNumbers.includes('-')) {
+    parts = withoutNumbers.split('-')
+  } else {
+    // Try to intelligently split camelCase or common name patterns
+    const commonFirstNames = ['sam', 'john', 'jane', 'mike', 'chris', 'alex', 'david', 'sarah', 'emma', 'james']
+    
+    for (const firstName of commonFirstNames) {
+      if (withoutNumbers.toLowerCase().startsWith(firstName)) {
+        const remaining = withoutNumbers.slice(firstName.length)
+        if (remaining.length > 0) {
+          parts = [firstName, remaining]
+          break
+        }
+      }
+    }
+    
+    // If no pattern found, just use the whole username
+    if (parts.length === 0) {
+      parts = [withoutNumbers]
+    }
+  }
+  
+  // Capitalize each part
+  const capitalizedParts = parts.map(part => 
+    part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+  )
+  
+  // Return the formatted name or fall back to username
+  return capitalizedParts.length > 1 ? capitalizedParts.join(' ') : capitalizedParts[0] || username
+}
+
 export const userService = {
   async getProfile(userId: string): Promise<UserProfile | null> {
     const supabase = createClient()
@@ -97,7 +159,7 @@ export const userService = {
     }
   },
 
-  async createProfile(userId: string, email: string): Promise<UserProfile | null> {
+  async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {
     const supabase = createClient()
     
     const { data, error } = await supabase
@@ -106,6 +168,8 @@ export const userService = {
         {
           id: userId,
           email: email,
+          first_name: firstName || '',
+          last_name: lastName || '',
           is_pro: false,
           user_tier: 'free' as UserTier
         }

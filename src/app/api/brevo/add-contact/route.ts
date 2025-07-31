@@ -3,7 +3,7 @@ import { brevoService } from '@/lib/brevo'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, firstName, userTier, sendWelcomeEmail } = await request.json()
+    const { email, firstName, lastName, userTier, sendWelcomeEmail } = await request.json()
 
     if (!email) {
       return NextResponse.json(
@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Adding contact to Brevo:', { email, firstName, userTier })
+    console.log('Adding contact to Brevo:', { email, firstName, lastName, userTier })
 
     // Add contact to Brevo
-    const result = await brevoService.addContactOnSignup(email, firstName, userTier || 'free')
+    const result = await brevoService.addContactOnSignup(email, firstName, lastName, userTier || 'free')
 
     if (!result.success) {
       console.error('Failed to add contact to Brevo:', result.error)

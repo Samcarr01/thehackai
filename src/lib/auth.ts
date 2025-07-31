@@ -5,7 +5,7 @@ const supabase = createClient()
 
 export const auth = {
   supabase,
-  async signUp(email: string, password: string) {
+  async signUp(email: string, password: string, firstName?: string, lastName?: string) {
     const supabase = createClient()
     
     const { data, error } = await supabase.auth.signUp({
@@ -13,6 +13,10 @@ export const auth = {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          first_name: firstName || '',
+          last_name: lastName || '',
+        }
       },
     })
     
