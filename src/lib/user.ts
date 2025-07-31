@@ -131,16 +131,40 @@ export const userService = {
   async getProfile(userId: string): Promise<UserProfile | null> {
     const supabase = createClient()
     
-    const { data, error } = await supabase
+    console.log('🔍 Fetching profile for userId:', userId)
+    
+    // First, let's see what's in the database
+    const { data: allData, error: queryError } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single()
     
-    if (error) {
-      console.error('Error fetching user profile:', error)
+    console.log('📊 Query result:', { 
+      hasData: !!allData, 
+      dataLength: allData?.length,
+      error: queryError?.message,
+      data: allData 
+    })
+    
+    if (queryError) {
+      console.error('❌ Error querying user profile:', queryError)
       return null
     }
+    
+    if (!allData || allData.length === 0) {
+      console.log('📝 No user profile found')
+      return null
+    }
+    
+    if (allData.length > 1) {
+      console.warn('⚠️ Multiple user profiles found, using the first one:', allData.length)
+      // Return the most recent one
+      const sortedData = allData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      return sortedData[0]
+    }
+    
+    console.log('✅ Single user profile found')
+    const data = allData[0]
     
     // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
     // Skip auto-upgrade if admin has manually set a tier for testing
@@ -164,6 +188,22 @@ export const userService = {
     
     console.log('🔄 Creating profile for:', { userId, email, firstName, lastName })
     
+    // First check if profile already exists to prevent duplicates
+    try {
+      const { data: existingData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .limit(1)
+      
+      if (existingData && existingData.length > 0) {
+        console.log('✅ Profile already exists, returning existing profile')
+        return existingData[0]
+      }
+    } catch (checkError) {
+      console.log('⚠️ Could not check for existing profile, proceeding with creation')
+    }
+    
     // Always try the simple approach first (without name columns)
     try {
       console.log('🔧 Attempting basic profile creation...')
@@ -178,17 +218,38 @@ export const userService = {
           }
         ])
         .select()
-        .single()
       
       if (error) {
         console.error('❌ Error creating basic profile:', error)
+        
+        // Handle duplicate key error (profile already exists)
+        if (error.message?.includes('duplicate') || error.code === '23505') {
+          console.log('🔄 Profile already exists due to duplicate, fetching existing profile...')
+          const { data: existingData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .limit(1)
+          
+          if (existingData && existingData.length > 0) {
+            return existingData[0]
+          }
+        }
+        
         return null
       }
       
-      console.log('✅ Basic profile created successfully:', data)
+      // Handle the response data
+      const profileData = data && data.length > 0 ? data[0] : null
+      if (!profileData) {
+        console.error('❌ No profile data returned from insert')
+        return null
+      }
+      
+      console.log('✅ Basic profile created successfully:', profileData)
       
       // If successful and we have names, try to update with names (if columns exist)
-      if ((firstName || lastName) && data) {
+      if ((firstName || lastName) && profileData) {
         try {
           console.log('🔧 Attempting to add names to profile...')
           const { data: updatedData, error: updateError } = await supabase
@@ -204,18 +265,18 @@ export const userService = {
           if (updateError) {
             console.log('⚠️ Could not add names (columns may not exist):', updateError.message)
             // Return the basic profile - names will be handled later
-            return data
+            return profileData
           } else {
             console.log('✅ Profile updated with names successfully')
             return updatedData
           }
         } catch (updateErr) {
           console.log('⚠️ Name update failed, returning basic profile:', updateErr)
-          return data
+          return profileData
         }
       }
       
-      return data
+      return profileData
     } catch (err) {
       console.error('❌ Fatal error in createProfile:', err)
       return null
