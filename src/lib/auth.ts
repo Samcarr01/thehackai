@@ -5,27 +5,65 @@ const supabase = createClient()
 
 // Rate limiting to prevent 429 errors
 let lastAuthCall = 0
+let lastSignupCall = 0
 const MIN_AUTH_INTERVAL = 1000 // 1 second minimum between auth calls
+const MIN_SIGNUP_INTERVAL = 5000 // 5 seconds minimum between signup calls
 let authCallQueue: Promise<any> | null = null
+let signupCallQueue: Promise<any> | null = null
 
 export const auth = {
   supabase,
   async signUp(email: string, password: string, firstName?: string, lastName?: string) {
+    // Rate limiting protection for signup calls
+    const now = Date.now()
+    if (now - lastSignupCall < MIN_SIGNUP_INTERVAL) {
+      if (signupCallQueue) {
+        console.log('🔄 Auth: Rate limiting signup - waiting for previous signup call...')
+        return await signupCallQueue
+      }
+      // If no queue, enforce minimum interval
+      const waitTime = MIN_SIGNUP_INTERVAL - (now - lastSignupCall)
+      console.log(`🔄 Auth: Rate limiting signup - waiting ${waitTime}ms...`)
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+    }
+    
+    lastSignupCall = Date.now()
     const supabase = createClient()
     
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          first_name: firstName || '',
-          last_name: lastName || '',
+    // Create promise for queue management
+    const signupPromise = (async () => {
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              first_name: firstName || '',
+              last_name: lastName || '',
+            }
+          },
+        })
+        
+        return { data, error }
+      } catch (err: any) {
+        console.error('❌ Auth: Signup error:', err)
+        
+        // Check if it's a 429 rate limit error
+        if (err.message?.includes('429') || err.status === 429) {
+          console.error('🚨 Auth: Signup rate limit detected - backing off for 10 seconds')
+          await new Promise(resolve => setTimeout(resolve, 10000))
+          return { data: null, error: { message: 'Too many signup attempts. Please wait a moment and try again.' } }
         }
-      },
-    })
+        
+        return { data: null, error: err }
+      } finally {
+        signupCallQueue = null
+      }
+    })()
     
-    return { data, error }
+    signupCallQueue = signupPromise
+    return await signupPromise
   },
 
   async signIn(email: string, password: string, rememberMe: boolean = false) {

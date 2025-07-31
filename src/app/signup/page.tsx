@@ -25,8 +25,8 @@ export default function SignupPage() {
     
     // Prevent rapid successive submissions to avoid rate limiting
     const now = Date.now()
-    if (now - lastSubmitTime < 3000) { // 3 second minimum between submissions
-      setError('Please wait a moment before trying again.')
+    if (now - lastSubmitTime < 10000) { // 10 second minimum between submissions
+      setError('Please wait 10 seconds before trying again.')
       return
     }
     
@@ -64,8 +64,8 @@ export default function SignupPage() {
           friendlyError = 'Please enter a valid email address.'
         } else if (error.message.includes('weak password')) {
           friendlyError = 'Password is too weak. Please use at least 8 characters with a mix of letters and numbers.'
-        } else if (error.message.includes('429') || error.message.includes('rate limit')) {
-          friendlyError = 'Too many signup attempts. Please wait a moment and try again.'
+        } else if (error.message.includes('429') || error.message.includes('rate limit') || error.message.includes('Too Many Requests')) {
+          friendlyError = 'Too many signup attempts. Please wait 10 seconds and try again.'
         }
         setError(friendlyError)
       } else if (data.user) {
