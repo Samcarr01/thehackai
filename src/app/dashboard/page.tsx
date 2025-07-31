@@ -37,11 +37,11 @@ export default function DashboardPage() {
       
       const timeoutId = setTimeout(() => {
         if (!isMounted) return
-        console.error('🚨 Dashboard: Auth loading timeout after 10 seconds - forcing stop')
+        console.error('🚨 Dashboard: Auth loading timeout after 20 seconds - forcing stop')
         setLoading(false)
         // Show error state instead of infinite loading
         setUser(null)
-      }, 10000) // 10 second timeout
+      }, 20000) // 20 second timeout
       
       try {
         console.log('🔄 Dashboard: Starting auth check...')
@@ -109,8 +109,10 @@ export default function DashboardPage() {
             setUser(userProfile)
             setLoading(false) // Stop loading immediately when user is set
             
-            // Load live stats with user tier in background
-            await loadStats(userProfile.user_tier || 'free')
+            // Load live stats with user tier in background (non-blocking)
+            loadStats(userProfile.user_tier || 'free').catch(error => {
+              console.error('Background stats loading failed:', error)
+            })
           } else {
             console.error('Failed to load or create user profile')
             if (!isMounted) return
@@ -191,13 +193,20 @@ export default function DashboardPage() {
       } else if (event === 'SIGNED_IN' && session?.user && !user) {
         // Only refresh if we don't already have user data
         console.log('Dashboard: User signed in, refreshing profile')
-        let userProfile = await userService.getProfile(session.user.id)
-        if (!userProfile) {
-          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
-        }
-        if (userProfile) {
-          setUser(userProfile)
-          await loadStats(userProfile.user_tier || 'free')
+        try {
+          let userProfile = await userService.getProfile(session.user.id)
+          if (!userProfile) {
+            userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+          }
+          if (userProfile) {
+            setUser(userProfile)
+            // Load stats in background (non-blocking)
+            loadStats(userProfile.user_tier || 'free').catch(error => {
+              console.error('Background stats loading failed:', error)
+            })
+          }
+        } catch (error) {
+          console.error('Dashboard: Error in auth state change handler:', error)
         }
       } else {
         console.log('Dashboard: Ignoring auth state change:', event)
