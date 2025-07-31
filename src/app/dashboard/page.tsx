@@ -107,8 +107,9 @@ export default function DashboardPage() {
           if (userProfile) {
             if (!isMounted) return // Check again before setting state
             setUser(userProfile)
+            setLoading(false) // Stop loading immediately when user is set
             
-            // Load live stats with user tier
+            // Load live stats with user tier in background
             await loadStats(userProfile.user_tier || 'free')
           } else {
             console.error('Failed to load or create user profile')
@@ -182,11 +183,14 @@ export default function DashboardPage() {
     const { supabase } = auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Dashboard: Auth state changed:', event)
+      
+      // Only act on meaningful state changes, ignore INITIAL_SESSION
       if (event === 'SIGNED_OUT') {
-        // User signed out - redirect to login
+        console.log('Dashboard: User signed out, redirecting to login')
         router.push('/login')
-      } else if (event === 'SIGNED_IN' && session?.user) {
-        // User signed in - refresh user data
+      } else if (event === 'SIGNED_IN' && session?.user && !user) {
+        // Only refresh if we don't already have user data
+        console.log('Dashboard: User signed in, refreshing profile')
         let userProfile = await userService.getProfile(session.user.id)
         if (!userProfile) {
           userProfile = await userService.createProfile(session.user.id, session.user.email || '')
@@ -195,6 +199,8 @@ export default function DashboardPage() {
           setUser(userProfile)
           await loadStats(userProfile.user_tier || 'free')
         }
+      } else {
+        console.log('Dashboard: Ignoring auth state change:', event)
       }
     })
     

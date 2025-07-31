@@ -26,6 +26,15 @@ export async function GET(request: NextRequest) {
       })
     
     // Check if we have a valid session (this means confirmation worked)
+    console.log('🔍 Auth callback session check:', {
+      hasSession: !!data?.session,
+      hasUser: !!data?.user,
+      sessionData: data?.session ? 'EXISTS' : 'MISSING',
+      userData: data?.user ? { id: data.user.id, email: data.user.email } : 'MISSING',
+      errorExists: !!error,
+      errorMsg: error?.message
+    })
+    
     if (data?.session && data?.user) {
       // Check if this is a password reset callback
       if (type === 'recovery') {
@@ -60,14 +69,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(redirectUrl)
     } else {
       // Auth error or no session - check if it's a "already confirmed" error
-      console.error('Auth callback error:', error)
+      console.error('🚨 Auth callback - No valid session/user:', { 
+        error: error?.message,
+        hasData: !!data,
+        hasSession: !!data?.session,
+        hasUser: !!data?.user 
+      })
+      
+      // Check if user is already authenticated despite the error
+      try {
+        console.log('🔍 Checking if user is already authenticated...')
+        const { data: currentUser } = await supabase.auth.getUser()
+        if (currentUser?.user) {
+          console.log('✅ User is already authenticated, redirecting to dashboard')
+          return NextResponse.redirect(`${origin}/dashboard`)
+        }
+      } catch (checkError) {
+        console.log('⚠️ Could not check current auth status:', checkError)
+      }
       
       // If the error is about already being confirmed, redirect to login instead
-      if (error?.message?.includes('already') || error?.message?.includes('expired')) {
-        console.log('Auth callback - Link already used or expired, redirecting to login')
+      if (error?.message?.includes('already') || error?.message?.includes('expired') || error?.message?.includes('confirmed')) {
+        console.log('🔄 Auth callback - Link already used/expired/confirmed, redirecting to login')
         return NextResponse.redirect(`${origin}/login?message=already_confirmed`)
       }
       
+      // For any other error, redirect to error page
+      console.log('❌ Auth callback - Redirecting to error page')
       return NextResponse.redirect(`${origin}/auth/auth-code-error`)
     }
     } catch (authError: any) {
