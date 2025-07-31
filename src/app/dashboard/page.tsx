@@ -30,11 +30,22 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getUser = async () => {
+      const timeoutId = setTimeout(() => {
+        console.error('Dashboard: Auth loading timeout after 10 seconds')
+        setLoading(false)
+      }, 10000) // 10 second timeout
+      
       try {
+        console.log('Dashboard: Starting auth check...')
         const { user: authUser, error } = await auth.getUser()
+        clearTimeout(timeoutId)
+        
+        console.log('Dashboard: Auth check result:', { hasUser: !!authUser, error: error?.message })
         
         if (error || !authUser) {
-          router.push('/login')
+          console.log('Dashboard: No user found, redirecting to login')
+          setLoading(false)
+          setTimeout(() => router.push('/login'), 100) // Small delay to prevent immediate redirect
           return
         }
 
@@ -43,9 +54,12 @@ export default function DashboardPage() {
         
         // If no profile exists, create one (for existing auth users)
         if (!userProfile) {
+          console.log('Dashboard: Creating new profile for user:', authUser.email)
           const firstName = authUser.user_metadata?.first_name || ''
           const lastName = authUser.user_metadata?.last_name || ''
+          console.log('Dashboard: User metadata names:', { firstName, lastName })
           userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
+          console.log('Dashboard: Profile created:', !!userProfile)
         }
         
         if (userProfile) {
@@ -55,13 +69,14 @@ export default function DashboardPage() {
           await loadStats(userProfile.user_tier || 'free')
         } else {
           console.error('Failed to load or create user profile')
-          router.push('/login')
+          setLoading(false)
+          setTimeout(() => router.push('/login'), 100)
         }
       } catch (err) {
         console.error('Error fetching user:', err)
-        router.push('/login')
-      } finally {
+        clearTimeout(timeoutId)
         setLoading(false)
+        setTimeout(() => router.push('/login'), 100)
       }
     }
 

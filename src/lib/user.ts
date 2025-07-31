@@ -162,27 +162,57 @@ export const userService = {
   async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {
     const supabase = createClient()
     
-    const { data, error } = await supabase
-      .from('users')
-      .insert([
-        {
-          id: userId,
-          email: email,
-          first_name: firstName || '',
-          last_name: lastName || '',
-          is_pro: false,
-          user_tier: 'free' as UserTier
+    // Try to create profile with name fields, fallback if columns don't exist
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .insert([
+          {
+            id: userId,
+            email: email,
+            first_name: firstName || '',
+            last_name: lastName || '',
+            is_pro: false,
+            user_tier: 'free' as UserTier
+          }
+        ])
+        .select()
+        .single()
+      
+      if (error) {
+        // If first_name/last_name columns don't exist, try without them
+        if (error.message?.includes('column') && (error.message?.includes('first_name') || error.message?.includes('last_name'))) {
+          console.log('Creating profile without name columns (schema not migrated yet)')
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('users')
+            .insert([
+              {
+                id: userId,
+                email: email,
+                is_pro: false,
+                user_tier: 'free' as UserTier
+              }
+            ])
+            .select()
+            .single()
+          
+          if (fallbackError) {
+            console.error('Error creating user profile (fallback):', fallbackError)
+            return null
+          }
+          
+          return fallbackData
         }
-      ])
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error creating user profile:', error)
+        
+        console.error('Error creating user profile:', error)
+        return null
+      }
+      
+      return data
+    } catch (err) {
+      console.error('Error in createProfile:', err)
       return null
     }
-    
-    return data
   },
 
   async updateProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> {

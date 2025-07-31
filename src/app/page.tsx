@@ -56,7 +56,9 @@ function HomePageContent() {
           // Get user profile for Pro status
           let userProfile = await userService.getProfile(authUser.id)
           if (!userProfile) {
-            userProfile = await userService.createProfile(authUser.id, authUser.email || '')
+            const firstName = authUser.user_metadata?.first_name || ''
+            const lastName = authUser.user_metadata?.last_name || ''
+            userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
           }
           setUser(userProfile)
           console.log('Homepage: User authenticated:', userProfile?.email, userProfile?.user_tier)
@@ -85,7 +87,9 @@ function HomePageContent() {
         // User signed in - update user state
         let userProfile = await userService.getProfile(session.user.id)
         if (!userProfile) {
-          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
+          const firstName = session.user.user_metadata?.first_name || ''
+          const lastName = session.user.user_metadata?.last_name || ''
+          userProfile = await userService.createProfile(session.user.id, session.user.email || '', firstName, lastName)
         }
         setUser(userProfile)
       } else if (event === 'SIGNED_OUT') {
