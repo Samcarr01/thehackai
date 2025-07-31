@@ -92,7 +92,7 @@ export default function DashboardPage() {
             try {
               userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
               console.log('✅ Dashboard: Profile creation result:', { success: !!userProfile, profile: userProfile })
-            } catch (createError) {
+            } catch (createError: any) {
               console.error('❌ Dashboard: Profile creation failed:', createError)
               
               // Check if it's a rate limit error
