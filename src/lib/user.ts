@@ -2,6 +2,11 @@ import { createClient } from './supabase/client'
 
 export type UserTier = 'free' | 'pro' | 'ultra'
 
+// Rate limiting to prevent 429 errors
+let lastDbCall = 0
+const MIN_DB_INTERVAL = 500 // 0.5 second minimum between database calls
+let dbCallQueue = new Map<string, Promise<any>>()
+
 export interface UserProfile {
   id: string
   email: string
@@ -129,58 +134,99 @@ export const getUserDisplayName = (user: UserProfile | null): string => {
 
 export const userService = {
   async getProfile(userId: string): Promise<UserProfile | null> {
+    // Rate limiting protection and deduplication
+    const cacheKey = `getProfile_${userId}`
+    const now = Date.now()
+    
+    // If there's already a pending call for this user, wait for it
+    if (dbCallQueue.has(cacheKey)) {
+      console.log('🔄 User: Waiting for existing profile fetch for userId:', userId)
+      return await dbCallQueue.get(cacheKey)!
+    }
+    
+    // Rate limiting protection
+    if (now - lastDbCall < MIN_DB_INTERVAL) {
+      console.log('🔄 User: Rate limiting - waiting 500ms before database call')
+      await new Promise(resolve => setTimeout(resolve, MIN_DB_INTERVAL))
+    }
+    
+    lastDbCall = Date.now()
     const supabase = createClient()
     
     console.log('🔍 Fetching profile for userId:', userId)
     
-    // First, let's see what's in the database
-    const { data: allData, error: queryError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-    
-    console.log('📊 Query result:', { 
-      hasData: !!allData, 
-      dataLength: allData?.length,
-      error: queryError?.message,
-      data: allData 
-    })
-    
-    if (queryError) {
-      console.error('❌ Error querying user profile:', queryError)
-      return null
-    }
-    
-    if (!allData || allData.length === 0) {
-      console.log('📝 No user profile found')
-      return null
-    }
-    
-    if (allData.length > 1) {
-      console.warn('⚠️ Multiple user profiles found, using the first one:', allData.length)
-      // Return the most recent one
-      const sortedData = allData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      return sortedData[0]
-    }
-    
-    console.log('✅ Single user profile found')
-    const data = allData[0]
-    
-    // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
-    // Skip auto-upgrade if admin has manually set a tier for testing
-    if (data && data.email === 'samcarr1232@gmail.com' && !data.user_tier) {
-      return {
-        ...data,
-        is_pro: true,  // Backward compatibility
-        user_tier: 'ultra' as UserTier
+    // Create promise for queue management
+    const profilePromise = (async () => {
+      try {
+        // First, let's see what's in the database
+        const { data: allData, error: queryError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userId)
+        
+        console.log('📊 Query result:', { 
+          hasData: !!allData, 
+          dataLength: allData?.length,
+          error: queryError?.message,
+          data: allData 
+        })
+        
+        if (queryError) {
+          console.error('❌ Error querying user profile:', queryError)
+          
+          // Check if it's a rate limit error
+          if (queryError.message?.includes('429') || queryError.code === '429') {
+            console.error('🚨 User: Database rate limit detected - backing off for 2 seconds')
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            throw new Error('Database rate limit exceeded. Please wait a moment and try again.')
+          }
+          
+          return null
+        }
+        
+        if (!allData || allData.length === 0) {
+          console.log('📝 No user profile found')
+          return null
+        }
+        
+        if (allData.length > 1) {
+          console.warn('⚠️ Multiple user profiles found, using the first one:', allData.length)
+          // Return the most recent one
+          const sortedData = allData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          return sortedData[0]
+        }
+        
+        console.log('✅ Single user profile found')
+        const data = allData[0]
+        
+        // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
+        // Skip auto-upgrade if admin has manually set a tier for testing
+        if (data && data.email === 'samcarr1232@gmail.com' && !data.user_tier) {
+          return {
+            ...data,
+            is_pro: true,  // Backward compatibility
+            user_tier: 'ultra' as UserTier
+          }
+        }
+        
+        // Ensure backward compatibility: sync is_pro with user_tier
+        return {
+          ...data,
+          is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
+        }
+      } catch (error: any) {
+        console.error('❌ User: Error in getProfile:', error)
+        return null
+      } finally {
+        // Clean up the queue
+        dbCallQueue.delete(cacheKey)
       }
-    }
+    })()
     
-    // Ensure backward compatibility: sync is_pro with user_tier
-    return {
-      ...data,
-      is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
-    }
+    // Store in queue
+    dbCallQueue.set(cacheKey, profilePromise)
+    
+    return await profilePromise
   },
 
   async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {

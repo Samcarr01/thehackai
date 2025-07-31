@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false)
+  const [rateLimitError, setRateLimitError] = useState(false)
   const [stats, setStats] = useState({ gpts: 0, documents: 0, blogPosts: 0 })
   const [contentStats, setContentStats] = useState<ContentStats | null>(null)
   const { getEffectiveUser } = useAdmin()
@@ -29,8 +30,13 @@ export default function DashboardPage() {
 
 
   useEffect(() => {
+    let isMounted = true
+    
     const getUser = async () => {
+      if (!isMounted) return // Prevent execution if component unmounted
+      
       const timeoutId = setTimeout(() => {
+        if (!isMounted) return
         console.error('🚨 Dashboard: Auth loading timeout after 10 seconds - forcing stop')
         setLoading(false)
         // Show error state instead of infinite loading
@@ -71,31 +77,58 @@ export default function DashboardPage() {
 
         // Fetch user profile from our database
         console.log('🔍 Dashboard: Fetching user profile from database...')
-        let userProfile = await userService.getProfile(authUser.id)
-        console.log('📋 Dashboard: Profile fetch result:', { hasProfile: !!userProfile })
         
-        // If no profile exists, create one (for existing auth users)
-        if (!userProfile) {
-          console.log('🔧 Dashboard: No profile found, creating new profile for user:', authUser.email)
-          const firstName = authUser.user_metadata?.first_name || ''
-          const lastName = authUser.user_metadata?.last_name || ''
-          console.log('📝 Dashboard: User metadata names:', { firstName, lastName, fullMetadata: authUser.user_metadata })
+        try {
+          let userProfile = await userService.getProfile(authUser.id)
+          console.log('📋 Dashboard: Profile fetch result:', { hasProfile: !!userProfile })
           
-          try {
-            userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
-            console.log('✅ Dashboard: Profile creation result:', { success: !!userProfile, profile: userProfile })
-          } catch (createError) {
-            console.error('❌ Dashboard: Profile creation failed:', createError)
+          // If no profile exists, create one (for existing auth users)
+          if (!userProfile) {
+            console.log('🔧 Dashboard: No profile found, creating new profile for user:', authUser.email)
+            const firstName = authUser.user_metadata?.first_name || ''
+            const lastName = authUser.user_metadata?.last_name || ''
+            console.log('📝 Dashboard: User metadata names:', { firstName, lastName, fullMetadata: authUser.user_metadata })
+            
+            try {
+              userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
+              console.log('✅ Dashboard: Profile creation result:', { success: !!userProfile, profile: userProfile })
+            } catch (createError) {
+              console.error('❌ Dashboard: Profile creation failed:', createError)
+              
+              // Check if it's a rate limit error
+              if (createError?.message?.includes('rate limit')) {
+                setRateLimitError(true)
+                setLoading(false)
+                return // Stop processing and wait for user to refresh
+              }
+            }
           }
-        }
-        
-        if (userProfile) {
-          setUser(userProfile)
           
-          // Load live stats with user tier
-          await loadStats(userProfile.user_tier || 'free')
-        } else {
-          console.error('Failed to load or create user profile')
+          if (userProfile) {
+            if (!isMounted) return // Check again before setting state
+            setUser(userProfile)
+            
+            // Load live stats with user tier
+            await loadStats(userProfile.user_tier || 'free')
+          } else {
+            console.error('Failed to load or create user profile')
+            if (!isMounted) return
+            setLoading(false)
+            setTimeout(() => router.push('/login'), 100)
+          }
+        } catch (profileError: any) {
+          console.error('❌ Dashboard: Error handling user profile:', profileError)
+          
+          // Check if it's a rate limit error
+          if (profileError?.message?.includes('rate limit') || profileError?.message?.includes('429')) {
+            console.log('🚨 Dashboard: Rate limit detected, stopping auth process')
+            if (!isMounted) return
+            setRateLimitError(true)
+            setLoading(false)
+            return
+          }
+          
+          if (!isMounted) return
           setLoading(false)
           setTimeout(() => router.push('/login'), 100)
         }
@@ -166,6 +199,7 @@ export default function DashboardPage() {
     })
     
     return () => {
+      isMounted = false // Cleanup flag
       subscription.unsubscribe()
     }
   }, [router])
@@ -261,6 +295,37 @@ export default function DashboardPage() {
               >
                 ×
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Rate Limit Error Message */}
+        {rateLimitError && (
+          <div className="mb-8 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">⚠️</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-yellow-300">System Busy</h3>
+                  <p className="text-sm text-yellow-200">
+                    We're experiencing high traffic. Please wait a moment and refresh the page.
+                  </p>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-3 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
+                >
+                  Refresh
+                </button>
+                <button
+                  onClick={() => setRateLimitError(false)}
+                  className="text-yellow-300 hover:text-yellow-100 text-xl"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           </div>
         )}

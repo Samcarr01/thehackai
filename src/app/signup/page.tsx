@@ -17,10 +17,20 @@ export default function SignupPage() {
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [lastSubmitTime, setLastSubmitTime] = useState(0)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent rapid successive submissions to avoid rate limiting
+    const now = Date.now()
+    if (now - lastSubmitTime < 3000) { // 3 second minimum between submissions
+      setError('Please wait a moment before trying again.')
+      return
+    }
+    
+    setLastSubmitTime(now)
     setLoading(true)
     setError('')
     
@@ -54,6 +64,8 @@ export default function SignupPage() {
           friendlyError = 'Please enter a valid email address.'
         } else if (error.message.includes('weak password')) {
           friendlyError = 'Password is too weak. Please use at least 8 characters with a mix of letters and numbers.'
+        } else if (error.message.includes('429') || error.message.includes('rate limit')) {
+          friendlyError = 'Too many signup attempts. Please wait a moment and try again.'
         }
         setError(friendlyError)
       } else if (data.user) {
