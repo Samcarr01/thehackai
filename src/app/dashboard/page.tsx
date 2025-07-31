@@ -31,35 +31,50 @@ export default function DashboardPage() {
   useEffect(() => {
     const getUser = async () => {
       const timeoutId = setTimeout(() => {
-        console.error('Dashboard: Auth loading timeout after 10 seconds')
+        console.error('🚨 Dashboard: Auth loading timeout after 10 seconds - forcing stop')
         setLoading(false)
+        // Show error state instead of infinite loading
+        setUser(null)
       }, 10000) // 10 second timeout
       
       try {
-        console.log('Dashboard: Starting auth check...')
+        console.log('🔄 Dashboard: Starting auth check...')
         const { user: authUser, error } = await auth.getUser()
         clearTimeout(timeoutId)
         
-        console.log('Dashboard: Auth check result:', { hasUser: !!authUser, error: error?.message })
+        console.log('✅ Dashboard: Auth check result:', { 
+          hasUser: !!authUser, 
+          userId: authUser?.id,
+          email: authUser?.email,
+          metadata: authUser?.user_metadata,
+          error: error?.message 
+        })
         
         if (error || !authUser) {
-          console.log('Dashboard: No user found, redirecting to login')
+          console.log('❌ Dashboard: No user found, redirecting to login')
           setLoading(false)
           setTimeout(() => router.push('/login'), 100) // Small delay to prevent immediate redirect
           return
         }
 
         // Fetch user profile from our database
+        console.log('🔍 Dashboard: Fetching user profile from database...')
         let userProfile = await userService.getProfile(authUser.id)
+        console.log('📋 Dashboard: Profile fetch result:', { hasProfile: !!userProfile })
         
         // If no profile exists, create one (for existing auth users)
         if (!userProfile) {
-          console.log('Dashboard: Creating new profile for user:', authUser.email)
+          console.log('🔧 Dashboard: No profile found, creating new profile for user:', authUser.email)
           const firstName = authUser.user_metadata?.first_name || ''
           const lastName = authUser.user_metadata?.last_name || ''
-          console.log('Dashboard: User metadata names:', { firstName, lastName })
-          userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
-          console.log('Dashboard: Profile created:', !!userProfile)
+          console.log('📝 Dashboard: User metadata names:', { firstName, lastName, fullMetadata: authUser.user_metadata })
+          
+          try {
+            userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
+            console.log('✅ Dashboard: Profile creation result:', { success: !!userProfile, profile: userProfile })
+          } catch (createError) {
+            console.error('❌ Dashboard: Profile creation failed:', createError)
+          }
         }
         
         if (userProfile) {
@@ -168,16 +183,45 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white">
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+      <DarkThemeBackground>
+        <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading dashboard...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+            <p className="text-gray-300">Loading dashboard...</p>
+            <p className="text-gray-500 text-sm mt-2">Check browser console for details</p>
           </div>
         </div>
-      </div>
+      </DarkThemeBackground>
+    )
+  }
+
+  if (!user) {
+    return (
+      <DarkThemeBackground>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="text-red-400 text-6xl mb-4">⚠️</div>
+            <h2 className="text-xl font-bold text-white mb-2">Unable to Load Dashboard</h2>
+            <p className="text-gray-400 mb-4">There was an error loading your profile.</p>
+            <div className="space-x-4">
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Try Again
+              </button>
+              <button 
+                onClick={() => router.push('/login')} 
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Back to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </DarkThemeBackground>
     )
   }
 

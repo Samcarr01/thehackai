@@ -162,16 +162,17 @@ export const userService = {
   async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {
     const supabase = createClient()
     
-    // Try to create profile with name fields, fallback if columns don't exist
+    console.log('🔄 Creating profile for:', { userId, email, firstName, lastName })
+    
+    // Always try the simple approach first (without name columns)
     try {
+      console.log('🔧 Attempting basic profile creation...')
       const { data, error } = await supabase
         .from('users')
         .insert([
           {
             id: userId,
             email: email,
-            first_name: firstName || '',
-            last_name: lastName || '',
             is_pro: false,
             user_tier: 'free' as UserTier
           }
@@ -180,37 +181,43 @@ export const userService = {
         .single()
       
       if (error) {
-        // If first_name/last_name columns don't exist, try without them
-        if (error.message?.includes('column') && (error.message?.includes('first_name') || error.message?.includes('last_name'))) {
-          console.log('Creating profile without name columns (schema not migrated yet)')
-          const { data: fallbackData, error: fallbackError } = await supabase
+        console.error('❌ Error creating basic profile:', error)
+        return null
+      }
+      
+      console.log('✅ Basic profile created successfully:', data)
+      
+      // If successful and we have names, try to update with names (if columns exist)
+      if ((firstName || lastName) && data) {
+        try {
+          console.log('🔧 Attempting to add names to profile...')
+          const { data: updatedData, error: updateError } = await supabase
             .from('users')
-            .insert([
-              {
-                id: userId,
-                email: email,
-                is_pro: false,
-                user_tier: 'free' as UserTier
-              }
-            ])
+            .update({
+              first_name: firstName || '',
+              last_name: lastName || ''
+            })
+            .eq('id', userId)
             .select()
             .single()
           
-          if (fallbackError) {
-            console.error('Error creating user profile (fallback):', fallbackError)
-            return null
+          if (updateError) {
+            console.log('⚠️ Could not add names (columns may not exist):', updateError.message)
+            // Return the basic profile - names will be handled later
+            return data
+          } else {
+            console.log('✅ Profile updated with names successfully')
+            return updatedData
           }
-          
-          return fallbackData
+        } catch (updateErr) {
+          console.log('⚠️ Name update failed, returning basic profile:', updateErr)
+          return data
         }
-        
-        console.error('Error creating user profile:', error)
-        return null
       }
       
       return data
     } catch (err) {
-      console.error('Error in createProfile:', err)
+      console.error('❌ Fatal error in createProfile:', err)
       return null
     }
   },

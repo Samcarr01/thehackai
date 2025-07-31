@@ -2,17 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { brevoService } from '@/lib/brevo'
 
 export async function POST(request: NextRequest) {
+  console.log('🔄 Brevo API route called')
+  
   try {
-    const { email, firstName, lastName, userTier, sendWelcomeEmail } = await request.json()
+    const requestBody = await request.json()
+    console.log('📨 Request body:', requestBody)
+    
+    const { email, firstName, lastName, userTier, sendWelcomeEmail } = requestBody
 
     if (!email) {
+      console.log('❌ No email provided in request')
       return NextResponse.json(
         { error: 'Email is required' },
         { status: 400 }
       )
     }
 
-    console.log('Adding contact to Brevo:', { email, firstName, lastName, userTier })
+    console.log('📧 Processing Brevo contact:', { email, firstName, lastName, userTier, sendWelcomeEmail })
 
     // Add contact to Brevo
     const result = await brevoService.addContactOnSignup(email, firstName, lastName, userTier || 'free')
