@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createBrowserClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -14,7 +15,9 @@ export async function GET(request: NextRequest) {
     
     try {
       const supabase = createClient()
+      console.log('🔍 Auth callback: About to exchange code for session...')
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      console.log('🔍 Code exchange raw response:', { data, error, timestamp: new Date().toISOString() })
     
       console.log('✅ Code exchange result:', { 
         hasSession: !!data?.session, 
@@ -105,6 +108,14 @@ export async function GET(request: NextRequest) {
       if (authError.message?.includes('Missing Supabase environment variables')) {
         console.error('🚨 Auth callback: Missing environment variables!')
         return NextResponse.redirect(`${origin}/auth/auth-code-error?error=config`)
+      }
+      
+      // Check if it's a 403 auth issue (likely domain/redirect URL config)
+      if (authError.message?.includes('403') || authError.status === 403) {
+        console.error('🚨 Auth callback: 403 Forbidden - likely domain/redirect URL configuration issue!')
+        console.error('🔍 Current origin:', origin)
+        console.error('🔍 Headers:', request.headers.get('host'), request.headers.get('x-forwarded-host'))
+        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=forbidden`)
       }
       
       // Check if it's a 429 rate limit issue
