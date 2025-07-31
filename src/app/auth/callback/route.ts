@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     console.log('🔄 Exchanging code for session...')
-    const supabase = createClient()
     
     try {
+      const supabase = createClient()
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     
       console.log('✅ Code exchange result:', { 
@@ -70,8 +70,21 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.redirect(`${origin}/auth/auth-code-error`)
     }
-    } catch (authError) {
+    } catch (authError: any) {
       console.error('❌ Auth callback exception:', authError)
+      
+      // Check if it's an environment variable issue
+      if (authError.message?.includes('Missing Supabase environment variables')) {
+        console.error('🚨 Auth callback: Missing environment variables!')
+        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=config`)
+      }
+      
+      // Check if it's a 429 rate limit issue
+      if (authError.message?.includes('429') || authError.status === 429) {
+        console.error('🚨 Auth callback: Rate limit detected!')
+        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=rate_limit`)
+      }
+      
       return NextResponse.redirect(`${origin}/auth/auth-code-error`)
     }
   }
