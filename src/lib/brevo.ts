@@ -1,13 +1,12 @@
 import * as brevo from '@getbrevo/brevo'
 
-// Initialize Brevo client
-const apiInstance = new brevo.ContactsApi()
-const campaignsApi = new brevo.EmailCampaignsApi()
+// Initialize API client
+const apiClient = brevo.ApiClient.instance
+apiClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY!
 
-// Set API key
-let defaultClient = brevo.ApiClient.instance
-let apiKey = defaultClient.authentications['api-key']
-apiKey.apiKey = process.env.BREVO_API_KEY!
+// Initialize service instances
+const contactsApi = new brevo.ContactsApi()
+const transactionalEmailsApi = new brevo.TransactionalEmailsApi()
 
 export const brevoService = {
   // Add contact to Brevo list on signup
@@ -38,7 +37,7 @@ export const brevoService = {
       
       console.log('Adding contact to Brevo:', { email, userTier, listIds })
       
-      const result = await apiInstance.createContact(createContact)
+      const result = await contactsApi.createContact(createContact)
       console.log('✅ Contact added to Brevo successfully:', result.body)
       
       return { success: true, data: result.body }
@@ -60,7 +59,7 @@ export const brevoService = {
       const updateContact = new brevo.UpdateContact()
       updateContact.attributes = attributes
       
-      const result = await apiInstance.updateContact(email, updateContact)
+      const result = await contactsApi.updateContact(email, updateContact)
       console.log('✅ Contact updated in Brevo successfully')
       
       return { success: true, data: result.body }
@@ -89,7 +88,7 @@ export const brevoService = {
       
       updateContact.listIds = listIds
       
-      const result = await apiInstance.updateContact(email, updateContact)
+      const result = await contactsApi.updateContact(email, updateContact)
       console.log(`✅ Contact upgraded to ${newTier} tier in Brevo`)
       
       return { success: true, data: result.body }
@@ -127,8 +126,7 @@ export const brevoService = {
       }
       sendTransacEmail.to = [{ email, name: firstName }]
       
-      const emailApi = new brevo.TransactionalEmailsApi()
-      const result = await emailApi.sendTransacEmail(sendTransacEmail)
+      const result = await transactionalEmailsApi.sendTransacEmail(sendTransacEmail)
       
       console.log('✅ Welcome email sent via Brevo')
       return { success: true, data: result.body }
@@ -141,7 +139,7 @@ export const brevoService = {
   // Remove contact (for account deletion)
   async removeContact(email: string) {
     try {
-      await apiInstance.deleteContact(email)
+      await contactsApi.deleteContact(email)
       console.log('✅ Contact removed from Brevo')
       return { success: true }
     } catch (error: any) {
