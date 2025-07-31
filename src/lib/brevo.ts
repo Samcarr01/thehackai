@@ -1,11 +1,10 @@
 // Simple Brevo integration using direct API calls instead of SDK
 
-// TODO: Update these with your actual Brevo list IDs
-// Go to Brevo Dashboard → Contacts → Lists → Click each list to see ID in URL
+// Brevo list IDs from your dashboard
 const BREVO_LIST_IDS = {
-  ALL_USERS: 1,    // Replace with your "All Users" list ID
-  PRO_USERS: 2,    // Replace with your "Pro Users" list ID  
-  ULTRA_USERS: 3   // Replace with your "Ultra Users" list ID
+  ALL_USERS: 4,    // All Users list
+  PRO_USERS: 5,    // Pro Users list  
+  ULTRA_USERS: 6   // Ultra Users list
 }
 
 export const brevoService = {
