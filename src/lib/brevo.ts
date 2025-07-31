@@ -1,13 +1,46 @@
-// Temporarily disable Brevo integration to fix build
-// TODO: Fix Brevo SDK integration
-
-console.log('Brevo integration temporarily disabled for build fix')
+// Simple Brevo integration using direct API calls instead of SDK
 
 export const brevoService = {
-  // Add contact to Brevo list on signup (temporarily disabled)
+  // Add contact to Brevo list on signup
   async addContactOnSignup(email: string, firstName?: string, lastName?: string, userTier: 'free' | 'pro' | 'ultra' = 'free') {
-    console.log('🚧 Brevo integration temporarily disabled - would add contact:', { email, firstName, lastName, userTier })
-    return { success: true, message: 'Brevo integration temporarily disabled' }
+    if (!process.env.BREVO_API_KEY) {
+      console.log('🚧 Brevo API key not configured')
+      return { success: true, message: 'Brevo API key not configured' }
+    }
+
+    try {
+      const response = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          attributes: {
+            FIRSTNAME: firstName || '',
+            LASTNAME: lastName || '',
+            USER_TIER: userTier.toUpperCase(),
+            SIGNUP_DATE: new Date().toISOString().split('T')[0],
+            SIGNUP_SOURCE: 'website'
+          },
+          listIds: [1] // Add to main list (update with your actual list ID)
+        })
+      })
+
+      if (response.ok) {
+        console.log('✅ Contact added to Brevo successfully:', email)
+        return { success: true, message: 'Contact added to Brevo' }
+      } else {
+        const errorData = await response.text()
+        console.error('❌ Failed to add contact to Brevo:', errorData)
+        return { success: false, message: `Brevo API error: ${response.status}` }
+      }
+    } catch (error: any) {
+      console.error('❌ Error calling Brevo API:', error)
+      return { success: false, message: error.message }
+    }
   },
 
   // Update existing contact (temporarily disabled)
@@ -22,10 +55,57 @@ export const brevoService = {
     return { success: true, message: 'Brevo integration temporarily disabled' }
   },
 
-  // Send welcome email campaign (temporarily disabled)
+  // Send welcome email campaign
   async sendWelcomeEmail(email: string, firstName?: string) {
-    console.log('🚧 Brevo integration temporarily disabled - would send welcome email:', { email, firstName })
-    return { success: true, message: 'Brevo integration temporarily disabled' }
+    if (!process.env.BREVO_API_KEY) {
+      console.log('🚧 Brevo API key not configured for welcome email')
+      return { success: true, message: 'Brevo API key not configured' }
+    }
+
+    try {
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'thehackai',
+            email: process.env.BREVO_FROM_EMAIL || 'hello@thehackai.com'
+          },
+          to: [{ email, name: firstName || 'there' }],
+          subject: 'Welcome to thehackai! 🚀',
+          htmlContent: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h1 style="color: #8B5CF6;">Welcome to thehackai! 🚀</h1>
+              <p>Hi ${firstName || 'there'},</p>
+              <p>Thanks for joining thehackai! You now have access to:</p>
+              <ul>
+                <li>📚 All our blog posts and AI insights</li>
+                <li>👀 Preview of our premium GPTs and playbooks</li>
+                <li>🚀 Upgrade options for full access</li>
+              </ul>
+              <p>Ready to explore? <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard" style="color: #8B5CF6;">Visit your dashboard</a></p>
+              <p>Best regards,<br>The thehackai Team</p>
+            </div>
+          `
+        })
+      })
+
+      if (response.ok) {
+        console.log('✅ Welcome email sent via Brevo:', email)
+        return { success: true, message: 'Welcome email sent' }
+      } else {
+        const errorData = await response.text()
+        console.error('❌ Failed to send welcome email:', errorData)
+        return { success: false, message: `Brevo email API error: ${response.status}` }
+      }
+    } catch (error: any) {
+      console.error('❌ Error sending welcome email:', error)
+      return { success: false, message: error.message }
+    }
   },
 
   // Remove contact (temporarily disabled)
