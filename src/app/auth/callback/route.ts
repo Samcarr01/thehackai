@@ -7,16 +7,23 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') // Check if this is a password reset
   const next = searchParams.get('next') ?? '/dashboard'
 
+  console.log('🔗 Auth callback started:', { hasCode: !!code, type, next, origin })
+
   if (code) {
+    console.log('🔄 Exchanging code for session...')
     const supabase = createClient()
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     
-    console.log('Auth callback - Code exchange result:', { 
-      hasSession: !!data?.session, 
-      hasUser: !!data?.user, 
-      type,
-      error: error?.message 
-    })
+    try {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    
+      console.log('✅ Code exchange result:', { 
+        hasSession: !!data?.session, 
+        hasUser: !!data?.user, 
+        userId: data?.user?.id,
+        email: data?.user?.email,
+        type,
+        error: error?.message 
+      })
     
     // Check if we have a valid session (this means confirmation worked)
     if (data?.session && data?.user) {
@@ -36,17 +43,21 @@ export async function GET(request: NextRequest) {
       }
       
       // Regular email confirmation - redirect to dashboard
-      console.log('Auth callback - Success, redirecting to:', next)
+      console.log('🚀 Email confirmation successful, redirecting to:', next)
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
       
+      let redirectUrl
       if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`)
+        redirectUrl = `${origin}${next}`
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
+        redirectUrl = `https://${forwardedHost}${next}`
       } else {
-        return NextResponse.redirect(`${origin}${next}`)
+        redirectUrl = `${origin}${next}`
       }
+      
+      console.log('🔗 Final redirect URL:', redirectUrl)
+      return NextResponse.redirect(redirectUrl)
     } else {
       // Auth error or no session - check if it's a "already confirmed" error
       console.error('Auth callback error:', error)
@@ -59,9 +70,13 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.redirect(`${origin}/auth/auth-code-error`)
     }
+    } catch (authError) {
+      console.error('❌ Auth callback exception:', authError)
+      return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+    }
   }
 
   // No code parameter - redirect to error page
-  console.log('Auth callback - No code parameter')
+  console.log('❌ Auth callback - No code parameter')
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }

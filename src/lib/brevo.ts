@@ -9,6 +9,12 @@ export const brevoService = {
     }
 
     try {
+      console.log('🔄 Sending contact to Brevo:', { email, firstName, lastName, userTier })
+      
+      // Add timeout to prevent hanging
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+      
       const response = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
         headers: {
@@ -26,19 +32,36 @@ export const brevoService = {
             SIGNUP_SOURCE: 'website'
           },
           listIds: [1] // Add to main list (update with your actual list ID)
-        })
+        }),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
 
       if (response.ok) {
         console.log('✅ Contact added to Brevo successfully:', email)
         return { success: true, message: 'Contact added to Brevo' }
       } else {
         const errorData = await response.text()
-        console.error('❌ Failed to add contact to Brevo:', errorData)
-        return { success: false, message: `Brevo API error: ${response.status}` }
+        console.error('❌ Failed to add contact to Brevo:', { status: response.status, error: errorData })
+        
+        // Handle common Brevo errors
+        if (response.status === 400 && errorData.includes('already exists')) {
+          console.log('Contact already exists in Brevo - treating as success')
+          return { success: true, message: 'Contact already exists in Brevo' }
+        }
+        
+        return { success: false, message: `Brevo API error: ${response.status} - ${errorData}` }
       }
     } catch (error: any) {
       console.error('❌ Error calling Brevo API:', error)
+      
+      // Handle timeout specifically
+      if (error.name === 'AbortError') {
+        console.error('Brevo API timeout after 10 seconds')
+        return { success: false, message: 'Brevo API timeout' }
+      }
+      
       return { success: false, message: error.message }
     }
   },

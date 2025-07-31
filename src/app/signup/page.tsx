@@ -59,32 +59,47 @@ export default function SignupPage() {
       } else if (data.user) {
         setSuccess(true)
         
-        // Add user to Brevo email list
-        try {
-          const brevoResponse = await fetch('/api/brevo/add-contact', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: email,
-              firstName: firstName,
-              lastName: lastName,
-              userTier: 'free',
-              sendWelcomeEmail: true
+        // Add user to Brevo email list (with timeout to prevent blocking signup)
+        const brevoPromise = (async () => {
+          try {
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+            
+            const brevoResponse = await fetch('/api/brevo/add-contact', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                userTier: 'free',
+                sendWelcomeEmail: true
+              }),
+              signal: controller.signal
             })
-          })
-          
-          const brevoResult = await brevoResponse.json()
-          if (brevoResult.success) {
-            console.log('✅ User added to Brevo successfully')
-          } else {
-            console.log('⚠️ Failed to add user to Brevo:', brevoResult.error)
+            
+            clearTimeout(timeoutId)
+            const brevoResult = await brevoResponse.json()
+            
+            if (brevoResult.success) {
+              console.log('✅ User added to Brevo successfully')
+            } else {
+              console.log('⚠️ Failed to add user to Brevo:', brevoResult.error)
+            }
+          } catch (brevoError: any) {
+            if (brevoError.name === 'AbortError') {
+              console.error('⚠️ Brevo API timeout during signup')
+            } else {
+              console.error('⚠️ Brevo integration error:', brevoError)
+            }
+            // Don't fail signup if Brevo fails
           }
-        } catch (brevoError) {
-          console.error('⚠️ Brevo integration error:', brevoError)
-          // Don't fail signup if Brevo fails
-        }
+        })()
+        
+        // Don't wait for Brevo - let it run in background
+        brevoPromise.catch(() => {}) // Prevent unhandled promise rejection
         
         // Don't redirect immediately - user needs to confirm email
       }
