@@ -3,9 +3,16 @@
 export const brevoService = {
   // Add contact to Brevo list on signup
   async addContactOnSignup(email: string, firstName?: string, lastName?: string, userTier: 'free' | 'pro' | 'ultra' = 'free') {
-    if (!process.env.BREVO_API_KEY) {
-      console.log('🚧 Brevo API key not configured')
-      return { success: true, message: 'Brevo API key not configured' }
+    const brevoApiKey = process.env.BREVO_API_KEY
+    
+    if (!brevoApiKey) {
+      console.log('🚧 Brevo API key not configured - skipping email list addition')
+      console.log('🔍 Environment check:', {
+        NODE_ENV: process.env.NODE_ENV,
+        hasBREVO_API_KEY: !!process.env.BREVO_API_KEY,
+        keyStart: process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.substring(0, 10) + '...' : 'MISSING'
+      })
+      return { success: true, message: 'Brevo API key not configured - email list addition skipped' }
     }
 
     try {
@@ -19,7 +26,7 @@ export const brevoService = {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'api-key': process.env.BREVO_API_KEY,
+          'api-key': brevoApiKey,
           'content-type': 'application/json'
         },
         body: JSON.stringify({
@@ -43,7 +50,24 @@ export const brevoService = {
         return { success: true, message: 'Contact added to Brevo' }
       } else {
         const errorData = await response.text()
-        console.error('❌ Failed to add contact to Brevo:', { status: response.status, error: errorData })
+        console.error('❌ Failed to add contact to Brevo:', { 
+          status: response.status, 
+          error: errorData,
+          headers: response.headers,
+          hasApiKey: !!brevoApiKey,
+          apiKeyStart: brevoApiKey.substring(0, 10) + '...'
+        })
+        
+        // Handle specific error messages
+        if (response.status === 429) {
+          console.error('🚨 Brevo API rate limit hit!')
+          return { success: false, message: 'Brevo API rate limit - too many requests' }
+        }
+        
+        if (response.status === 401 || errorData.includes('No API key found')) {
+          console.error('🚨 Brevo API authentication failed!')
+          return { success: false, message: 'Brevo API authentication failed - check API key' }
+        }
         
         // Handle common Brevo errors
         if (response.status === 400 && errorData.includes('already exists')) {

@@ -25,6 +25,26 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
       console.error('Failed to add contact to Brevo:', result.message || 'Unknown error')
+      
+      // Check if it's a rate limit or auth error that might be causing the 429
+      if (result.message?.includes('rate limit') || result.message?.includes('429')) {
+        // Don't fail the signup but log the rate limit
+        console.error('🚨 Brevo rate limit detected during signup')
+        return NextResponse.json(
+          { success: false, error: 'Email service rate limited - signup completed but email list addition failed' },
+          { status: 200 } // Return 200 so signup doesn't fail
+        )
+      }
+      
+      if (result.message?.includes('authentication') || result.message?.includes('API key')) {
+        // Don't fail the signup but log the auth issue
+        console.error('🚨 Brevo authentication issue during signup')
+        return NextResponse.json(
+          { success: false, error: 'Email service authentication failed - signup completed but email list addition failed' },
+          { status: 200 } // Return 200 so signup doesn't fail
+        )
+      }
+      
       // Don't fail the signup process, just log the error
       return NextResponse.json(
         { success: false, error: result.message || 'Unknown error' },
