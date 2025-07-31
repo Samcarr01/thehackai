@@ -50,6 +50,18 @@ export default function DashboardPage() {
           error: error?.message 
         })
         
+        // Handle refresh token errors specifically
+        if (error) {
+          if (error.message?.includes('Refresh Token') || error.message?.includes('Invalid Refresh')) {
+            console.log('🔄 Dashboard: Invalid refresh token, clearing all auth data and redirecting...')
+            // Clear all invalid auth data
+            await auth.clearAuthData()
+            setLoading(false)
+            setTimeout(() => router.push('/login?message=session_expired'), 100)
+            return
+          }
+        }
+        
         if (error || !authUser) {
           console.log('❌ Dashboard: No user found, redirecting to login')
           setLoading(false)

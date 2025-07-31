@@ -48,6 +48,10 @@ export default function LoginPage() {
         setSuccessMessage('✅ Your email is already confirmed! You can sign in now.')
         // Clear the URL parameter
         window.history.replaceState({}, '', '/login')
+      } else if (message === 'session_expired') {
+        setError('⚠️ Your session expired. Please sign in again.')
+        // Clear the URL parameter
+        window.history.replaceState({}, '', '/login')
       }
     }
   }, [router])

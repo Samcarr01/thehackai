@@ -46,12 +46,53 @@ export const auth = {
   async signOut() {
     const supabase = createClient()
     
-    // Clear localStorage persistence flag
-    localStorage.removeItem('supabase-auth-persist')
+    // Clear all auth-related localStorage items
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('supabase-auth-persist')
+      localStorage.removeItem('rememberMe')
+      
+      // Clear all supabase auth keys (they start with 'sb-')
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-')) {
+          localStorage.removeItem(key)
+        }
+      })
+    }
     
     const { error } = await supabase.auth.signOut()
     
     return { error }
+  },
+
+  // Clear all auth data in case of token issues
+  async clearAuthData() {
+    console.log('🧹 Clearing all auth data...')
+    
+    if (typeof window !== 'undefined') {
+      // Clear localStorage
+      localStorage.removeItem('supabase-auth-persist')
+      localStorage.removeItem('rememberMe')
+      
+      // Clear all supabase auth keys
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-')) {
+          localStorage.removeItem(key)
+        }
+      })
+      
+      // Clear sessionStorage
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('sb-')) {
+          sessionStorage.removeItem(key)
+        }
+      })
+    }
+    
+    // Sign out from Supabase
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    
+    console.log('✅ Auth data cleared')
   },
 
   async resetPassword(email: string) {
@@ -94,9 +135,21 @@ export const auth = {
   async getUser() {
     const supabase = createClient()
     
-    const { data: { user }, error } = await supabase.auth.getUser()
-    
-    return { user, error }
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser()
+      
+      // If we get a refresh token error, clear the session
+      if (error && (error.message?.includes('Refresh Token') || error.message?.includes('Invalid Refresh'))) {
+        console.log('🔄 Auth: Invalid refresh token detected, clearing session...')
+        await this.signOut()
+        return { user: null, error }
+      }
+      
+      return { user, error }
+    } catch (err: any) {
+      console.error('❌ Auth: Error getting user:', err)
+      return { user: null, error: err }
+    }
   },
 
   async getSession() {
