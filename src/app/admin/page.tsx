@@ -182,7 +182,7 @@ export default function AdminPage() {
       const [gptsData, documentsData, blogData] = await Promise.all([
         gptsService.getAllGPTs(),
         documentsService.getAllDocuments(),
-        blogService.getAllPosts()
+        blogService.getAllPosts(true) // Include drafts in admin panel
       ])
       
       setGpts(gptsData)
@@ -549,23 +549,67 @@ export default function AdminPage() {
                     <div key={post.id} className="p-4 bg-slate-700/50 rounded-lg border border-slate-600">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-white mb-1">{post.title}</h3>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-white">{post.title}</h3>
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                              ✅ Published
+                            </span>
+                          </div>
                           <p className="text-sm text-gray-300 mb-2">{post.meta_description}</p>
                           <div className="flex items-center space-x-3 text-xs text-gray-400">
                             <span>{post.category}</span>
                             <span>•</span>
                             <span>{post.read_time} min read</span>
                             <span>•</span>
-                            <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                            <span>{new Date(post.published_at || post.created_at).toLocaleDateString()}</span>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2 ml-4">
-                          <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-slate-600 transition-colors">
+                          {/* Preview Button */}
+                          <a
+                            href={`/blog/${post.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-400 hover:text-purple-300 p-2 rounded-lg hover:bg-slate-600 transition-colors"
+                            title="Preview"
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                          </button>
-                          <button className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-slate-600 transition-colors">
+                          </a>
+                          
+                          {/* Publish/Unpublish Button - Hidden until status column added */}
+                          {/* {post.status === 'draft' ? (
+                            <button className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-slate-600 transition-colors" title="Publish">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <button className="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg hover:bg-slate-600 transition-colors" title="Unpublish">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                              </svg>
+                            </button>
+                          )} */}
+                          
+                          {/* Delete Button */}
+                          <button 
+                            onClick={async () => {
+                              if (confirm('Are you sure you want to delete this blog post?')) {
+                                try {
+                                  await blogService.deletePost(post.id)
+                                  await loadContent()
+                                  showNotification('Success', 'Blog post deleted!', 'success')
+                                } catch (error) {
+                                  showNotification('Error', 'Failed to delete post', 'error')
+                                }
+                              }
+                            }}
+                            className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-slate-600 transition-colors"
+                            title="Delete"
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -946,11 +990,27 @@ export default function AdminPage() {
                   includeImages={includeImages}
                   onComplete={async (blogPost) => {
                     try {
-                      // Save the blog post
-                      await blogService.createPost(blogPost)
+                      // Generate slug from title
+                      const slug = blogPost.title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '')
                       
-                      // Refresh blog posts
-                      const posts = await blogService.getAllPosts()
+                      // Save the blog post
+                      const postData: any = {
+                        ...blogPost,
+                        slug,
+                        published_at: new Date().toISOString()
+                      }
+                      
+                      // Only add status if column exists
+                      // Remove this after migration
+                      // postData.status = 'draft'
+                      
+                      await blogService.createPost(postData)
+                      
+                      // Refresh blog posts (including drafts)
+                      const posts = await blogService.getAllPosts(true)
                       setBlogPosts(posts)
                       
                       // Reset and close

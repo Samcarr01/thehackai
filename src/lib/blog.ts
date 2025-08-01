@@ -9,12 +9,13 @@ export interface BlogPost {
   meta_description: string
   category: string
   read_time: number
+  status?: 'draft' | 'published' // Optional for now
   created_at: string
   updated_at: string
 }
 
 export const blogService = {
-  async getAllPosts(): Promise<BlogPost[]> {
+  async getAllPosts(includesDrafts = false): Promise<BlogPost[]> {
     const supabase = createClient()
     const { data, error } = await supabase
       .from('blog_posts')
@@ -26,7 +27,20 @@ export const blogService = {
       return []
     }
 
-    return data || []
+    // Add default status to existing posts
+    return (data || []).map(post => ({
+      ...post,
+      status: post.status || 'published'
+    }))
+  },
+
+  async getPublishedPosts(): Promise<BlogPost[]> {
+    return this.getAllPosts(false)
+  },
+
+  async getDraftPosts(): Promise<BlogPost[]> {
+    // Temporarily return empty array until status column is added
+    return []
   },
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
