@@ -8,7 +8,19 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') // Check if this is a password reset
   const next = searchParams.get('next') ?? '/dashboard'
 
-  console.log('🔗 Auth callback started:', { hasCode: !!code, type, next, origin })
+  console.log('🔗 Auth callback started:', { 
+    hasCode: !!code, 
+    codeStart: code ? code.substring(0, 20) + '...' : 'MISSING',
+    type, 
+    next, 
+    origin,
+    fullUrl: request.url,
+    headers: {
+      host: request.headers.get('host'),
+      forwardedHost: request.headers.get('x-forwarded-host'),
+      referer: request.headers.get('referer')
+    }
+  })
 
   if (code) {
     console.log('🔄 Exchanging code for session...')
