@@ -13,6 +13,7 @@ import { aiService } from '@/lib/ai'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
 import NotificationModal from '@/components/NotificationModal'
+import BlogGenerationProgress from '@/components/BlogGenerationProgress'
 
 interface AnalyzedContent {
   title: string
@@ -44,6 +45,14 @@ export default function AdminPage() {
     message: '',
     type: 'success'
   })
+
+  // Blog generation state
+  const [showBlogModal, setShowBlogModal] = useState(false)
+  const [blogPrompt, setBlogPrompt] = useState('')
+  const [blogKnowledge, setBlogKnowledge] = useState('')
+  const [includeWebSearch, setIncludeWebSearch] = useState(true)
+  const [includeImages, setIncludeImages] = useState(true)
+  const [generatingBlog, setGeneratingBlog] = useState(false)
 
   // Tier testing state
   const [switchingTier, setSwitchingTier] = useState(false)
@@ -527,7 +536,9 @@ export default function AdminPage() {
                   <span className="mr-3">✍️</span>
                   Blog Posts
                 </h2>
-                <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-shadow">
+                <button 
+                  onClick={() => setShowBlogModal(true)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-shadow">
                   ➕ New Post
                 </button>
               </div>
@@ -827,6 +838,147 @@ export default function AdminPage() {
         message={notification.message}
         type={notification.type}
       />
+
+      {/* Blog Generation Modal */}
+      {showBlogModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !generatingBlog && setShowBlogModal(false)} />
+          <div className="relative bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            {!generatingBlog ? (
+              <div className="p-6 sm:p-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  🤖 Generate AI Blog Post
+                </h2>
+                
+                <div className="space-y-6">
+                  {/* Blog Topic/Prompt */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Blog Topic / Prompt <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={blogPrompt}
+                      onChange={(e) => setBlogPrompt(e.target.value)}
+                      placeholder="e.g., How to use AI tools for productivity in 2025"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Additional Knowledge */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Additional Context (Optional)
+                    </label>
+                    <textarea
+                      value={blogKnowledge}
+                      onChange={(e) => setBlogKnowledge(e.target.value)}
+                      placeholder="Any specific points, data, or context you want to include..."
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      rows={2}
+                    />
+                  </div>
+
+                  {/* Options */}
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={includeWebSearch}
+                        onChange={(e) => setIncludeWebSearch(e.target.checked)}
+                        className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        🔍 Include Web Search (uses Perplexity for current data)
+                      </span>
+                    </label>
+                    
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={includeImages}
+                        onChange={(e) => setIncludeImages(e.target.checked)}
+                        className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        🎨 Generate Images (uses DALL-E 3)
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Info Box */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>💡 Tips:</strong> The AI will generate a comprehensive 2000-3000 word blog post with proper SEO optimization, headings, sections, and formatting. Web search helps include current information and trends.
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => setShowBlogModal(false)}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!blogPrompt.trim()) {
+                          showNotification('Error', 'Please enter a blog topic', 'error')
+                          return
+                        }
+                        setGeneratingBlog(true)
+                      }}
+                      disabled={!blogPrompt.trim()}
+                      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Generate Blog
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 sm:p-8">
+                <BlogGenerationProgress
+                  prompt={blogPrompt}
+                  knowledgeBase={blogKnowledge}
+                  includeWebSearch={includeWebSearch}
+                  includeImages={includeImages}
+                  onComplete={async (blogPost) => {
+                    try {
+                      // Save the blog post
+                      await blogService.createPost(blogPost)
+                      
+                      // Refresh blog posts
+                      const posts = await blogService.getAllPosts()
+                      setBlogPosts(posts)
+                      
+                      // Reset and close
+                      setGeneratingBlog(false)
+                      setShowBlogModal(false)
+                      setBlogPrompt('')
+                      setBlogKnowledge('')
+                      
+                      showNotification('Success', 'Blog post generated and saved successfully!', 'success')
+                    } catch (error) {
+                      console.error('Error saving blog post:', error)
+                      showNotification('Error', 'Failed to save blog post', 'error')
+                      setGeneratingBlog(false)
+                    }
+                  }}
+                  onError={(error) => {
+                    showNotification('Error', error, 'error')
+                    setGeneratingBlog(false)
+                  }}
+                  onCancel={() => {
+                    setGeneratingBlog(false)
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </DarkThemeBackground>
   )
 }
