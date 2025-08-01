@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 📊 **Database Schema**
 ```sql
-users (id, email, first_name, last_name, is_pro, stripe_customer_id, created_at, updated_at)
+users (id, email, first_name, last_name, user_tier, stripe_customer_id, created_at, updated_at)
 documents (id, title, description, pdf_url, category, is_featured, added_date, created_at, updated_at)
 gpts (id, title, description, chatgpt_url, category, is_featured, added_date, created_at, updated_at)
 blog_posts (id, title, content, slug, published_at, meta_description, category, read_time)
@@ -36,7 +36,7 @@ blog_posts (id, title, content, slug, published_at, meta_description, category, 
 - **Blog Access:** Full access to all blog posts (SEO driver + immediate value)
 - **Clear Upgrade Path:** Strategic upgrade prompts throughout platform
 
-### **Pro Users (£15/month):**
+### **Pro & Ultra Users:**
 - **Everything Free Users Get PLUS:**
 - **Direct GPT Links:** Click and immediately access ChatGPT tools
 - **PDF Downloads:** Download all playbooks and guides
@@ -85,14 +85,14 @@ blog_posts (id, title, content, slug, published_at, meta_description, category, 
 - **Professional Typography:** Progressive scaling across breakpoints
 
 ### **✅ Payment Integration (100% Complete)**
-- **Stripe Checkout:** Secure payment processing for Pro subscriptions
+- **Stripe Checkout:** Secure payment processing for Pro and Ultra subscriptions
 - **Webhook Handling:** Automatic user status updates on payment events
-- **Subscription Management:** Pro/Free status tracking in database
+- **Subscription Management:** Multi-tier status tracking (Free/Pro/Ultra) in database
 - **Payment Flow:** Seamless upgrade journey with proper error handling
 
 ### **✅ Email Marketing (100% Complete)**
 - **Brevo Integration:** Automatic contact addition on signup
-- **List Management:** Smart assignment to All Users, Pro Users, Ultra Users lists
+- **List Management:** Smart assignment to All Users, Pro, and Ultra tier lists
 - **Duplicate Handling:** Existing contacts treated as success
 - **Background Processing:** Non-blocking integration during signup
 - **Error Handling:** Comprehensive logging and graceful failures
@@ -238,9 +238,9 @@ NEXT_PUBLIC_SITE_URL=https://thehackai.com
 3. **Email Confirmation:** PKCE flow redirects to dashboard (not error page)
 4. **Dashboard Access:** Automatic profile creation with user stats
 5. **Content Exploration:** Preview GPTs/documents with upgrade prompts
-6. **Upgrade Decision:** Stripe checkout for Pro access
+6. **Upgrade Decision:** Stripe checkout for Pro or Ultra access
 
-### **Pro User Experience:**
+### **Pro & Ultra User Experience:**
 - **Direct GPT Access:** Click and immediately access ChatGPT tools
 - **PDF Downloads:** Instant download buttons for all playbooks
 - **No Upgrade Prompts:** Clean interface focused on content consumption
@@ -284,7 +284,7 @@ git push origin main  # Auto-deploys to Vercel
 **The thehackai.com platform is 100% production-ready with:**
 - ✅ **Complete Authentication System** - Signup, email confirmation, dashboard access
 - ✅ **Content Management** - 7 GPTs, admin panel, AI analysis
-- ✅ **Payment Processing** - Stripe integration with Pro subscriptions
+- ✅ **Payment Processing** - Stripe integration with Pro and Ultra subscriptions
 - ✅ **Email Marketing** - Brevo integration with list management
 - ✅ **Mobile Optimization** - Comprehensive responsive design
 - ✅ **Debug Infrastructure** - Monitoring and troubleshooting tools
