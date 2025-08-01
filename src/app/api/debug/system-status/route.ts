@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       if (testError) {
         supabaseStatus = { status: 'error', error: testError.message }
       } else {
-        supabaseStatus = { status: 'connected', message: 'Database connection successful' }
+        supabaseStatus = { status: 'connected', error: 'Database connection successful' }
       }
     } catch (dbError: any) {
       supabaseStatus = { status: 'error', error: dbError.message }
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
           schemaStatus = { status: 'error', error: schemaError.message }
         }
       } else {
-        schemaStatus = { status: 'ready', message: 'Name columns exist' }
+        schemaStatus = { status: 'ready', error: 'Name columns exist' }
       }
     } catch (schemaErr: any) {
       schemaStatus = { status: 'error', error: schemaErr.message }
@@ -79,8 +79,7 @@ export async function GET(request: NextRequest) {
           const accountData = await response.json()
           brevoStatus = { 
             status: 'connected', 
-            account: accountData.email,
-            plan: accountData.plan?.type || 'unknown'
+            error: `Connected to ${accountData.email} (${accountData.plan?.type || 'unknown'} plan)`
           }
         } else {
           brevoStatus = { status: 'auth_error', error: `HTTP ${response.status}` }
