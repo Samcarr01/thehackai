@@ -46,8 +46,7 @@ export async function GET(request: NextRequest) {
         if (schemaError.message.includes('column') && schemaError.message.includes('does not exist')) {
           schemaStatus = { 
             status: 'migration_needed', 
-            error: 'first_name/last_name columns missing',
-            action: 'Run database migration'
+            error: 'first_name/last_name columns missing. Action required: Run database migration'
           }
         } else {
           schemaStatus = { status: 'error', error: schemaError.message }
