@@ -21,5 +21,11 @@ export function createClient() {
     keyStart: key.substring(0, 30) + '...'
   })
   
-  return createBrowserClient(url, key)
+  return createBrowserClient(url, key, {
+    auth: {
+      flowType: 'pkce',
+      autoRefreshToken: true,
+      persistSession: true
+    }
+  })
 }

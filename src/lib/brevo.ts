@@ -93,8 +93,8 @@ export const brevoService = {
         }
         
         // Handle common Brevo errors
-        if (response.status === 400 && errorData.includes('already exists')) {
-          console.log('Contact already exists in Brevo - treating as success')
+        if (response.status === 400 && (errorData.includes('already exists') || errorData.includes('duplicate_parameter') || errorData.includes('already associated'))) {
+          console.log('✅ Contact already exists in Brevo - treating as success')
           return { success: true, message: 'Contact already exists in Brevo' }
         }
         

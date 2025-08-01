@@ -21,6 +21,11 @@ export function createClient() {
     url,
     key,
     {
+      auth: {
+        flowType: 'pkce',
+        autoRefreshToken: true,
+        persistSession: true
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll()
