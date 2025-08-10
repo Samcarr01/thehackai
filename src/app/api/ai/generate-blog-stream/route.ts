@@ -402,6 +402,19 @@ Quality and usefulness matter more than strict word count requirements.
 
 🚨 CRITICAL: YOU MUST FORMAT YOUR RESPONSE AS VALID JSON - THE SYSTEM WILL REJECT NON-JSON RESPONSES
 
+🏷️ CATEGORY SELECTION GUIDELINES:
+Intelligently select the most appropriate category based on your topic:
+- AI Tools: Specific AI software, platforms, models (ChatGPT, Claude, etc.)
+- Productivity: Efficiency, time management, workflow optimization
+- Business Strategy: Growth, planning, decision-making, leadership
+- Automation: Process automation, workflows, integrations
+- Content Creation: Writing, video, design, creative tools
+- Data Analysis: Analytics, reporting, insights, visualization
+- Development: Programming, coding, software development
+- Marketing: SEO, social media, advertising, campaigns
+- Design: UI/UX, graphics, visual design, creative process
+- Research: Analysis, investigation, academic, discovery
+
 ⚠️ CRITICAL JSON FORMAT REQUIREMENTS:
 - Your response must be ONLY JSON - no explanatory text, markdown, or code blocks
 - Start immediately with { and end with } 
@@ -414,7 +427,7 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
   "title": "Professional, SEO-optimized title (45-60 characters)",
   "content": "## Introduction\\n\\nComprehensive 250+ word introduction with hook, value proposition, and detailed outline of what readers will learn...\\n\\n## What is [Topic]? (400+ words)\\n\\nDetailed definition, background, context, and importance...\\n\\n### Key Components\\n\\nSpecific subsection content...\\n\\n## Why [Topic] Matters Now (350+ words)\\n\\nCurrent trends, benefits, problems solved...\\n\\n## Complete Step-by-Step Guide (500+ words)\\n\\nActionable implementation steps...\\n\\n## [Continue with 6 more major sections]\\n\\n## Conclusion\\n\\nComprehensive 250+ word summary with clear call-to-action...",
   "meta_description": "Compelling 150-160 character description with primary keyword", 
-  "category": "Business Planning",
+  "category": "[CHOOSE FROM: AI Tools, Productivity, Business Strategy, Automation, Content Creation, Data Analysis, Development, Marketing, Design, Research]",
   "read_time": 15
 }
 
@@ -774,11 +787,35 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
             
             // Create a fallback blog post with debugging information
             const contentPreview = accumulatedContent.slice(0, 500).replace(/['"]/g, '').replace(/\n/g, ' ')
+            
+            // Intelligently determine fallback category based on prompt
+            let fallbackCategory = 'AI Tools' // default
+            const promptLower = prompt.toLowerCase()
+            if (promptLower.includes('business') || promptLower.includes('strategy') || promptLower.includes('planning')) {
+              fallbackCategory = 'Business Strategy'
+            } else if (promptLower.includes('productivity') || promptLower.includes('efficiency') || promptLower.includes('time management')) {
+              fallbackCategory = 'Productivity'  
+            } else if (promptLower.includes('automation') || promptLower.includes('workflow')) {
+              fallbackCategory = 'Automation'
+            } else if (promptLower.includes('content') || promptLower.includes('writing') || promptLower.includes('creative')) {
+              fallbackCategory = 'Content Creation'
+            } else if (promptLower.includes('data') || promptLower.includes('analytics') || promptLower.includes('analysis')) {
+              fallbackCategory = 'Data Analysis'
+            } else if (promptLower.includes('development') || promptLower.includes('coding') || promptLower.includes('programming')) {
+              fallbackCategory = 'Development'
+            } else if (promptLower.includes('marketing') || promptLower.includes('seo') || promptLower.includes('social media')) {
+              fallbackCategory = 'Marketing'
+            } else if (promptLower.includes('design') || promptLower.includes('ui') || promptLower.includes('ux')) {
+              fallbackCategory = 'Design'
+            } else if (promptLower.includes('research') || promptLower.includes('study') || promptLower.includes('investigation')) {
+              fallbackCategory = 'Research'
+            }
+            
             blogPost = {
               title: fallbackTitle,
               content: `# ${fallbackTitle}\n\n**Note:** There was an issue with content generation. The AI generated ${accumulatedContent.length} characters but it couldn't be parsed as valid JSON.\n\n**Content Preview:**\n${contentPreview}${accumulatedContent.length > 500 ? '...' : ''}\n\n**Possible Issues:**\n- AI included text before or after the JSON\n- JSON syntax errors (missing quotes, commas)\n- Content too long causing truncation\n\nPlease try again with a simpler prompt or check the browser console for full details.`,
               meta_description: `Learn about ${prompt}. Expert insights and strategies.`.slice(0, 160),
-              category: 'AI Tools',
+              category: fallbackCategory,
               read_time: 3
             };
             
