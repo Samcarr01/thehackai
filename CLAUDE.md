@@ -357,9 +357,12 @@ git push origin main  # Auto-deploys to Vercel
 - Check Stripe webhook logs for payment processing
 - Update content via admin panel as needed
 
-### **Known Issues:**
-- **DALL-E Image URLs**: Generated images from OpenAI are temporary and may flicker/expire. Consider downloading and re-uploading to Supabase Storage for permanent hosting.
-- **Perplexity API Key**: Must be added to Vercel environment variables for web search functionality
+### **Recent Fixes (February 2025):**
+- ✅ **Blog Image Stability**: Fixed scroll-induced image reloading with lazy loading and fixed aspect ratios
+- ✅ **DALL-E Image Diversity**: Enhanced AI prompts for varied visual styles (neural networks, infographics, 3D illustrations, conceptual art)
+- ✅ **Image Layout Consistency**: Implemented fixed 16:9 aspect ratio to prevent layout shifts during loading
+- ✅ **Blog Categorization**: Fixed intelligent category assignment replacing hardcoded defaults
+- ✅ **Permanent Image Storage**: DALL-E images automatically stored in Supabase Storage to prevent expiration
 
 ### **Future Enhancements (Optional):**
 - Implement permanent image storage for blog posts

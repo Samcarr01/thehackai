@@ -200,13 +200,14 @@ export default function BlogPostClient({ post, user }: Props) {
                       src={src} 
                       alt={alt} 
                       className="w-full h-auto block"
-                      loading="eager" // Load immediately to prevent scroll-triggered loading
+                      loading="lazy" // Use lazy loading to prevent excessive loading
                       decoding="async" // Non-blocking decoding for better performance  
-                      fetchPriority="high" // Prioritize image loading
                       style={{ 
-                        minHeight: '300px',
+                        aspectRatio: '16/9', // Fixed aspect ratio to prevent layout shift
+                        objectFit: 'cover',  // Better image fitting
                         maxWidth: '100%',
-                        height: 'auto'
+                        height: 'auto',
+                        backgroundColor: '#1f2937' // Gray placeholder while loading
                       }}
                       onError={(e) => {
                         console.warn('❌ Blog image failed to load:', src)

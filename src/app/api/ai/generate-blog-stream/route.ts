@@ -961,42 +961,42 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
                   })
                   
                   if (index === 0) {
-                    // Hero image - main topic visualization with enhanced prompts and brand logos
-                    const brandLogoText = primaryBrand ? ` Screen prominently displays ${brandVisuals} in clean, professional presentation.` : ''
+                    // Hero image - diverse visualizations beyond just workspaces
+                    const brandLogoText = primaryBrand ? ` ${brandVisuals} prominently featured.` : ''
                     
                     if (titleLower.includes('ai tools') || titleLower.includes('artificial intelligence')) {
-                      enhancedImagePrompt = `Modern minimalist workspace with ultra-wide monitor displaying AI tool interfaces.${brandLogoText} Soft purple ambient lighting, clean desk setup, professional studio photography quality, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Futuristic AI neural network visualization with glowing purple nodes and connections, holographic interface elements floating in space.${brandLogoText} Cinematic lighting, 3D rendered, ultra-high detail, 8K resolution.`
                     } else if (titleLower.includes('productivity') || titleLower.includes('workflow')) {
-                      enhancedImagePrompt = `Executive workspace with curved ultrawide monitor showing productivity dashboard with charts and metrics.${brandLogoText} Elegant purple LED backlighting, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Dynamic infographic showing productivity workflow with ascending arrows, time-saving icons, and efficiency metrics. Modern flat design with purple gradient background and glowing elements.${brandLogoText} Professional illustration style, high detail, 8K resolution.`
                     } else if (titleLower.includes('marketing') || titleLower.includes('social media')) {
-                      enhancedImagePrompt = `Creative studio setup with dual 4K monitors displaying social media analytics and content creation interfaces.${brandLogoText} Warm purple studio lighting, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Creative marketing collage with social media icons, growth charts, engagement metrics, and brand elements floating in dynamic composition. Vibrant colors with purple accents.${brandLogoText} Contemporary digital art style, high detail, 8K resolution.`
                     } else if (titleLower.includes('claude code') || titleLower.includes('coding') || titleLower.includes('development')) {
-                      enhancedImagePrompt = `Modern developer workspace with ultrawide monitor showing Claude Code interface with syntax highlighting and terminal.${brandLogoText} RGB purple keyboard backlighting, clean desk setup, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Abstract code visualization with floating syntax elements, terminal windows, and programming languages symbols in 3D space. Purple and orange color scheme with glowing effects.${brandLogoText} Futuristic tech art style, high detail, 8K resolution.`
                     } else if (titleLower.includes('writing') || titleLower.includes('content')) {
-                      enhancedImagePrompt = `Elegant writer's workspace with curved monitor displaying modern writing interface with clean typography.${brandLogoText} Soft purple ambient lighting, minimal desk setup, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Creative writing concept with floating letters, words, and documents transforming into digital content. Elegant typography elements and paper textures with purple magical effects.${brandLogoText} Artistic illustration style, high detail, 8K resolution.`
                     } else if (titleLower.includes('business') || titleLower.includes('strategy')) {
-                      enhancedImagePrompt = `Executive business workspace with large monitor showing analytics dashboard with KPI charts and metrics.${brandLogoText} Sophisticated purple accent lighting, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Strategic business visualization with chess pieces, growth arrows, financial charts, and success icons arranged in dynamic composition. Professional blue and purple color palette.${brandLogoText} Corporate art style, high detail, 8K resolution.`
                     } else if (titleLower.includes('automation') || titleLower.includes('workflow')) {
-                      enhancedImagePrompt = `High-tech workspace with multiple screens displaying automation workflow interfaces and process diagrams.${brandLogoText} Cyberpunk purple neon accents, professional photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Robotic automation concept with mechanical gears, workflow arrows, and digital processes interconnected in 3D space. Sleek metallic surfaces with purple energy streams.${brandLogoText} Industrial tech art style, high detail, 8K resolution.`
                     } else {
-                      enhancedImagePrompt = `Premium professional workspace focused on "${blogPost.title}" with large monitor displaying relevant modern interface.${brandLogoText} Sophisticated purple gradient ambient lighting, professional studio photography, high detail, 8K resolution.`
+                      enhancedImagePrompt = `Abstract conceptual art representing "${blogPost.title}" with modern geometric shapes, flowing lines, and digital elements. Contemporary design with purple gradient palette.${brandLogoText} Minimalist artistic style, high detail, 8K resolution.`
                     }
                   } else {
-                    // Enhanced secondary content image - more specific visualization with brand logos
-                    const secondaryBrandText = primaryBrand ? ` Interface prominently features ${brandVisuals} with professional presentation.` : ''
+                    // Diverse secondary content images - different styles and concepts
+                    const secondaryBrandText = primaryBrand ? ` ${brandVisuals} integrated into the design.` : ''
                     
-                    if (mentionedTools.length > 0) {
-                      const toolsList = mentionedTools.slice(0, 2).join(' and ')
-                      enhancedImagePrompt = `Close-up view of ${toolsList} interface on premium monitor with detailed UI elements visible.${secondaryBrandText} Clean modern design, subtle purple accents, professional studio lighting, high detail, 8K resolution.`
-                    } else if (contentLower.includes('comparison') || contentLower.includes('vs')) {
-                      enhancedImagePrompt = `Professional side-by-side software comparison displayed on dual 4K monitors with clear interface details.${secondaryBrandText} Clean UI layouts, subtle purple accent lighting, professional setup, high detail, 8K resolution.`
-                    } else if (contentLower.includes('step') || contentLower.includes('guide') || contentLower.includes('tutorial')) {
-                      enhancedImagePrompt = `Step-by-step tutorial interface displayed on large monitor with numbered workflow and clear instructions.${secondaryBrandText} Clean educational layout, soft purple theme, professional lighting, high detail, 8K resolution.`
-                    } else if (contentLower.includes('analytics') || contentLower.includes('data') || contentLower.includes('metrics')) {
-                      enhancedImagePrompt = `Detailed analytics dashboard with colorful charts and KPI metrics displayed on curved monitor.${secondaryBrandText} Data visualization with purple gradient accents, professional setup, high detail, 8K resolution.`
-                    } else {
-                      enhancedImagePrompt = `Supporting visual for "${blogPost.title}" showing relevant interface or concept on premium monitor.${secondaryBrandText} Modern UI design, elegant purple gradients, professional workspace, high detail, 8K resolution.`
-                    }
+                    // Create varied image types for secondary images
+                    const imageTypes = [
+                      `Isometric 3D illustration showing workflow process with interconnected elements, user icons, and data flow arrows. Modern vector art style with purple gradient accents.${secondaryBrandText} Clean tech illustration, high detail, 8K resolution.`,
+                      `Split-screen before/after comparison showing transformation results. Left: traditional method, right: optimized solution with clear visual improvements and success metrics. Professional infographic style.${secondaryBrandText} High detail, 8K resolution.`,
+                      `Step-by-step visual guide with numbered circular icons, flowing connection lines, and progress indicators. Educational diagram style with engaging graphics and purple theme.${secondaryBrandText} Instructional design, high detail, 8K resolution.`,
+                      `Interactive data visualization with floating holographic charts, metrics, and KPI indicators in 3D space. Futuristic analytics interface with glowing purple data points.${secondaryBrandText} Sci-fi UI design, high detail, 8K resolution.`,
+                      `Creative conceptual metaphor using symbolic imagery and abstract shapes to represent the topic. Artistic interpretation with meaningful visual elements and purple color palette.${secondaryBrandText} Contemporary art style, high detail, 8K resolution.`,
+                      `Technical schematic diagram showing system architecture, connections, and process flows in clean blueprint style. Professional technical illustration with purple accent colors.${secondaryBrandText} Engineering aesthetic, high detail, 8K resolution.`
+                    ]
+                    
+                    // Use different image type based on index, cycling through options
+                    enhancedImagePrompt = imageTypes[(index - 1) % imageTypes.length]
                   }
                   
                   // Add timeout and performance optimizations
