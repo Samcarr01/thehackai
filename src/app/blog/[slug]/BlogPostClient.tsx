@@ -192,7 +192,7 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // Stable image renderer to prevent layout shift during scroll
+              // Stable image renderer with persistent loading to prevent scroll issues
               img: ({ src, alt }) => (
                 <figure className="my-8 clear-both">
                   <div className="blog-image shadow-xl">
@@ -200,13 +200,13 @@ export default function BlogPostClient({ post, user }: Props) {
                       src={src} 
                       alt={alt} 
                       className="w-full h-auto block"
-                      loading="lazy" // Use lazy loading to prevent excessive loading
+                      loading="eager" // Force eager loading to prevent scroll-induced reloading
                       decoding="async" // Non-blocking decoding for better performance  
+                      fetchPriority="high" // Prioritize image loading
                       style={{ 
-                        aspectRatio: '16/9', // Fixed aspect ratio to prevent layout shift
-                        objectFit: 'cover',  // Better image fitting
-                        maxWidth: '100%',
-                        height: 'auto',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
                         backgroundColor: '#1f2937' // Gray placeholder while loading
                       }}
                       onError={(e) => {
@@ -215,7 +215,7 @@ export default function BlogPostClient({ post, user }: Props) {
                         const container = target.closest('.blog-image')
                         if (container) {
                           container.innerHTML = `
-                            <div class="w-full h-full bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700 min-h-[300px]">
+                            <div class="w-full bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700" style="height: 300px; aspect-ratio: 16/9;">
                               <div class="text-center text-gray-400">
                                 <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
