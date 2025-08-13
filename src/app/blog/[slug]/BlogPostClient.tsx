@@ -192,36 +192,74 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // Stable image renderer - optimized for consistent display
-              img: ({ src, alt }) => (
-                <figure className="my-8 clear-both">
-                  <div className="blog-image shadow-xl">
-                    <img 
-                      src={src} 
-                      alt={alt} 
-                      onError={(e) => {
-                        console.warn('❌ Blog image failed to load:', src)
-                        const target = e.target as HTMLImageElement
-                        const container = target.closest('.blog-image')
-                        if (container) {
-                          container.innerHTML = `
-                            <div class="w-full h-full bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700">
-                              <div class="text-center text-gray-400">
-                                <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <p class="text-sm">Image temporarily unavailable</p>
-                                ${alt ? `<p class="text-xs mt-1 opacity-75">${alt}</p>` : ''}
-                              </div>
-                            </div>
-                          `
-                        }
-                      }}
-                    />
-                  </div>
-                  {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
-                </figure>
-              ),
+              // Anti-flicker image renderer with aggressive caching and stability
+              img: ({ src, alt }) => {
+                // Enhanced debugging for image issues
+                const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  console.error('🚨 IMAGE LOAD ERROR:', {
+                    src,
+                    alt,
+                    timestamp: new Date().toISOString(),
+                    scrollY: window.scrollY,
+                    isTemporaryUrl: src?.includes('oaidalleapiprodscus.blob.core.windows.net'),
+                    isPermanentUrl: src?.includes('supabase')
+                  })
+                  
+                  const target = e.target as HTMLImageElement
+                  const container = target.closest('.blog-image')
+                  if (container) {
+                    container.innerHTML = `
+                      <div class="w-full h-full bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700">
+                        <div class="text-center text-gray-400">
+                          <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <p class="text-sm">Image load failed</p>
+                          ${alt ? `<p class="text-xs mt-1 opacity-75">${alt}</p>` : ''}
+                          <p class="text-xs mt-1 opacity-50">URL: ${src?.slice(0, 50)}...</p>
+                        </div>
+                      </div>
+                    `
+                  }
+                }
+
+                const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  console.log('✅ IMAGE LOADED:', {
+                    src,
+                    alt,
+                    timestamp: new Date().toISOString(),
+                    scrollY: window.scrollY,
+                    naturalWidth: (e.target as HTMLImageElement).naturalWidth,
+                    naturalHeight: (e.target as HTMLImageElement).naturalHeight
+                  })
+                }
+
+                return (
+                  <figure className="my-8 clear-both">
+                    <div className="blog-image shadow-xl">
+                      <img 
+                        src={src} 
+                        alt={alt}
+                        loading="eager"
+                        decoding="sync"
+                        fetchPriority="high"
+                        style={{
+                          // Force high priority and prevent unloading
+                          contentVisibility: 'visible',
+                          contain: 'layout style paint',
+                          imageRendering: 'auto'
+                        }}
+                        onError={handleImageError}
+                        onLoad={handleImageLoad}
+                        // Additional attributes to prevent flicker
+                        referrerPolicy="no-referrer"
+                        crossOrigin="anonymous"
+                      />
+                    </div>
+                    {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
+                  </figure>
+                )
+              },
               // Custom code block renderer
               code: ({ children, ...props }) => {
                 const isInline = !('className' in props && typeof props.className === 'string' && props.className.includes('language-'))

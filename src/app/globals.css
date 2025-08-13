@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Blog image stability - prevent layout shift and loading/unloading during scroll */
+/* ANTI-FLICKER BLOG IMAGES - Aggressive stability settings */
 .blog-image {
   min-height: 300px;
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.5), rgba(75, 85, 99, 0.3));
@@ -10,9 +10,13 @@
   overflow: hidden;
   position: relative;
   aspect-ratio: 16/9;
-  /* Force compositing layer for stability */
-  will-change: transform;
-  transform: translateZ(0);
+  /* Create isolated stacking context */
+  isolation: isolate;
+  /* Force GPU layer and prevent changes */
+  will-change: auto; /* Don't hint at changes */
+  transform: translate3d(0, 0, 0); /* Force hardware acceleration */
+  /* Prevent any layout recalculation */
+  contain: layout style paint;
 }
 
 .blog-image img {
@@ -20,20 +24,38 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  /* Force browser to keep images in memory during scroll */
-  will-change: transform;
-  transform: translateZ(0);
-  /* Prevent layout shifts and maintain stability */
+  /* CRITICAL: Prevent any browser optimizations that cause flicker */
+  will-change: auto; /* No dynamic changes expected */
+  transform: translate3d(0, 0, 0); /* Force GPU layer */
+  /* Prevent paint invalidation */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  /* Additional stability improvements */
+  /* Force high quality rendering */
   image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  /* Prevent image unloading during scroll */
-  loading: eager;
-  /* Ensure images stay loaded */
-  opacity: 1;
-  transition: opacity 0.3s ease;
+  image-rendering: optimize-contrast;
+  /* Prevent any transitions or animations */
+  transition: none !important;
+  /* Force immediate loading and prevent lazy loading */
+  content-visibility: visible !important;
+  /* Ensure opacity is always 1 */
+  opacity: 1 !important;
+  /* Prevent any pointer events from interfering */
+  pointer-events: auto;
+  /* Force contain layout calculations */
+  contain: layout style;
+}
+
+/* Additional CSS to prevent scroll-triggered repaints */
+.blog-image img[src*="supabase"] {
+  /* Extra stability for Supabase images */
+  image-rendering: auto !important;
+  will-change: auto !important;
+}
+
+.blog-image img[src*="oaidalleapiprodscus"] {
+  /* Mark temporary URLs visually for debugging */
+  border: 2px solid red !important;
+  filter: sepia(0.2) !important;
 }
 
 @layer base {
