@@ -14,16 +14,15 @@
 
 .blog-image img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
   object-fit: cover;
-  will-change: auto;
-  /* Prevent browser from unloading images during scroll */
-  content-visibility: auto;
-  contain-intrinsic-size: 100% 300px;
+  /* Force browser to keep images in memory during scroll */
+  will-change: transform;
+  transform: translateZ(0);
+  /* Prevent layout shifts and maintain stability */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @layer base {
