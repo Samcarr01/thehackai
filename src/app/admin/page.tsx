@@ -1472,15 +1472,42 @@ export default function AdminPage() {
                           throw new Error(`❌ Missing required fields: ${missingFields.join(', ')}`)
                         }
                         
+                        // Validate and fix image URLs in content before saving
+                        let validatedContent = (previewBlog.content || '').trim()
+                        const temporaryUrlPattern = /oaidalleapiprodscus\.blob\.core\.windows\.net/g
+                        const temporaryUrls = validatedContent.match(temporaryUrlPattern)
+                        
+                        if (temporaryUrls && temporaryUrls.length > 0) {
+                          console.warn(`⚠️ Found ${temporaryUrls.length} temporary DALL-E URLs in content - these will cause flickering issues!`)
+                          console.warn('🔧 This indicates image storage failed during generation')
+                          
+                          // Try to replace with permanent URLs if we have generated_images metadata
+                          if (previewBlog.generated_images && previewBlog.generated_images.length > 0) {
+                            for (const img of previewBlog.generated_images) {
+                              if (img.original_dalle_url && img.url && !img.url.includes('oaidalleapiprodscus.blob.core.windows.net')) {
+                                validatedContent = validatedContent.replace(img.original_dalle_url, img.url)
+                                console.log(`✅ Replaced temporary URL with permanent URL for image`)
+                              }
+                            }
+                          }
+                          
+                          // Final check
+                          const remainingTempUrls = validatedContent.match(temporaryUrlPattern)
+                          if (remainingTempUrls && remainingTempUrls.length > 0) {
+                            showNotification('Warning', `Blog contains ${remainingTempUrls.length} temporary image URLs that will expire and cause broken images. Consider regenerating the blog.`, 'error')
+                          }
+                        }
+
                         // Clean the blog post data with better error handling
                         const cleanPost = {
                           title: (previewBlog.title || '').trim(),
-                          content: (previewBlog.content || '').trim(),
+                          content: validatedContent,
                           slug: (previewBlog.slug || '').trim(),
                           published_at: previewBlog.published_at || new Date().toISOString(),
                           meta_description: (previewBlog.meta_description || '').trim() || previewBlog.title.substring(0, 150),
                           category: (previewBlog.category || 'AI Tools').trim(),
-                          read_time: previewBlog.read_time || Math.ceil((previewBlog.content || '').split(' ').length / 200)
+                          read_time: previewBlog.read_time || Math.ceil((previewBlog.content || '').split(' ').length / 200),
+                          generated_images: previewBlog.generated_images || [] // Include image metadata for tracking
                         }
                         
                         console.log('📝 Cleaned post data for saving:', cleanPost)

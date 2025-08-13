@@ -12,6 +12,13 @@ export interface BlogPost {
   status?: 'draft' | 'published' // Optional for now
   created_at: string
   updated_at: string
+  generated_images?: Array<{
+    url: string
+    prompt: string
+    description: string
+    placement: string
+    original_dalle_url?: string
+  }>
 }
 
 export const blogService = {

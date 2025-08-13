@@ -10,6 +10,9 @@
   overflow: hidden;
   position: relative;
   aspect-ratio: 16/9;
+  /* Force compositing layer for stability */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .blog-image img {
@@ -23,6 +26,14 @@
   /* Prevent layout shifts and maintain stability */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  /* Additional stability improvements */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* Prevent image unloading during scroll */
+  loading: eager;
+  /* Ensure images stay loaded */
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 @layer base {
