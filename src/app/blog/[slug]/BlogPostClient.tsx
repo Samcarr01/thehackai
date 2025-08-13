@@ -196,13 +196,14 @@ export default function BlogPostClient({ post, user }: Props) {
               img: ({ src, alt }) => {
                 // Enhanced debugging for image issues
                 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  const srcStr = typeof src === 'string' ? src : ''
                   console.error('🚨 IMAGE LOAD ERROR:', {
-                    src,
+                    src: srcStr,
                     alt,
                     timestamp: new Date().toISOString(),
                     scrollY: window.scrollY,
-                    isTemporaryUrl: src?.includes('oaidalleapiprodscus.blob.core.windows.net'),
-                    isPermanentUrl: src?.includes('supabase')
+                    isTemporaryUrl: srcStr.includes('oaidalleapiprodscus.blob.core.windows.net'),
+                    isPermanentUrl: srcStr.includes('supabase')
                   })
                   
                   const target = e.target as HTMLImageElement
@@ -216,7 +217,7 @@ export default function BlogPostClient({ post, user }: Props) {
                           </svg>
                           <p class="text-sm">Image load failed</p>
                           ${alt ? `<p class="text-xs mt-1 opacity-75">${alt}</p>` : ''}
-                          <p class="text-xs mt-1 opacity-50">URL: ${src?.slice(0, 50)}...</p>
+                          <p class="text-xs mt-1 opacity-50">URL: ${srcStr.slice(0, 50)}...</p>
                         </div>
                       </div>
                     `
@@ -224,8 +225,9 @@ export default function BlogPostClient({ post, user }: Props) {
                 }
 
                 const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  const srcStr = typeof src === 'string' ? src : ''
                   console.log('✅ IMAGE LOADED:', {
-                    src,
+                    src: srcStr,
                     alt,
                     timestamp: new Date().toISOString(),
                     scrollY: window.scrollY,
