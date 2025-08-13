@@ -166,9 +166,9 @@ export const userService = {
         
         const timeoutPromise = new Promise<{ data: null; error: { message: string; isTimeout: boolean } }>((resolve) => {
           setTimeout(() => {
-            console.error('⏰ User: Database query timeout after 8 seconds')
+            console.error('⏰ User: Database query timeout after 12 seconds')
             resolve({ data: null, error: { message: 'Database query timeout', isTimeout: true } })
-          }, 8000) // Increased timeout to reduce errors
+          }, 12000) // Increased timeout to 12 seconds to reduce errors
         })
         
         // Race the query against timeout

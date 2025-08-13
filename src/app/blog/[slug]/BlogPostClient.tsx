@@ -192,19 +192,26 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // SILENT image renderer - no event handlers to prevent constant reloading
+              // SAFE image renderer with SSR compatibility
               img: ({ src, alt }) => {
-                const srcStr = typeof src === 'string' ? src : ''
+                // Safe string conversion for SSR compatibility
+                const srcStr = src && typeof src === 'string' ? src : ''
+                const altStr = alt && typeof alt === 'string' ? alt : ''
+                
+                // Don't render if no valid src to prevent hydration mismatches
+                if (!srcStr) {
+                  return null
+                }
                 
                 return (
                   <figure className="my-8 clear-both">
                     <div className="blog-image shadow-xl">
                       <img 
                         src={srcStr}
-                        alt={alt || ''}
-                        loading="eager"
-                        decoding="sync"
-                        // NO onLoad/onError handlers - they trigger repeatedly during scroll
+                        alt={altStr}
+                        loading="lazy"
+                        decoding="async"
+                        // NO event handlers to prevent scroll-triggered reloading
                         style={{
                           width: '100%',
                           height: '100%',
@@ -213,7 +220,7 @@ export default function BlogPostClient({ post, user }: Props) {
                         }}
                       />
                     </div>
-                    {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
+                    {altStr && <figcaption className="text-center text-sm text-gray-400 mt-3">{altStr}</figcaption>}
                   </figure>
                 )
               },
