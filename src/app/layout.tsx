@@ -13,16 +13,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'thehackai - Battle-tested AI workflows that actually work',
-  description: 'Access curated AI tools and guides for £15/month. Proven GPTs, PDF guides, and monthly additions.',
+  description: 'Access curated AI tools and guides. Pro £7/month, Ultra £19/month. Proven GPTs, PDF guides, and monthly additions.',
   icons: {
     icon: [
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon.ico', sizes: 'any' }
+      { url: '/logo.png', sizes: 'any', type: 'image/png' }
     ],
     apple: [
-      { url: '/favicon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/favicon-512x512.png', sizes: '512x512', type: 'image/png' }
+      { url: '/logo.png', sizes: '192x192', type: 'image/png' }
     ],
     other: [
       {
