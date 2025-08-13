@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Cache for user profile to prevent excessive database calls
 let profileCache: { profile: UserProfile | null; timestamp: number } | null = null
-const PROFILE_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+const PROFILE_CACHE_TTL = 10 * 60 * 1000 // 10 minutes - longer cache for better performance
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)

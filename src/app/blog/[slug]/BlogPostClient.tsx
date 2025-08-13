@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import SmartNavigation from '@/components/SmartNavigation'
+import BlogImage from '@/components/BlogImage'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { BlogPost } from '@/lib/blog'
@@ -193,7 +193,7 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // OPTIMIZED image renderer with Next.js Image for performance
+              // ROBUST image renderer with error handling and fallbacks
               img: ({ src, alt, ...props }) => {
                 // Comprehensive safety checks for SSR/CSR compatibility
                 if (!src || typeof src !== 'string' || src.trim() === '') {
@@ -209,31 +209,13 @@ export default function BlogPostClient({ post, user }: Props) {
                 }
                 
                 return (
-                  <figure className="my-8 clear-both" key={srcStr}>
-                    <div className="blog-image shadow-xl">
-                      <Image
-                        src={srcStr}
-                        alt={altStr}
-                        width={800}
-                        height={450}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx4f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                        sizes="(max-width: 768px) 100vw, 800px"
-                        style={{
-                          objectFit: 'cover'
-                        }}
-                      />
-                    </div>
-                    {altStr && (
-                      <figcaption 
-                        className="text-center text-sm text-gray-400 mt-3"
-                      >
-                        {altStr}
-                      </figcaption>
-                    )}
-                  </figure>
+                  <BlogImage
+                    key={srcStr}
+                    src={srcStr}
+                    alt={altStr}
+                    width={800}
+                    height={450}
+                  />
                 )
               },
               // Custom code block renderer
