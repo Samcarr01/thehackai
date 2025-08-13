@@ -192,56 +192,29 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // STABLE image renderer - prevent React re-rendering images
+              // SILENT image renderer - no event handlers to prevent constant reloading
               img: ({ src, alt }) => {
                 const srcStr = typeof src === 'string' ? src : ''
                 
-                // Create a stable key to prevent re-mounting
-                const stableKey = `${srcStr}-${alt}`.replace(/[^a-zA-Z0-9]/g, '').slice(0, 50)
-                
-                return React.createElement('figure', 
-                  { className: "my-8 clear-both", key: stableKey },
-                  [
-                    React.createElement('div', 
-                      { className: "blog-image shadow-xl", key: `container-${stableKey}` },
-                      React.createElement('img', {
-                        key: `img-${stableKey}`, // Force React to never re-mount this element
-                        src: srcStr,
-                        alt: alt || '',
-                        loading: 'eager',
-                        decoding: 'sync',
-                        fetchPriority: 'high',
-                        style: {
+                return (
+                  <figure className="my-8 clear-both">
+                    <div className="blog-image shadow-xl">
+                      <img 
+                        src={srcStr}
+                        alt={alt || ''}
+                        loading="eager"
+                        decoding="sync"
+                        // NO onLoad/onError handlers - they trigger repeatedly during scroll
+                        style={{
                           width: '100%',
                           height: '100%',
                           display: 'block',
-                          objectFit: 'cover',
-                          contentVisibility: 'visible',
-                          contain: 'strict',
-                          imageRendering: 'auto'
-                        },
-                        onLoad: () => {
-                          // Minimal logging to reduce console spam
-                          console.log(`✅ STABLE IMAGE: ${srcStr.slice(-20)}`)
-                        },
-                        onError: (e: any) => {
-                          console.error(`❌ IMAGE ERROR: ${srcStr.slice(-20)}`)
-                          const img = e.target
-                          if (img.parentElement) {
-                            img.parentElement.innerHTML = `
-                              <div style="width:100%;height:100%;background:#374151;display:flex;align-items:center;justify-content:center;border-radius:0.5rem;">
-                                <span style="color:#9CA3AF;font-size:14px;">Image unavailable</span>
-                              </div>
-                            `
-                          }
-                        }
-                      })
-                    ),
-                    alt ? React.createElement('figcaption', 
-                      { className: "text-center text-sm text-gray-400 mt-3", key: `caption-${stableKey}` },
-                      alt
-                    ) : null
-                  ].filter(Boolean)
+                          objectFit: 'cover'
+                        }}
+                      />
+                    </div>
+                    {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
+                  </figure>
                 )
               },
               // Custom code block renderer
