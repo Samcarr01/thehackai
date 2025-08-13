@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import SmartNavigation from '@/components/SmartNavigation'
 import ReactMarkdown from 'react-markdown'
@@ -192,76 +192,56 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // Anti-flicker image renderer with aggressive caching and stability
+              // STABLE image renderer - prevent React re-rendering images
               img: ({ src, alt }) => {
-                // Enhanced debugging for image issues
-                const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const srcStr = typeof src === 'string' ? src : ''
-                  console.error('🚨 IMAGE LOAD ERROR:', {
-                    src: srcStr,
-                    alt,
-                    timestamp: new Date().toISOString(),
-                    scrollY: window.scrollY,
-                    isTemporaryUrl: srcStr.includes('oaidalleapiprodscus.blob.core.windows.net'),
-                    isPermanentUrl: srcStr.includes('supabase')
-                  })
-                  
-                  const target = e.target as HTMLImageElement
-                  const container = target.closest('.blog-image')
-                  if (container) {
-                    container.innerHTML = `
-                      <div class="w-full h-full bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700">
-                        <div class="text-center text-gray-400">
-                          <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <p class="text-sm">Image load failed</p>
-                          ${alt ? `<p class="text-xs mt-1 opacity-75">${alt}</p>` : ''}
-                          <p class="text-xs mt-1 opacity-50">URL: ${srcStr.slice(0, 50)}...</p>
-                        </div>
-                      </div>
-                    `
-                  }
-                }
-
-                const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const srcStr = typeof src === 'string' ? src : ''
-                  console.log('✅ IMAGE LOADED:', {
-                    src: srcStr,
-                    alt,
-                    timestamp: new Date().toISOString(),
-                    scrollY: window.scrollY,
-                    naturalWidth: (e.target as HTMLImageElement).naturalWidth,
-                    naturalHeight: (e.target as HTMLImageElement).naturalHeight
-                  })
-                }
-
-                return (
-                  <figure className="my-8 clear-both">
-                    <div className="blog-image shadow-xl">
-                      <img 
-                        src={src} 
-                        alt={alt}
-                        loading="eager"
-                        decoding="sync"
-                        fetchPriority="high"
-                        style={{
-                          // CRITICAL: Prevent browser from ever reloading images
-                          contentVisibility: 'visible',
-                          contain: 'strict', 
-                          imageRendering: 'auto',
-                          // Force immediate display and prevent intersection observer
+                const srcStr = typeof src === 'string' ? src : ''
+                
+                // Create a stable key to prevent re-mounting
+                const stableKey = `${srcStr}-${alt}`.replace(/[^a-zA-Z0-9]/g, '').slice(0, 50)
+                
+                return React.createElement('figure', 
+                  { className: "my-8 clear-both", key: stableKey },
+                  [
+                    React.createElement('div', 
+                      { className: "blog-image shadow-xl", key: `container-${stableKey}` },
+                      React.createElement('img', {
+                        key: `img-${stableKey}`, // Force React to never re-mount this element
+                        src: srcStr,
+                        alt: alt || '',
+                        loading: 'eager',
+                        decoding: 'sync',
+                        fetchPriority: 'high',
+                        style: {
+                          width: '100%',
+                          height: '100%',
                           display: 'block',
-                          visibility: 'visible'
-                        }}
-                        onError={handleImageError}
-                        onLoad={handleImageLoad}
-                        // Don't use crossOrigin as it may cause auth issues with Supabase
-                        referrerPolicy="strict-origin-when-cross-origin"
-                      />
-                    </div>
-                    {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
-                  </figure>
+                          objectFit: 'cover',
+                          contentVisibility: 'visible',
+                          contain: 'strict',
+                          imageRendering: 'auto'
+                        },
+                        onLoad: () => {
+                          // Minimal logging to reduce console spam
+                          console.log(`✅ STABLE IMAGE: ${srcStr.slice(-20)}`)
+                        },
+                        onError: (e: any) => {
+                          console.error(`❌ IMAGE ERROR: ${srcStr.slice(-20)}`)
+                          const img = e.target
+                          if (img.parentElement) {
+                            img.parentElement.innerHTML = `
+                              <div style="width:100%;height:100%;background:#374151;display:flex;align-items:center;justify-content:center;border-radius:0.5rem;">
+                                <span style="color:#9CA3AF;font-size:14px;">Image unavailable</span>
+                              </div>
+                            `
+                          }
+                        }
+                      })
+                    ),
+                    alt ? React.createElement('figcaption', 
+                      { className: "text-center text-sm text-gray-400 mt-3", key: `caption-${stableKey}` },
+                      alt
+                    ) : null
+                  ].filter(Boolean)
                 )
               },
               // Custom code block renderer

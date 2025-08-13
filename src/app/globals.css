@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ANTI-FLICKER BLOG IMAGES - NUCLEAR OPTION to prevent reloading */
+/* STABLE BLOG IMAGES - Clean approach with React key stability */
 .blog-image {
   min-height: 300px;
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.5), rgba(75, 85, 99, 0.3));
@@ -10,42 +10,18 @@
   overflow: hidden;
   position: relative;
   aspect-ratio: 16/9;
-  /* NUCLEAR: Complete containment */
-  contain: strict;
-  /* Force immediate paint */
-  content-visibility: visible !important;
-  /* Prevent any optimizations */
-  will-change: auto;
-  transform: translate3d(0, 0, 0);
+  /* Minimal necessary containment */
+  contain: layout;
 }
 
 .blog-image img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-  object-fit: cover !important;
-  /* NUCLEAR: Prevent ALL browser optimizations */
-  will-change: auto !important;
-  transform: translate3d(0, 0, 0) !important;
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-  /* CRITICAL: Complete containment to prevent reloads */
-  contain: strict !important;
-  content-visibility: visible !important;
-  /* Force visible and prevent lazy loading */
-  loading: eager !important;
-  /* Prevent ANY transitions or changes */
-  transition: none !important;
-  animation: none !important;
-  /* Lock opacity */
-  opacity: 1 !important;
-  /* Prevent intersection observer from affecting images */
-  pointer-events: auto !important;
-  /* NUCLEAR: Force browser to never unload */
-  position: relative !important;
-  visibility: visible !important;
-  /* Prevent scroll-based optimizations */
-  overscroll-behavior: contain !important;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  /* Basic stability without aggressive overrides */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* Additional CSS to prevent scroll-triggered repaints */
