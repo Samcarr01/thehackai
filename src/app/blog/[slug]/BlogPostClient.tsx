@@ -192,7 +192,7 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // ULTRA-SAFE image renderer with complete SSR compatibility
+              // PROXY image renderer to bypass authentication issues
               img: ({ src, alt, ...props }) => {
                 // Comprehensive safety checks for SSR/CSR compatibility
                 if (!src || typeof src !== 'string' || src.trim() === '') {
@@ -207,15 +207,19 @@ export default function BlogPostClient({ post, user }: Props) {
                   return null
                 }
                 
+                // Use proxy for Supabase images to bypass authentication issues
+                const proxiedSrc = srcStr.includes('supabase.co') 
+                  ? `/api/proxy-image?url=${encodeURIComponent(srcStr)}`
+                  : srcStr
+                
                 return (
                   <figure className="my-8 clear-both" key={srcStr}>
                     <div className="blog-image shadow-xl">
                       <img 
-                        src={srcStr}
+                        src={proxiedSrc}
                         alt={altStr}
                         loading="lazy"
                         decoding="async"
-                        crossOrigin="anonymous"
                         // Prevent any potential hydration issues
                         suppressHydrationWarning={true}
                         style={{
