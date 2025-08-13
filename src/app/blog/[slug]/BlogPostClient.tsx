@@ -246,16 +246,18 @@ export default function BlogPostClient({ post, user }: Props) {
                         decoding="sync"
                         fetchPriority="high"
                         style={{
-                          // Force high priority and prevent unloading
+                          // CRITICAL: Prevent browser from ever reloading images
                           contentVisibility: 'visible',
-                          contain: 'layout style paint',
-                          imageRendering: 'auto'
+                          contain: 'strict', 
+                          imageRendering: 'auto',
+                          // Force immediate display and prevent intersection observer
+                          display: 'block',
+                          visibility: 'visible'
                         }}
                         onError={handleImageError}
                         onLoad={handleImageLoad}
-                        // Additional attributes to prevent flicker
-                        referrerPolicy="no-referrer"
-                        crossOrigin="anonymous"
+                        // Don't use crossOrigin as it may cause auth issues with Supabase
+                        referrerPolicy="strict-origin-when-cross-origin"
                       />
                     </div>
                     {alt && <figcaption className="text-center text-sm text-gray-400 mt-3">{alt}</figcaption>}
