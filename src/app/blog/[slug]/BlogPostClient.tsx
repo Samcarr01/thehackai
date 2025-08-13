@@ -192,35 +192,49 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // SAFE image renderer with SSR compatibility
-              img: ({ src, alt }) => {
-                // Safe string conversion for SSR compatibility
-                const srcStr = src && typeof src === 'string' ? src : ''
-                const altStr = alt && typeof alt === 'string' ? alt : ''
+              // ULTRA-SAFE image renderer with complete SSR compatibility
+              img: ({ src, alt, ...props }) => {
+                // Comprehensive safety checks for SSR/CSR compatibility
+                if (!src || typeof src !== 'string' || src.trim() === '') {
+                  return null
+                }
                 
-                // Don't render if no valid src to prevent hydration mismatches
-                if (!srcStr) {
+                const srcStr = src.trim()
+                const altStr = (alt && typeof alt === 'string') ? alt.trim() : ''
+                
+                // Additional validation for Supabase URLs
+                if (!srcStr.includes('supabase.co') && !srcStr.startsWith('http')) {
                   return null
                 }
                 
                 return (
-                  <figure className="my-8 clear-both">
+                  <figure className="my-8 clear-both" key={srcStr}>
                     <div className="blog-image shadow-xl">
                       <img 
                         src={srcStr}
                         alt={altStr}
                         loading="lazy"
                         decoding="async"
-                        // NO event handlers to prevent scroll-triggered reloading
+                        crossOrigin="anonymous"
+                        // Prevent any potential hydration issues
+                        suppressHydrationWarning={true}
                         style={{
                           width: '100%',
                           height: '100%',
                           display: 'block',
                           objectFit: 'cover'
                         }}
+                        {...props}
                       />
                     </div>
-                    {altStr && <figcaption className="text-center text-sm text-gray-400 mt-3">{altStr}</figcaption>}
+                    {altStr && (
+                      <figcaption 
+                        className="text-center text-sm text-gray-400 mt-3"
+                        suppressHydrationWarning={true}
+                      >
+                        {altStr}
+                      </figcaption>
+                    )}
                   </figure>
                 )
               },
