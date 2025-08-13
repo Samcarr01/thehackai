@@ -1,6 +1,15 @@
 import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+// Singleton instance
+let client: SupabaseClient | null = null
 
 export function createClient() {
+  // Return existing client if already created
+  if (client) {
+    return client
+  }
+  
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
@@ -14,18 +23,20 @@ export function createClient() {
     throw new Error('Missing Supabase environment variables')
   }
   
-  console.log('✅ Creating Supabase client with env vars:', {
-    hasUrl: !!url,
-    hasKey: !!key,
-    urlStart: url.substring(0, 30) + '...',
-    keyStart: key.substring(0, 30) + '...'
-  })
+  // Only log once when creating the singleton
+  console.log('✅ Creating Supabase client singleton')
   
-  return createBrowserClient(url, key, {
+  // Create and cache the client
+  client = createBrowserClient(url, key, {
     auth: {
       flowType: 'pkce',
       autoRefreshToken: true,
       persistSession: true
     }
   })
+  
+  return client
 }
+
+// Export the client instance directly for better performance
+export const supabase = createClient()

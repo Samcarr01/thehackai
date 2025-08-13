@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import SmartNavigation from '@/components/SmartNavigation'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -192,7 +193,7 @@ export default function BlogPostClient({ post, user }: Props) {
                   </a>
                 )
               },
-              // PROXY image renderer to bypass authentication issues
+              // OPTIMIZED image renderer with Next.js Image for performance
               img: ({ src, alt, ...props }) => {
                 // Comprehensive safety checks for SSR/CSR compatibility
                 if (!src || typeof src !== 'string' || src.trim() === '') {
@@ -202,39 +203,32 @@ export default function BlogPostClient({ post, user }: Props) {
                 const srcStr = src.trim()
                 const altStr = (alt && typeof alt === 'string') ? alt.trim() : ''
                 
-                // Additional validation for Supabase URLs
-                if (!srcStr.includes('supabase.co') && !srcStr.startsWith('http')) {
+                // Additional validation for image URLs
+                if (!srcStr.startsWith('http')) {
                   return null
                 }
-                
-                // Use proxy for Supabase images to bypass authentication issues
-                const proxiedSrc = srcStr.includes('supabase.co') 
-                  ? `/api/proxy-image?url=${encodeURIComponent(srcStr)}`
-                  : srcStr
                 
                 return (
                   <figure className="my-8 clear-both" key={srcStr}>
                     <div className="blog-image shadow-xl">
-                      <img 
-                        src={proxiedSrc}
+                      <Image
+                        src={srcStr}
                         alt={altStr}
+                        width={800}
+                        height={450}
+                        className="w-full h-full object-cover"
                         loading="lazy"
-                        decoding="async"
-                        // Prevent any potential hydration issues
-                        suppressHydrationWarning={true}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx4f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        sizes="(max-width: 768px) 100vw, 800px"
                         style={{
-                          width: '100%',
-                          height: '100%',
-                          display: 'block',
                           objectFit: 'cover'
                         }}
-                        {...props}
                       />
                     </div>
                     {altStr && (
                       <figcaption 
                         className="text-center text-sm text-gray-400 mt-3"
-                        suppressHydrationWarning={true}
                       >
                         {altStr}
                       </figcaption>

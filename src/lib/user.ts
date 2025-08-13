@@ -2,10 +2,20 @@ import { createClient } from './supabase/client'
 
 export type UserTier = 'free' | 'pro' | 'ultra'
 
-// Rate limiting to prevent 429 errors
+// Enhanced caching and rate limiting to prevent excessive database calls
 let lastDbCall = 0
-const MIN_DB_INTERVAL = 500 // 0.5 second minimum between database calls
+const MIN_DB_INTERVAL = 1000 // 1 second minimum between database calls
 let dbCallQueue = new Map<string, Promise<any>>()
+
+// In-memory cache for user profiles
+interface ProfileCache {
+  profile: UserProfile
+  timestamp: number
+  ttl: number
+}
+
+const profileCache = new Map<string, ProfileCache>()
+const DEFAULT_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 export interface UserProfile {
   id: string
@@ -134,9 +144,17 @@ export const getUserDisplayName = (user: UserProfile | null): string => {
 
 export const userService = {
   async getProfile(userId: string): Promise<UserProfile | null> {
+    const now = Date.now()
+    
+    // Check cache first
+    const cached = profileCache.get(userId)
+    if (cached && now - cached.timestamp < cached.ttl) {
+      console.log('🚀 User: Using cached profile for userId:', userId)
+      return cached.profile
+    }
+    
     // Rate limiting protection and deduplication
     const cacheKey = `getProfile_${userId}`
-    const now = Date.now()
     
     // If there's already a pending call for this user, wait for it
     if (dbCallQueue.has(cacheKey)) {
@@ -229,19 +247,29 @@ export const userService = {
         
         // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
         // Skip auto-upgrade if admin has manually set a tier for testing
+        let profile: UserProfile
         if (data && data.email === 'samcarr1232@gmail.com' && !data.user_tier) {
-          return {
+          profile = {
             ...data,
             is_pro: true,  // Backward compatibility
             user_tier: 'ultra' as UserTier
           }
+        } else {
+          // Ensure backward compatibility: sync is_pro with user_tier
+          profile = {
+            ...data,
+            is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
+          }
         }
         
-        // Ensure backward compatibility: sync is_pro with user_tier
-        return {
-          ...data,
-          is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
-        }
+        // Cache the profile
+        profileCache.set(userId, {
+          profile,
+          timestamp: now,
+          ttl: DEFAULT_CACHE_TTL
+        })
+        
+        return profile
       } catch (error: any) {
         console.error('❌ User: Error in getProfile:', error)
         return null
