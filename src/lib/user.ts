@@ -176,74 +176,70 @@ export const userService = {
     // Create promise for queue management with timeout
     const profilePromise = (async () => {
       try {
-        // Add timeout to prevent hanging database queries
+        // Optimize query for RLS performance with explicit single() call and AbortController
+        const controller = new AbortController()
+        
         const queryPromise = supabase
           .from('users')
           .select('*')
           .eq('id', userId)
+          .single()  // Add explicit single() to optimize RLS evaluation
+          .abortSignal(controller.signal)
         
-        const timeoutPromise = new Promise<{ data: null; error: { message: string; isTimeout: boolean } }>((resolve) => {
-          setTimeout(() => {
-            console.error('⏰ User: Database query timeout after 5 seconds')
-            resolve({ data: null, error: { message: 'Database query timeout', isTimeout: true } })
-          }, 5000) // Reduced to 5 seconds - if it takes longer, something is fundamentally wrong
-        })
+        const timeoutId = setTimeout(() => {
+          console.error('⏰ User: Database query timeout after 5 seconds')
+          controller.abort()
+        }, 5000)
         
-        // Race the query against timeout
-        const { data: allData, error: queryError } = await Promise.race([queryPromise, timeoutPromise])
+        try {
+          // Execute optimized query with true cancellation support
+          const { data: profileData, error: queryError } = await queryPromise
+          clearTimeout(timeoutId)
         
-        console.log('📊 Query result:', { 
-          hasData: !!allData, 
-          dataLength: allData?.length,
-          error: queryError?.message,
-          data: allData 
-        })
-        
-        if (queryError) {
-          console.error('❌ Error querying user profile:', queryError)
+          console.log('📊 Query result:', { 
+            hasData: !!profileData, 
+            error: queryError?.message,
+            data: profileData 
+          })
           
-          // Check if it's a timeout error - try cached data
-          if (queryError.message?.includes('timeout') || ('isTimeout' in queryError && queryError.isTimeout)) {
-            console.log('⏰ User: Database timeout - checking for cached data...')
-            try {
-              const cachedData = localStorage.getItem('cached-user-profile')
-              if (cachedData) {
-                const cachedProfile = JSON.parse(cachedData)
-                if (cachedProfile.id === userId) {
-                  console.log('✅ User: Using cached profile data for timeout fallback')
-                  return cachedProfile
+          if (queryError) {
+            console.error('❌ Error querying user profile:', queryError)
+            
+            // Check if it's an abort error (timeout)
+            if (queryError.name === 'AbortError' || queryError.message?.includes('aborted')) {
+              console.log('⏰ User: Query aborted due to timeout - checking cached data...')
+              try {
+                const cachedData = localStorage.getItem('cached-user-profile')
+                if (cachedData) {
+                  const cachedProfile = JSON.parse(cachedData)
+                  if (cachedProfile.id === userId) {
+                    console.log('✅ User: Using cached profile data for timeout fallback')
+                    return cachedProfile
+                  }
                 }
+              } catch (e) {
+                console.log('⚠️ User: Could not access cached data')
               }
-            } catch (e) {
-              console.log('⚠️ User: Could not access cached data')
+              return null
             }
+            
+            // Check if it's a rate limit error
+            if (queryError.message?.includes('429') || ('code' in queryError && queryError.code === '429')) {
+              console.error('🚨 User: Database rate limit detected - backing off for 2 seconds')
+              await new Promise(resolve => setTimeout(resolve, 2000))
+              throw new Error('Database rate limit exceeded. Please wait a moment and try again.')
+            }
+            
             return null
           }
           
-          // Check if it's a rate limit error
-          if (queryError.message?.includes('429') || ('code' in queryError && queryError.code === '429')) {
-            console.error('🚨 User: Database rate limit detected - backing off for 2 seconds')
-            await new Promise(resolve => setTimeout(resolve, 2000))
-            throw new Error('Database rate limit exceeded. Please wait a moment and try again.')
+          if (!profileData) {
+            console.log('📝 No user profile found')
+            return null
           }
           
-          return null
-        }
-        
-        if (!allData || allData.length === 0) {
-          console.log('📝 No user profile found')
-          return null
-        }
-        
-        if (allData.length > 1) {
-          console.warn('⚠️ Multiple user profiles found, using the first one:', allData.length)
-          // Return the most recent one
-          const sortedData = allData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          return sortedData[0]
-        }
-        
-        console.log('✅ Single user profile found')
-        const data = allData[0]
+          console.log('✅ User profile found')
+          const data = profileData
         
         // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
         // Skip auto-upgrade if admin has manually set a tier for testing
@@ -269,7 +265,14 @@ export const userService = {
           ttl: DEFAULT_CACHE_TTL
         })
         
-        return profile
+          return profile
+        } catch (abortError) {
+          if (abortError.name === 'AbortError') {
+            console.error('⏰ User: Query cancelled due to timeout')
+            return null
+          }
+          throw abortError
+        }
       } catch (error: any) {
         console.error('❌ User: Error in getProfile:', error)
         return null
