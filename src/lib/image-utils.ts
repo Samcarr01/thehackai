@@ -1,9 +1,12 @@
 // Stable image URL generation for blog posts
 export function getBlogImageUrl(imagePath: string): string {
-  // Remove any existing Supabase URL prefix if present
-  const cleanPath = imagePath.replace(/^.*\/storage\/v1\/object\/public\/blog-images\//, '');
+  // If it's already a complete Supabase Storage URL, return as-is
+  if (imagePath.includes('supabase.co/storage/v1/object/public/blog-images/')) {
+    return imagePath;
+  }
   
-  // Return stable public URL without auth context
+  // If it's a relative path, construct the full URL
+  const cleanPath = imagePath.replace(/^\//, ''); // Remove leading slash if present
   return `https://ndhljslogveuhijpifwf.supabase.co/storage/v1/object/public/blog-images/${cleanPath}`;
 }
 
