@@ -17,37 +17,8 @@ interface ProfileCache {
 const profileCache = new Map<string, ProfileCache>()
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-// Fast profile fetch using server-side API with service role
-// This eliminates the sequential scan issue by bypassing RLS on the server
-async function fetchProfileViaAPI(userId: string): Promise<UserProfile | null> {
-  try {
-    const response = await fetch(`/api/user/profile?userId=${encodeURIComponent(userId)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'same-origin' // Include cookies for authentication
-    })
-    
-    if (!response.ok) {
-      if (response.status === 401) {
-        console.log('🔐 API: Unauthorized - user not authenticated')
-        return null
-      }
-      if (response.status === 404) {
-        console.log('📝 API: Profile not found')
-        return null
-      }
-      throw new Error(`API error: ${response.status}`)
-    }
-    
-    const { profile } = await response.json()
-    return profile
-  } catch (error: any) {
-    console.error('❌ API: Profile fetch failed:', error)
-    throw error
-  }
-}
+// Optimized profile cache with fast fallback to localStorage
+// Prioritizes cached data to ensure the app remains responsive
 
 export interface UserProfile {
   id: string
@@ -207,26 +178,72 @@ export const userService = {
     // Create promise for queue management with timeout
     const profilePromise = (async () => {
       try {
-        // Use server-side API for fast profile lookup without RLS overhead
-        const apiPromise = fetchProfileViaAPI(userId)
+        // Use optimized direct client with fast timeout and retry
+        const supabase = createClient()
         
+        const fastQuery = async (): Promise<UserProfile | null> => {
+          try {
+            console.log('🚀 User: Attempting fast direct query with RLS optimization')
+            
+            // Use the most optimized query possible with RLS
+            const { data, error } = await supabase
+              .from('users')
+              .select('id, email, first_name, last_name, is_pro, user_tier, stripe_customer_id, stripe_subscription_id, subscription_status, subscription_current_period_end, subscription_cancel_at_period_end, created_at, updated_at')
+              .eq('id', userId)
+              .limit(1)
+              .single()
+            
+            if (error) {
+              console.error('❌ Direct query error:', error.message)
+              return null
+            }
+            
+            if (!data) {
+              console.log('📝 No profile found with direct query')
+              return null
+            }
+            
+            console.log('✅ Direct query successful')
+            
+            // Apply admin logic and type conversion
+            let profile: UserProfile
+            if (data.email === 'samcarr1232@gmail.com' && !data.user_tier) {
+              profile = {
+                ...data,
+                is_pro: true,
+                user_tier: 'ultra' as UserTier
+              }
+            } else {
+              profile = {
+                ...data,
+                is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
+              }
+            }
+            
+            return profile
+          } catch (queryError: any) {
+            console.error('❌ Direct query exception:', queryError)
+            return null
+          }
+        }
+        
+        // Try fast query with short timeout
         const timeoutPromise = new Promise<UserProfile | null>((resolve) => {
           setTimeout(() => {
-            console.error('⏰ User: API request timeout after 3 seconds')
+            console.log('⏰ Fast query timeout - will try cached fallback')
             resolve(null)
-          }, 3000) // Reduced to 3s - API should be much faster with direct DB access
+          }, 1500) // Very short timeout - if RLS is optimized this should be fast
         })
         
-        // Race the API call against timeout
-        const profileData = await Promise.race([apiPromise, timeoutPromise])
+        const profileData = await Promise.race([fastQuery(), timeoutPromise])
         
-        console.log('📊 API result:', { 
+        console.log('📊 Query result:', { 
           hasData: !!profileData, 
           data: profileData 
         })
         
         if (!profileData) {
-          console.log('⏰ User: API timeout or no profile found - checking cached data...')
+          console.log('⏰ User: Query timeout - checking cached data...')
           try {
             const cachedData = localStorage.getItem('cached-user-profile')
             if (cachedData) {
@@ -242,7 +259,7 @@ export const userService = {
           return null
         }
         
-        console.log('✅ User profile fetched via API')
+        console.log('✅ User profile fetched successfully')
         
         // Cache the profile
         profileCache.set(userId, {
