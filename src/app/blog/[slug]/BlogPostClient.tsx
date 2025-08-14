@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import SmartNavigation from '@/components/SmartNavigation'
 import BlogImage from '@/components/BlogImage'
@@ -67,17 +67,15 @@ export default function BlogPostClient({ post, user }: Props) {
     // Could add a toast notification here
   }
 
-  // Generate table of contents from content
-  const generateTOC = () => {
+  // Generate table of contents from content - MEMOIZED to prevent React hydration issues
+  const toc = useMemo(() => {
     const headings = post.content.match(/^##\s+(.+)$/gm) || []
     return headings.map(heading => {
       const title = heading.replace(/^##\s+/, '')
       const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
       return { title, id }
     })
-  }
-
-  const toc = generateTOC()
+  }, [post.content])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
@@ -285,7 +283,8 @@ export default function BlogPostClient({ post, user }: Props) {
                 <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
               ),
               h2: ({ children, ...props }) => {
-                const text = Array.isArray(children) ? children.join('') : children?.toString() || ''
+                // Ensure stable ID generation that matches TOC
+                const text = React.Children.toArray(children).join('')
                 const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
                 return <h2 id={id} className="text-2xl font-semibold text-white mb-4 mt-8 scroll-mt-20" {...props}>{children}</h2>
               },
