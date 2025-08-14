@@ -1,4 +1,5 @@
 import { createClient } from './supabase/client'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 export type UserTier = 'free' | 'pro' | 'ultra'
 
@@ -16,6 +17,25 @@ interface ProfileCache {
 
 const profileCache = new Map<string, ProfileCache>()
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+// Service role client for bypassing RLS on profile queries
+// This eliminates the sequential scan issue caused by auth.uid() = id evaluation
+function createServiceRoleClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  if (!url || !serviceKey) {
+    console.error('🚨 Service client: Missing environment variables')
+    throw new Error('Missing Supabase service role configuration')
+  }
+  
+  return createServiceClient(url, serviceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  })
+}
 
 export interface UserProfile {
   id: string
@@ -169,19 +189,22 @@ export const userService = {
     }
     
     lastDbCall = Date.now()
-    const supabase = createClient()
     
     console.log('🔍 Fetching profile for userId:', userId)
+    
+    // Use service role client to bypass RLS and utilize index directly
+    // This prevents the sequential scan caused by auth.uid() = id evaluation
+    const serviceClient = createServiceRoleClient()
     
     // Create promise for queue management with timeout
     const profilePromise = (async () => {
       try {
-        // Optimize query for RLS performance with explicit single() call
-        const queryPromise = supabase
+        // Use service role client for direct index access without RLS overhead
+        const queryPromise = serviceClient
           .from('users')
           .select('*')
           .eq('id', userId)
-          .single()  // Add explicit single() to optimize RLS evaluation
+          .single()  // Direct index lookup - no RLS evaluation needed
         
         const timeoutPromise = new Promise<{ data: null; error: { message: string; isTimeout: boolean } }>((resolve) => {
           setTimeout(() => {
@@ -280,13 +303,14 @@ export const userService = {
   },
 
   async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {
-    const supabase = createClient()
+    // Use service role client for reliable profile creation without RLS overhead
+    const serviceClient = createServiceRoleClient()
     
     console.log('🔄 Creating profile for:', { userId, email, firstName, lastName })
     
     // First check if profile already exists to prevent duplicates (with timeout)
     try {
-      const existingQuery = supabase
+      const existingQuery = serviceClient
         .from('users')
         .select('*')
         .eq('id', userId)
@@ -310,7 +334,7 @@ export const userService = {
     try {
       console.log('🔧 Attempting basic profile creation...')
       
-      const insertQuery = supabase
+      const insertQuery = serviceClient
         .from('users')
         .insert([
           {
@@ -338,7 +362,7 @@ export const userService = {
         if (error.message?.includes('timeout') || ('isTimeout' in error && error.isTimeout)) {
           console.log('⏰ User: Profile creation timed out - checking if profile exists')
           try {
-            const { data: timeoutCheckData } = await supabase
+            const { data: timeoutCheckData } = await serviceClient
               .from('users')
               .select('*')
               .eq('id', userId)
@@ -358,7 +382,7 @@ export const userService = {
         if (error.message?.includes('duplicate') || ('code' in error && error.code === '23505')) {
           console.log('🔄 Profile already exists due to duplicate, fetching existing profile...')
           try {
-            const { data: existingData } = await supabase
+            const { data: existingData } = await serviceClient
               .from('users')
               .select('*')
               .eq('id', userId)
@@ -388,7 +412,7 @@ export const userService = {
       if ((firstName || lastName) && profileData) {
         try {
           console.log('🔧 Attempting to add names to profile...')
-          const { data: updatedData, error: updateError } = await supabase
+          const { data: updatedData, error: updateError } = await serviceClient
             .from('users')
             .update({
               first_name: firstName || '',
