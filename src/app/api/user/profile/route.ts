@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 // Server-side profile API that uses service role for performance
@@ -17,26 +18,44 @@ export async function GET(request: NextRequest) {
       )
     }
     
-    // Verify user is authenticated by checking their session
+    // Create server client to properly handle auth cookies
     const cookieStore = cookies()
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${cookieStore.get('sb-access-token')?.value || ''}`
-        }
-      }
+    const userClient = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // Ignore cookie setting errors in API routes
+          }
+        },
+      },
     })
     
     // Verify the requesting user matches the profile being requested
     const { data: { user }, error: authError } = await userClient.auth.getUser()
     
-    if (authError || !user || user.id !== userId) {
+    if (authError || !user) {
+      console.log('🔐 API: Authentication failed:', authError?.message)
       return NextResponse.json(
-        { error: 'Unauthorized - can only access own profile' },
+        { error: 'Authentication required' },
         { status: 401 }
+      )
+    }
+    
+    if (user.id !== userId) {
+      console.log('🔐 API: User ID mismatch - can only access own profile')
+      return NextResponse.json(
+        { error: 'Can only access own profile' },
+        { status: 403 }
       )
     }
     

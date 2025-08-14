@@ -25,7 +25,8 @@ async function fetchProfileViaAPI(userId: string): Promise<UserProfile | null> {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      credentials: 'same-origin' // Include cookies for authentication
     })
     
     if (!response.ok) {
