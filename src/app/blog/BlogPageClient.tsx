@@ -64,29 +64,6 @@ export default function BlogPageClient() {
     }
 
     loadData()
-    
-    // Listen for auth state changes
-    const { supabase } = auth
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Blog Page: Auth state changed:', event)
-      if (event === 'SIGNED_OUT') {
-        // User signed out - update user state (blog is public so no redirect)
-        setUser(null)
-      } else if (event === 'SIGNED_IN' && session?.user) {
-        // User signed in - refresh user data for better UX
-        let userProfile = await userService.getProfile(session.user.id)
-        if (!userProfile) {
-          userProfile = await userService.createProfile(session.user.id, session.user.email || '')
-        }
-        if (userProfile) {
-          setUser(userProfile)
-        }
-      }
-    })
-    
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [router])
 
   // Get effective user for display (applies global admin toggle)

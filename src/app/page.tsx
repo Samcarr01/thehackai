@@ -79,29 +79,6 @@ function HomePageContent() {
     }
     
     checkAuth()
-    
-    // Listen for auth state changes
-    const { supabase } = auth
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Homepage: Auth state changed:', event)
-      if (event === 'SIGNED_IN' && session?.user) {
-        // User signed in - update user state
-        let userProfile = await userService.getProfile(session.user.id)
-        if (!userProfile) {
-          const firstName = session.user.user_metadata?.first_name || ''
-          const lastName = session.user.user_metadata?.last_name || ''
-          userProfile = await userService.createProfile(session.user.id, session.user.email || '', firstName, lastName)
-        }
-        setUser(userProfile)
-      } else if (event === 'SIGNED_OUT') {
-        // User signed out - clear user state
-        setUser(null)
-      }
-    })
-    
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [])
   
   const handleFeatureClick = globalNavigation.goToFeatures

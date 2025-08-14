@@ -29,7 +29,7 @@ export const auth = {
     }
     
     lastSignupCall = Date.now()
-    const supabase = createClient()
+    // Use singleton client instead of creating new ones
     
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -60,7 +60,7 @@ export const auth = {
   },
 
   async signIn(email: string, password: string, rememberMe: boolean = false) {
-    const supabase = createClient()
+    // Use singleton client instead of creating new ones
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
