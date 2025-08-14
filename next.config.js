@@ -3,16 +3,18 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // IMAGES: Configure domains for Next.js Image optimization
+  // IMAGES: Configure for Supabase public URLs
   images: {
     domains: ['ndhljslogveuhijpifwf.supabase.co'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: 'ndhljslogveuhijpifwf.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    // Reduce auth interference
+    unoptimized: false,
   },
   
   // SECURITY: Add security headers
