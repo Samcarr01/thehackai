@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { getBlogImageUrl } from '@/lib/image-utils'
 
 interface BlogImageProps {
@@ -10,8 +11,8 @@ interface BlogImageProps {
   className?: string
 }
 
-// Extremely simple component that renders once and never re-renders
-export default function BlogImage({ 
+// Memoized component that only re-renders when props change
+const BlogImage = React.memo(function BlogImage({ 
   src, 
   alt, 
   width = 800, 
@@ -43,4 +44,6 @@ export default function BlogImage({
       )}
     </figure>
   )
-}
+})
+
+export default BlogImage

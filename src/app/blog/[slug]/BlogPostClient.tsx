@@ -77,6 +77,144 @@ export default function BlogPostClient({ post, user }: Props) {
     })
   }, [post.content])
 
+  // Memoize ReactMarkdown to prevent re-renders on scroll (reading progress updates)
+  const renderedContent = useMemo(() => (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        // Custom link renderer to handle internal/external links
+        a: ({ href, children }) => {
+          const isInternal = href?.startsWith('/') || href?.startsWith('#')
+          if (isInternal) {
+            return (
+              <Link 
+                href={href || '#'}
+                className="text-purple-400 hover:text-purple-300 underline transition-colors"
+              >
+                {children}
+              </Link>
+            )
+          }
+          return (
+            <a 
+              href={href}
+              className="text-purple-400 hover:text-purple-300 underline transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {children}
+            </a>
+          )
+        },
+        // ROBUST image renderer with error handling and fallbacks
+        img: ({ src, alt, ...props }) => {
+          // Comprehensive safety checks for SSR/CSR compatibility
+          if (!src || typeof src !== 'string' || src.trim() === '') {
+            return null
+          }
+          
+          const srcStr = src.trim()
+          const altStr = (alt && typeof alt === 'string') ? alt.trim() : ''
+          
+          // Additional validation for image URLs
+          if (!srcStr.startsWith('http')) {
+            return null
+          }
+          
+          return (
+            <BlogImage
+              key={srcStr}
+              src={srcStr}
+              alt={altStr}
+              width={800}
+              height={450}
+            />
+          )
+        },
+        // Custom code block renderer
+        code: ({ children, ...props }) => {
+          const isInline = !('className' in props && typeof props.className === 'string' && props.className.includes('language-'))
+          if (isInline) {
+            return <code className="px-1 py-0.5 bg-gray-800 text-purple-300 rounded text-sm">{children}</code>
+          }
+          return (
+            <pre className="block p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto border border-gray-700">
+              <code>{children}</code>
+            </pre>
+          )
+        },
+        // Custom blockquote renderer
+        blockquote: ({ children }) => (
+          <blockquote className="border-l-4 border-purple-500 pl-4 my-6 italic text-gray-300 bg-gray-800/30 py-2 rounded-r">
+            {children}
+          </blockquote>
+        ),
+        // Custom table renderer with better spacing and float clearing
+        table: ({ children }) => (
+          <div className="overflow-x-auto my-8 clear-both"> {/* Added clear-both */}
+            <table className="min-w-full divide-y divide-gray-700 bg-gray-800 rounded-lg">
+              {children}
+            </table>
+          </div>
+        ),
+        thead: ({ children }) => (
+          <thead className="bg-gray-700">{children}</thead>
+        ),
+        tbody: ({ children }) => (
+          <tbody className="bg-gray-800 divide-y divide-gray-700">{children}</tbody>
+        ),
+        tr: ({ children }) => (
+          <tr>{children}</tr>
+        ),
+        th: ({ children }) => (
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+            {children}
+          </th>
+        ),
+        td: ({ children }) => (
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+            {children}
+          </td>
+        ),
+        ul: ({ children }) => (
+          <ul className="list-disc pl-6 my-4 space-y-2 text-gray-300">{children}</ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="list-decimal pl-6 my-4 space-y-2 text-gray-300">{children}</ol>
+        ),
+        li: ({ children }) => (
+          <li className="text-gray-300">{children}</li>
+        ),
+        p: ({ children }) => (
+          <p className="mb-4 text-gray-300 leading-relaxed">{children}</p>
+        ),
+        strong: ({ children }) => (
+          <strong className="font-semibold text-white">{children}</strong>
+        ),
+        em: ({ children }) => (
+          <em className="italic text-gray-200">{children}</em>
+        ),
+        h1: ({ children }) => (
+          <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
+        ),
+        h2: ({ children, ...props }) => {
+          // Ensure stable ID generation that matches TOC
+          const text = React.Children.toArray(children).join('')
+          const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+          return <h2 id={id} className="text-2xl font-semibold text-white mb-4 mt-8 scroll-mt-20" {...props}>{children}</h2>
+        },
+        h3: ({ children }) => (
+          <h3 className="text-xl font-semibold text-white mb-3 mt-6">{children}</h3>
+        ),
+        h4: ({ children }) => (
+          <h4 className="text-lg font-semibold text-white mb-2 mt-4">{children}</h4>
+        ),
+      }}
+    >
+      {post.content}
+    </ReactMarkdown>
+  ), [post.content])
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900">
       <SmartNavigation user={user} currentPage="blog" />
@@ -164,140 +302,7 @@ export default function BlogPostClient({ post, user }: Props) {
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              // Custom link renderer to handle internal/external links
-              a: ({ href, children }) => {
-                const isInternal = href?.startsWith('/') || href?.startsWith('#')
-                if (isInternal) {
-                  return (
-                    <Link 
-                      href={href || '#'}
-                      className="text-purple-400 hover:text-purple-300 underline transition-colors"
-                    >
-                      {children}
-                    </Link>
-                  )
-                }
-                return (
-                  <a 
-                    href={href}
-                    className="text-purple-400 hover:text-purple-300 underline transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {children}
-                  </a>
-                )
-              },
-              // ROBUST image renderer with error handling and fallbacks
-              img: ({ src, alt, ...props }) => {
-                // Comprehensive safety checks for SSR/CSR compatibility
-                if (!src || typeof src !== 'string' || src.trim() === '') {
-                  return null
-                }
-                
-                const srcStr = src.trim()
-                const altStr = (alt && typeof alt === 'string') ? alt.trim() : ''
-                
-                // Additional validation for image URLs
-                if (!srcStr.startsWith('http')) {
-                  return null
-                }
-                
-                return (
-                  <BlogImage
-                    key={srcStr}
-                    src={srcStr}
-                    alt={altStr}
-                    width={800}
-                    height={450}
-                  />
-                )
-              },
-              // Custom code block renderer
-              code: ({ children, ...props }) => {
-                const isInline = !('className' in props && typeof props.className === 'string' && props.className.includes('language-'))
-                if (isInline) {
-                  return <code className="px-1 py-0.5 bg-gray-800 text-purple-300 rounded text-sm">{children}</code>
-                }
-                return (
-                  <pre className="block p-4 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto border border-gray-700">
-                    <code>{children}</code>
-                  </pre>
-                )
-              },
-              // Custom blockquote renderer
-              blockquote: ({ children }) => (
-                <blockquote className="border-l-4 border-purple-500 pl-4 my-6 italic text-gray-300 bg-gray-800/30 py-2 rounded-r">
-                  {children}
-                </blockquote>
-              ),
-              // Custom table renderer with better spacing and float clearing
-              table: ({ children }) => (
-                <div className="overflow-x-auto my-8 clear-both"> {/* Added clear-both */}
-                  <table className="min-w-full divide-y divide-gray-700 bg-gray-800 rounded-lg">
-                    {children}
-                  </table>
-                </div>
-              ),
-              thead: ({ children }) => (
-                <thead className="bg-gray-700">{children}</thead>
-              ),
-              tbody: ({ children }) => (
-                <tbody className="bg-gray-800 divide-y divide-gray-700">{children}</tbody>
-              ),
-              tr: ({ children }) => (
-                <tr>{children}</tr>
-              ),
-              th: ({ children }) => (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  {children}
-                </th>
-              ),
-              td: ({ children }) => (
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                  {children}
-                </td>
-              ),
-              ul: ({ children }) => (
-                <ul className="list-disc pl-6 my-4 space-y-2 text-gray-300">{children}</ul>
-              ),
-              ol: ({ children }) => (
-                <ol className="list-decimal pl-6 my-4 space-y-2 text-gray-300">{children}</ol>
-              ),
-              li: ({ children }) => (
-                <li className="text-gray-300">{children}</li>
-              ),
-              p: ({ children }) => (
-                <p className="mb-4 text-gray-300 leading-relaxed">{children}</p>
-              ),
-              strong: ({ children }) => (
-                <strong className="font-semibold text-white">{children}</strong>
-              ),
-              em: ({ children }) => (
-                <em className="italic text-gray-200">{children}</em>
-              ),
-              h1: ({ children }) => (
-                <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
-              ),
-              h2: ({ children, ...props }) => {
-                // Ensure stable ID generation that matches TOC
-                const text = React.Children.toArray(children).join('')
-                const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-                return <h2 id={id} className="text-2xl font-semibold text-white mb-4 mt-8 scroll-mt-20" {...props}>{children}</h2>
-              },
-              h3: ({ children }) => (
-                <h3 className="text-xl font-semibold text-white mb-3 mt-6">{children}</h3>
-              ),
-              h4: ({ children }) => (
-                <h4 className="text-lg font-semibold text-white mb-2 mt-4">{children}</h4>
-              ),
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
+          {renderedContent}
         </div>
 
         {/* Share Section */}
