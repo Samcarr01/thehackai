@@ -176,25 +176,23 @@ export const userService = {
     // Create promise for queue management with timeout
     const profilePromise = (async () => {
       try {
-        // Optimize query for RLS performance with explicit single() call and AbortController
-        const controller = new AbortController()
-        
+        // Optimize query for RLS performance with explicit single() call
         const queryPromise = supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .single()  // Add explicit single() to optimize RLS evaluation
-          .abortSignal(controller.signal)
         
-        const timeoutId = setTimeout(() => {
-          console.error('⏰ User: Database query timeout after 5 seconds')
-          controller.abort()
-        }, 5000)
+        const timeoutPromise = new Promise<{ data: null; error: { message: string; isTimeout: boolean } }>((resolve) => {
+          setTimeout(() => {
+            console.error('⏰ User: Database query timeout after 5 seconds')
+            resolve({ data: null, error: { message: 'Database query timeout', isTimeout: true } })
+          }, 5000)
+        })
         
-        try {
-          // Execute optimized query with true cancellation support
-          const { data: profileData, error: queryError } = await queryPromise
-          clearTimeout(timeoutId)
+        // Race the optimized query against timeout
+        const result = await Promise.race([queryPromise, timeoutPromise])
+        const { data: profileData, error: queryError } = result
         
           console.log('📊 Query result:', { 
             hasData: !!profileData, 
@@ -205,9 +203,9 @@ export const userService = {
           if (queryError) {
             console.error('❌ Error querying user profile:', queryError)
             
-            // Check if it's an abort error (timeout)
-            if (queryError.name === 'AbortError' || queryError.message?.includes('aborted')) {
-              console.log('⏰ User: Query aborted due to timeout - checking cached data...')
+            // Check if it's a timeout error
+            if (queryError.message?.includes('timeout') || ('isTimeout' in queryError && queryError.isTimeout)) {
+              console.log('⏰ User: Database timeout - checking cached data...')
               try {
                 const cachedData = localStorage.getItem('cached-user-profile')
                 if (cachedData) {
@@ -266,13 +264,6 @@ export const userService = {
         })
         
           return profile
-        } catch (abortError) {
-          if (abortError.name === 'AbortError') {
-            console.error('⏰ User: Query cancelled due to timeout')
-            return null
-          }
-          throw abortError
-        }
       } catch (error: any) {
         console.error('❌ User: Error in getProfile:', error)
         return null

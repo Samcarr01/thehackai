@@ -37,7 +37,7 @@ describe('User Profile Performance', () => {
 
   it('should fetch profile in under 500ms', async () => {
     // Mock fast DB response
-    mockSupabase.abortSignal.mockResolvedValue({
+    mockSupabase.single.mockResolvedValue({
       data: {
         id: 'test-user-id',
         email: 'test@example.com',
@@ -61,7 +61,7 @@ describe('User Profile Performance', () => {
     let callCount = 0
     
     // Mock DB response with delay to simulate real conditions
-    mockSupabase.abortSignal.mockImplementation(() => {
+    mockSupabase.single.mockImplementation(() => {
       callCount++
       return new Promise(resolve => {
         setTimeout(() => resolve({
@@ -95,9 +95,17 @@ describe('User Profile Performance', () => {
     expect(result1?.id).toBe(userId)
   })
   
-  it('should handle timeout gracefully with AbortController', async () => {
-    // Mock timeout scenario
-    mockSupabase.abortSignal.mockRejectedValue(new DOMException('Aborted', 'AbortError'))
+  it('should handle timeout gracefully with Promise.race', async () => {
+    // Mock slow query that will be beaten by timeout
+    mockSupabase.single.mockReturnValue({
+      then: (resolve: any) => {
+        // Simulate slow query - never resolves in time
+        setTimeout(() => resolve({
+          data: null,
+          error: { message: 'Slow query' }
+        }), 10000) // 10s delay - longer than 5s timeout
+      }
+    })
     
     const startTime = Date.now()
     const profile = await userService.getProfile('timeout-user-id')
@@ -110,7 +118,7 @@ describe('User Profile Performance', () => {
   
   it('should use cached profile on subsequent calls', async () => {
     // Mock successful first call
-    mockSupabase.abortSignal.mockResolvedValueOnce({
+    mockSupabase.single.mockResolvedValueOnce({
       data: {
         id: 'cached-user-id',
         email: 'cached@example.com',
@@ -125,11 +133,11 @@ describe('User Profile Performance', () => {
     
     // First call - should hit DB
     const profile1 = await userService.getProfile(userId)
-    expect(mockSupabase.abortSignal).toHaveBeenCalledTimes(1)
+    expect(mockSupabase.single).toHaveBeenCalledTimes(1)
     
     // Second call - should use cache
     const profile2 = await userService.getProfile(userId)
-    expect(mockSupabase.abortSignal).toHaveBeenCalledTimes(1) // No additional call
+    expect(mockSupabase.single).toHaveBeenCalledTimes(1) // No additional call
     
     expect(profile1).toEqual(profile2)
     expect(profile2?.user_tier).toBe('pro')
@@ -144,6 +152,5 @@ describe('User Profile Performance', () => {
     expect(mockSupabase.select).toHaveBeenCalledWith('*')
     expect(mockSupabase.eq).toHaveBeenCalledWith('id', 'optimize-test-id')
     expect(mockSupabase.single).toHaveBeenCalled()
-    expect(mockSupabase.abortSignal).toHaveBeenCalled()
   })
 })
