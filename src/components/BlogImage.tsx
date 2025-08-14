@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, memo } from 'react'
-import Image from 'next/image'
 import { getBlogImageUrl } from '@/lib/image-utils'
 
 interface BlogImageProps {
@@ -34,17 +33,17 @@ const BlogImage = memo(function BlogImage({
   return (
     <figure className="my-8 clear-both">
       <div className="blog-image shadow-xl relative">
-        <Image
+        {/* Use native HTML img to completely bypass Next.js processing */}
+        <img
           src={hasError ? '/default-blog-image.svg' : stableUrl}
           alt={alt}
           width={width}
           height={height}
           className={`w-full h-full object-cover ${className}`}
           loading="lazy"
-          unoptimized={hasError} // Skip optimization for fallback
           onError={handleError}
-          // Remove auth-related props that might interfere
           crossOrigin="anonymous"
+          style={{ aspectRatio: '16/9' }}
         />
         {hasError && (
           <div className="absolute bottom-2 left-2 bg-red-600/80 text-white text-xs px-2 py-1 rounded">
