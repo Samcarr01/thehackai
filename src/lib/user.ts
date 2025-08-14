@@ -1,5 +1,4 @@
 import { createClient } from './supabase/client'
-import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 export type UserTier = 'free' | 'pro' | 'ultra'
 
@@ -18,23 +17,35 @@ interface ProfileCache {
 const profileCache = new Map<string, ProfileCache>()
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-// Service role client for bypassing RLS on profile queries
-// This eliminates the sequential scan issue caused by auth.uid() = id evaluation
-function createServiceRoleClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  
-  if (!url || !serviceKey) {
-    console.error('🚨 Service client: Missing environment variables')
-    throw new Error('Missing Supabase service role configuration')
-  }
-  
-  return createServiceClient(url, serviceKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
+// Fast profile fetch using server-side API with service role
+// This eliminates the sequential scan issue by bypassing RLS on the server
+async function fetchProfileViaAPI(userId: string): Promise<UserProfile | null> {
+  try {
+    const response = await fetch(`/api/user/profile?userId=${encodeURIComponent(userId)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.log('🔐 API: Unauthorized - user not authenticated')
+        return null
+      }
+      if (response.status === 404) {
+        console.log('📝 API: Profile not found')
+        return null
+      }
+      throw new Error(`API error: ${response.status}`)
     }
-  })
+    
+    const { profile } = await response.json()
+    return profile
+  } catch (error: any) {
+    console.error('❌ API: Profile fetch failed:', error)
+    throw error
+  }
 }
 
 export interface UserProfile {
@@ -192,103 +203,78 @@ export const userService = {
     
     console.log('🔍 Fetching profile for userId:', userId)
     
-    // Use service role client to bypass RLS and utilize index directly
-    // This prevents the sequential scan caused by auth.uid() = id evaluation
-    const serviceClient = createServiceRoleClient()
-    
     // Create promise for queue management with timeout
     const profilePromise = (async () => {
       try {
-        // Use service role client for direct index access without RLS overhead
-        const queryPromise = serviceClient
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .single()  // Direct index lookup - no RLS evaluation needed
+        // Use server-side API for fast profile lookup without RLS overhead
+        const apiPromise = fetchProfileViaAPI(userId)
         
-        const timeoutPromise = new Promise<{ data: null; error: { message: string; isTimeout: boolean } }>((resolve) => {
+        const timeoutPromise = new Promise<UserProfile | null>((resolve) => {
           setTimeout(() => {
-            console.error('⏰ User: Database query timeout after 5 seconds')
-            resolve({ data: null, error: { message: 'Database query timeout', isTimeout: true } })
+            console.error('⏰ User: API request timeout after 5 seconds')
+            resolve(null)
           }, 5000)
         })
         
-        // Race the optimized query against timeout
-        const result = await Promise.race([queryPromise, timeoutPromise])
-        const { data: profileData, error: queryError } = result
+        // Race the API call against timeout
+        const profileData = await Promise.race([apiPromise, timeoutPromise])
         
-          console.log('📊 Query result:', { 
-            hasData: !!profileData, 
-            error: queryError?.message,
-            data: profileData 
-          })
-          
-          if (queryError) {
-            console.error('❌ Error querying user profile:', queryError)
-            
-            // Check if it's a timeout error
-            if (queryError.message?.includes('timeout') || ('isTimeout' in queryError && queryError.isTimeout)) {
-              console.log('⏰ User: Database timeout - checking cached data...')
-              try {
-                const cachedData = localStorage.getItem('cached-user-profile')
-                if (cachedData) {
-                  const cachedProfile = JSON.parse(cachedData)
-                  if (cachedProfile.id === userId) {
-                    console.log('✅ User: Using cached profile data for timeout fallback')
-                    return cachedProfile
-                  }
-                }
-              } catch (e) {
-                console.log('⚠️ User: Could not access cached data')
+        console.log('📊 API result:', { 
+          hasData: !!profileData, 
+          data: profileData 
+        })
+        
+        if (!profileData) {
+          console.log('⏰ User: API timeout or no profile found - checking cached data...')
+          try {
+            const cachedData = localStorage.getItem('cached-user-profile')
+            if (cachedData) {
+              const cachedProfile = JSON.parse(cachedData)
+              if (cachedProfile.id === userId) {
+                console.log('✅ User: Using cached profile data for fallback')
+                return cachedProfile
               }
-              return null
             }
-            
-            // Check if it's a rate limit error
-            if (queryError.message?.includes('429') || ('code' in queryError && queryError.code === '429')) {
-              console.error('🚨 User: Database rate limit detected - backing off for 2 seconds')
-              await new Promise(resolve => setTimeout(resolve, 2000))
-              throw new Error('Database rate limit exceeded. Please wait a moment and try again.')
-            }
-            
-            return null
+          } catch (e) {
+            console.log('⚠️ User: Could not access cached data')
           }
-          
-          if (!profileData) {
-            console.log('📝 No user profile found')
-            return null
-          }
-          
-          console.log('✅ User profile found')
-          const data = profileData
-        
-        // Give admin Ultra access (highest tier) only if user_tier is not explicitly set
-        // Skip auto-upgrade if admin has manually set a tier for testing
-        let profile: UserProfile
-        if (data && data.email === 'samcarr1232@gmail.com' && !data.user_tier) {
-          profile = {
-            ...data,
-            is_pro: true,  // Backward compatibility
-            user_tier: 'ultra' as UserTier
-          }
-        } else {
-          // Ensure backward compatibility: sync is_pro with user_tier
-          profile = {
-            ...data,
-            is_pro: data.user_tier === 'pro' || data.user_tier === 'ultra'
-          }
+          return null
         }
+        
+        console.log('✅ User profile fetched via API')
         
         // Cache the profile
         profileCache.set(userId, {
-          profile,
+          profile: profileData,
           timestamp: now,
           ttl: DEFAULT_CACHE_TTL
         })
         
-          return profile
+        // Store in localStorage as backup
+        try {
+          localStorage.setItem('cached-user-profile', JSON.stringify(profileData))
+        } catch (e) {
+          console.log('⚠️ User: Could not cache profile data')
+        }
+        
+        return profileData
       } catch (error: any) {
         console.error('❌ User: Error in getProfile:', error)
+        
+        // Try cached data on any error
+        try {
+          const cachedData = localStorage.getItem('cached-user-profile')
+          if (cachedData) {
+            const cachedProfile = JSON.parse(cachedData)
+            if (cachedProfile.id === userId) {
+              console.log('✅ User: Using cached profile data for error fallback')
+              return cachedProfile
+            }
+          }
+        } catch (e) {
+          console.log('⚠️ User: Could not access cached data on error')
+        }
+        
         return null
       } finally {
         // Clean up the queue
@@ -303,14 +289,13 @@ export const userService = {
   },
 
   async createProfile(userId: string, email: string, firstName?: string, lastName?: string): Promise<UserProfile | null> {
-    // Use service role client for reliable profile creation without RLS overhead
-    const serviceClient = createServiceRoleClient()
+    const supabase = createClient()
     
     console.log('🔄 Creating profile for:', { userId, email, firstName, lastName })
     
     // First check if profile already exists to prevent duplicates (with timeout)
     try {
-      const existingQuery = serviceClient
+      const existingQuery = supabase
         .from('users')
         .select('*')
         .eq('id', userId)
@@ -334,7 +319,7 @@ export const userService = {
     try {
       console.log('🔧 Attempting basic profile creation...')
       
-      const insertQuery = serviceClient
+      const insertQuery = supabase
         .from('users')
         .insert([
           {
@@ -362,7 +347,7 @@ export const userService = {
         if (error.message?.includes('timeout') || ('isTimeout' in error && error.isTimeout)) {
           console.log('⏰ User: Profile creation timed out - checking if profile exists')
           try {
-            const { data: timeoutCheckData } = await serviceClient
+            const { data: timeoutCheckData } = await supabase
               .from('users')
               .select('*')
               .eq('id', userId)
@@ -382,7 +367,7 @@ export const userService = {
         if (error.message?.includes('duplicate') || ('code' in error && error.code === '23505')) {
           console.log('🔄 Profile already exists due to duplicate, fetching existing profile...')
           try {
-            const { data: existingData } = await serviceClient
+            const { data: existingData } = await supabase
               .from('users')
               .select('*')
               .eq('id', userId)
@@ -412,7 +397,7 @@ export const userService = {
       if ((firstName || lastName) && profileData) {
         try {
           console.log('🔧 Attempting to add names to profile...')
-          const { data: updatedData, error: updateError } = await serviceClient
+          const { data: updatedData, error: updateError } = await supabase
             .from('users')
             .update({
               first_name: firstName || '',
