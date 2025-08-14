@@ -79,45 +79,88 @@ export async function GET(request: NextRequest) {
     console.log('🔍 Server: Fetching profile for userId:', userId)
     
     // Fast profile query using service role (bypasses RLS sequential scan)
-    const { data: profileData, error: profileError } = await serviceClient
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single()
+    // Database tests show this takes <1ms with index scan
+    const startTime = Date.now()
     
-    if (profileError) {
-      console.error('❌ Server: Error querying profile:', profileError)
+    try {
+      const { data: profileData, error: profileError } = await serviceClient
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      
+      const queryTime = Date.now() - startTime
+      console.log(`⚡ Server: Profile query completed in ${queryTime}ms`)
+      
+      if (profileError) {
+        console.error('❌ Server: Database error:', profileError)
+        return NextResponse.json(
+          { error: `Database error: ${profileError.message}` },
+          { status: 500 }
+        )
+      }
+      
+      if (!profileData) {
+        console.log('📝 Server: Profile not found in database')
+        return NextResponse.json(
+          { error: 'Profile not found' },
+          { status: 404 }
+        )
+      }
+      
+      console.log('✅ Server: Profile found successfully')
+      
+      // Apply admin tier logic if needed
+      let profile = profileData
+      if (profileData.email === 'samcarr1232@gmail.com' && !profileData.user_tier) {
+        profile = {
+          ...profileData,
+          is_pro: true,
+          user_tier: 'ultra'
+        }
+      } else {
+        profile = {
+          ...profileData,
+          is_pro: profileData.user_tier === 'pro' || profileData.user_tier === 'ultra'
+        }
+      }
+      
+      return NextResponse.json({ profile })
+      
+    } catch (queryError: any) {
+      const queryTime = Date.now() - startTime
+      console.error(`❌ Server: Query failed after ${queryTime}ms:`, queryError)
+      
+      // If it's a connection timeout, try once more
+      if (queryTime > 4000 && (queryError.message?.includes('timeout') || queryError.message?.includes('connection'))) {
+        console.log('🔄 Server: Retrying query due to connection timeout...')
+        try {
+          const { data: retryData, error: retryError } = await serviceClient
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single()
+            
+          if (!retryError && retryData) {
+            console.log('✅ Server: Retry successful')
+            let profile = retryData
+            if (retryData.email === 'samcarr1232@gmail.com' && !retryData.user_tier) {
+              profile = { ...retryData, is_pro: true, user_tier: 'ultra' }
+            } else {
+              profile = { ...retryData, is_pro: retryData.user_tier === 'pro' || retryData.user_tier === 'ultra' }
+            }
+            return NextResponse.json({ profile })
+          }
+        } catch (retryError) {
+          console.error('❌ Server: Retry also failed:', retryError)
+        }
+      }
+      
       return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
+        { error: 'Database connection timeout' },
+        { status: 500 }
       )
     }
-    
-    if (!profileData) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      )
-    }
-    
-    console.log('✅ Server: Profile found successfully')
-    
-    // Apply admin tier logic if needed
-    let profile = profileData
-    if (profileData.email === 'samcarr1232@gmail.com' && !profileData.user_tier) {
-      profile = {
-        ...profileData,
-        is_pro: true,
-        user_tier: 'ultra'
-      }
-    } else {
-      profile = {
-        ...profileData,
-        is_pro: profileData.user_tier === 'pro' || profileData.user_tier === 'ultra'
-      }
-    }
-    
-    return NextResponse.json({ profile })
     
   } catch (error: any) {
     console.error('❌ Server: Profile API error:', error)

@@ -212,9 +212,9 @@ export const userService = {
         
         const timeoutPromise = new Promise<UserProfile | null>((resolve) => {
           setTimeout(() => {
-            console.error('⏰ User: API request timeout after 5 seconds')
+            console.error('⏰ User: API request timeout after 3 seconds')
             resolve(null)
-          }, 5000)
+          }, 3000) // Reduced to 3s - API should be much faster with direct DB access
         })
         
         // Race the API call against timeout
