@@ -23,11 +23,33 @@ const BlogImage = memo(function BlogImage({
   const stableUrl = getBlogImageUrl(src)
   const [hasError, setHasError] = useState(false)
 
+  // Debug logging for URL transformation
+  console.log('🔍 BlogImage component:', {
+    originalSrc: src,
+    transformedUrl: stableUrl,
+    alt: alt,
+    component: 'BlogImage'
+  })
+
   const handleError = () => {
     if (!hasError) {
-      console.warn('⚠️ Blog image failed to load:', stableUrl)
+      console.error('🚨 BLOG IMAGE ERROR:', {
+        originalSrc: src,
+        stableUrl: stableUrl,
+        alt: alt,
+        timestamp: new Date().toISOString()
+      })
       setHasError(true)
     }
+  }
+
+  const handleLoad = () => {
+    console.log('✅ BLOG IMAGE LOADED:', {
+      originalSrc: src,
+      stableUrl: stableUrl,
+      alt: alt,
+      timestamp: new Date().toISOString()
+    })
   }
 
   return (
@@ -42,6 +64,7 @@ const BlogImage = memo(function BlogImage({
           className={`w-full h-full object-cover ${className}`}
           loading="lazy"
           onError={handleError}
+          onLoad={handleLoad}
           crossOrigin="anonymous"
           style={{ aspectRatio: '16/9' }}
         />
