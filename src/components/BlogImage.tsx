@@ -23,9 +23,9 @@ const BlogImage = React.memo(function BlogImage({
   const stableUrl = getBlogImageUrl(src)
 
   return (
-    <figure className="my-8 clear-both">
-      <div className="blog-image shadow-xl relative">
-        {/* Ultra-simple img tag with no state or handlers */}
+    <figure className="my-4 sm:my-6 md:my-8 clear-both">
+      <div className="blog-image shadow-lg sm:shadow-xl relative rounded-lg sm:rounded-xl overflow-hidden">
+        {/* Mobile-optimized image with responsive sizing */}
         <img
           src={stableUrl}
           alt={alt}
@@ -38,7 +38,7 @@ const BlogImage = React.memo(function BlogImage({
         />
       </div>
       {alt && (
-        <figcaption className="text-center text-sm text-gray-400 mt-3">
+        <figcaption className="text-center text-xs sm:text-sm text-gray-400 mt-2 sm:mt-3 px-2">
           {alt}
         </figcaption>
       )}

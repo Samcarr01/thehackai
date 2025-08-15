@@ -177,16 +177,16 @@ export default function BlogPostClient({ post, user }: Props) {
           </td>
         ),
         ul: ({ children }) => (
-          <ul className="list-disc pl-6 my-4 space-y-2 text-gray-300">{children}</ul>
+          <ul className="list-disc pl-4 sm:pl-6 my-3 sm:my-4 space-y-1 sm:space-y-2 text-sm sm:text-base text-gray-300">{children}</ul>
         ),
         ol: ({ children }) => (
-          <ol className="list-decimal pl-6 my-4 space-y-2 text-gray-300">{children}</ol>
+          <ol className="list-decimal pl-4 sm:pl-6 my-3 sm:my-4 space-y-1 sm:space-y-2 text-sm sm:text-base text-gray-300">{children}</ol>
         ),
         li: ({ children }) => (
-          <li className="text-gray-300">{children}</li>
+          <li className="text-sm sm:text-base text-gray-300 leading-relaxed">{children}</li>
         ),
         p: ({ children }) => (
-          <p className="mb-4 text-gray-300 leading-relaxed">{children}</p>
+          <p className="mb-3 sm:mb-4 text-sm sm:text-base text-gray-300 leading-relaxed">{children}</p>
         ),
         strong: ({ children }) => (
           <strong className="font-semibold text-white">{children}</strong>
@@ -195,19 +195,19 @@ export default function BlogPostClient({ post, user }: Props) {
           <em className="italic text-gray-200">{children}</em>
         ),
         h1: ({ children }) => (
-          <h1 className="text-3xl font-bold text-white mb-6">{children}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6 mt-6 sm:mt-8">{children}</h1>
         ),
         h2: ({ children, ...props }) => {
           // Ensure stable ID generation that matches TOC
           const text = React.Children.toArray(children).join('')
           const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-          return <h2 id={id} className="text-2xl font-semibold text-white mb-4 mt-8 scroll-mt-20" {...props}>{children}</h2>
+          return <h2 id={id} className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-3 sm:mb-4 mt-6 sm:mt-8 scroll-mt-24" {...props}>{children}</h2>
         },
         h3: ({ children }) => (
-          <h3 className="text-xl font-semibold text-white mb-3 mt-6">{children}</h3>
+          <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2 sm:mb-3 mt-4 sm:mt-6">{children}</h3>
         ),
         h4: ({ children }) => (
-          <h4 className="text-lg font-semibold text-white mb-2 mt-4">{children}</h4>
+          <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 mt-3 sm:mt-4">{children}</h4>
         ),
       }}
     >
@@ -227,69 +227,73 @@ export default function BlogPostClient({ post, user }: Props) {
         />
       </div>
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumbs */}
-        <nav className="mb-8">
-          <ol className="flex items-center space-x-2 text-sm text-gray-400">
-            <li>
+      <article className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Breadcrumbs - Mobile optimized */}
+        <nav className="mb-6 sm:mb-8">
+          <ol className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-gray-400 overflow-x-auto scrollbar-hide">
+            <li className="whitespace-nowrap">
               <Link href="/" className="hover:text-purple-400 transition-colors">
                 Home
               </Link>
             </li>
-            <li>/</li>
-            <li>
+            <li className="text-gray-600">/</li>
+            <li className="whitespace-nowrap">
               <Link href="/blog" className="hover:text-purple-400 transition-colors">
                 Blog
               </Link>
             </li>
-            <li>/</li>
-            <li className="text-white font-medium truncate">{post.title}</li>
+            <li className="text-gray-600">/</li>
+            <li className="text-white font-medium truncate max-w-[120px] sm:max-w-none">
+              {post.title}
+            </li>
           </ol>
         </nav>
 
-        {/* Article Header */}
-        <header className="mb-12">
-          <div className="mb-6">
-            <span className="inline-block px-3 py-1 text-sm font-medium text-purple-200 bg-purple-900/30 rounded-full">
+        {/* Article Header - Mobile optimized */}
+        <header className="mb-8 sm:mb-12">
+          <div className="mb-4 sm:mb-6">
+            <span className="inline-block px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-purple-200 bg-purple-900/30 rounded-full">
               {post.category}
             </span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             {post.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-4 text-gray-300">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-4 text-sm sm:text-base text-gray-300">
             <time className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              <span className="text-xs sm:text-sm">
+                {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </span>
             </time>
             <span className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              {post.read_time} min read
+              <span className="text-xs sm:text-sm">{post.read_time} min read</span>
             </span>
           </div>
         </header>
 
-        {/* Table of Contents (for long posts) */}
+        {/* Table of Contents (for long posts) - Mobile optimized */}
         {toc.length > 3 && (
-          <div className="mb-12 p-6 bg-gray-800/50 rounded-xl border border-gray-700">
-            <h2 className="text-lg font-semibold text-white mb-4">Table of Contents</h2>
+          <div className="mb-8 sm:mb-12 p-4 sm:p-6 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Table of Contents</h2>
             <nav>
-              <ul className="space-y-2">
+              <ul className="space-y-1 sm:space-y-2">
                 {toc.map((item, index) => (
                   <li key={index}>
                     <a 
                       href={`#${item.id}`}
-                      className="text-gray-300 hover:text-purple-400 transition-colors"
+                      className="text-sm sm:text-base text-gray-300 hover:text-purple-400 transition-colors block py-1"
                     >
                       {item.title}
                     </a>
