@@ -305,7 +305,7 @@ export default function BlogPostClient({ post, user }: Props) {
         )}
 
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-full overflow-hidden">
           {renderedContent}
         </div>
 

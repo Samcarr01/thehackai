@@ -23,21 +23,22 @@ const BlogImage = React.memo(function BlogImage({
   const stableUrl = getBlogImageUrl(src)
 
   return (
-    <figure className="my-3 sm:my-4 md:my-6 lg:my-8 clear-both">
-      <div className="blog-image shadow-md sm:shadow-lg md:shadow-xl relative rounded-md sm:rounded-lg md:rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        {/* Mobile-optimized image with no extra spacing */}
+    <figure className="my-3 sm:my-4 md:my-6 lg:my-8 clear-both w-full max-w-full">
+      <div className="blog-image shadow-md sm:shadow-lg md:shadow-xl relative rounded-md sm:rounded-lg md:rounded-xl overflow-hidden w-full max-w-full" style={{ aspectRatio: '16/9' }}>
+        {/* Mobile-optimized image with proper constraints */}
         <img
           src={stableUrl}
           alt={alt}
           width={width}
           height={height}
-          className={`w-full h-full object-cover block ${className}`}
+          className={`w-full h-full object-cover block max-w-full ${className}`}
           loading="lazy"
           crossOrigin="anonymous"
+          style={{ maxWidth: '100%' }}
         />
       </div>
       {alt && (
-        <figcaption className="text-center text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2 md:mt-3 px-1 sm:px-2">
+        <figcaption className="text-center text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2 md:mt-3 px-1 sm:px-2 max-w-full">
           {alt}
         </figcaption>
       )}
