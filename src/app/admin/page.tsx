@@ -380,7 +380,9 @@ export default function AdminPage() {
       })
 
       if (!imageResponse.ok) {
-        throw new Error('Image upload failed')
+        const errorText = await imageResponse.text()
+        console.error('❌ Image upload failed:', imageResponse.status, errorText)
+        throw new Error(`Image upload failed: ${errorText}`)
       }
 
       const imageData = await imageResponse.json()
@@ -413,9 +415,33 @@ export default function AdminPage() {
       )
     } catch (error) {
       console.error('❌ Upload failed:', error)
+      console.error('❌ Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : null,
+        affiliateUrl,
+        analyzedAffiliateTool: analyzedAffiliateTool ? {
+          title: analyzedAffiliateTool.title,
+          category: analyzedAffiliateTool.category
+        } : null,
+        hasImage: !!affiliateImage
+      })
+      
+      let errorMessage = 'Unknown error occurred'
+      if (error instanceof Error) {
+        if (error.message.includes('Image upload failed')) {
+          errorMessage = 'Failed to upload image. Please check file size (max 5MB) and format (JPG/PNG only).'
+        } else if (error.message.includes('permission')) {
+          errorMessage = 'Permission denied. Please make sure you have admin access.'
+        } else if (error.message.includes('network')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
       showNotification(
         'Upload Failed',
-        error instanceof Error ? error.message : 'Unknown error occurred',
+        errorMessage,
         'error'
       )
     } finally {

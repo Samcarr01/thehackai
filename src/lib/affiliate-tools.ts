@@ -99,7 +99,13 @@ export const affiliateToolsService = {
 
     if (error) {
       console.error('Error creating affiliate tool:', error)
-      throw error
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      })
+      throw new Error(`Database error: ${error.message}`)
     }
 
     return data
