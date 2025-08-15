@@ -177,16 +177,16 @@ export default function BlogPostClient({ post, user }: Props) {
           </td>
         ),
         ul: ({ children }) => (
-          <ul className="list-disc pl-4 sm:pl-6 my-3 sm:my-4 space-y-1 sm:space-y-2 text-sm sm:text-base text-gray-300">{children}</ul>
+          <ul className="list-disc pl-5 sm:pl-6 my-4 sm:my-5 space-y-2 sm:space-y-2 text-base sm:text-base text-gray-300">{children}</ul>
         ),
         ol: ({ children }) => (
-          <ol className="list-decimal pl-4 sm:pl-6 my-3 sm:my-4 space-y-1 sm:space-y-2 text-sm sm:text-base text-gray-300">{children}</ol>
+          <ol className="list-decimal pl-5 sm:pl-6 my-4 sm:my-5 space-y-2 sm:space-y-2 text-base sm:text-base text-gray-300">{children}</ol>
         ),
         li: ({ children }) => (
-          <li className="text-sm sm:text-base text-gray-300 leading-relaxed">{children}</li>
+          <li className="text-base sm:text-base text-gray-300 leading-relaxed">{children}</li>
         ),
         p: ({ children }) => (
-          <p className="mb-3 sm:mb-4 text-sm sm:text-base text-gray-300 leading-relaxed">{children}</p>
+          <p className="mb-4 sm:mb-5 text-base sm:text-base text-gray-300 leading-relaxed">{children}</p>
         ),
         strong: ({ children }) => (
           <strong className="font-semibold text-white">{children}</strong>
@@ -195,19 +195,19 @@ export default function BlogPostClient({ post, user }: Props) {
           <em className="italic text-gray-200">{children}</em>
         ),
         h1: ({ children }) => (
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6 mt-6 sm:mt-8">{children}</h1>
+          <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-white mb-5 sm:mb-6 mt-8 sm:mt-8">{children}</h1>
         ),
         h2: ({ children, ...props }) => {
           // Ensure stable ID generation that matches TOC
           const text = React.Children.toArray(children).join('')
           const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-          return <h2 id={id} className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-3 sm:mb-4 mt-6 sm:mt-8 scroll-mt-24" {...props}>{children}</h2>
+          return <h2 id={id} className="text-xl sm:text-xl md:text-2xl font-semibold text-white mb-4 sm:mb-4 mt-8 sm:mt-8 scroll-mt-24" {...props}>{children}</h2>
         },
         h3: ({ children }) => (
-          <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2 sm:mb-3 mt-4 sm:mt-6">{children}</h3>
+          <h3 className="text-lg sm:text-lg md:text-xl font-semibold text-white mb-3 sm:mb-3 mt-6 sm:mt-6">{children}</h3>
         ),
         h4: ({ children }) => (
-          <h4 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 mt-3 sm:mt-4">{children}</h4>
+          <h4 className="text-base sm:text-base md:text-lg font-semibold text-white mb-2 mt-4 sm:mt-4">{children}</h4>
         ),
       }}
     >
@@ -227,7 +227,7 @@ export default function BlogPostClient({ post, user }: Props) {
         />
       </div>
 
-      <article className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Breadcrumbs - Mobile optimized */}
         <nav className="mb-6 sm:mb-8">
           <ol className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-gray-400 overflow-x-auto scrollbar-hide">
