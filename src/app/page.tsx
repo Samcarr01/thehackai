@@ -38,13 +38,18 @@ function HomePageContent() {
   useEffect(() => {
     const hash = window.location.hash
     if (hash) {
-      // Wait a moment for page to fully load, then scroll
+      // Wait a moment for page to fully load, then scroll with header offset
       setTimeout(() => {
         const element = document.getElementById(hash.substring(1))
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
+          const headerOffset = 80 // Account for mobile header height
+          const elementPosition = element.offsetTop - headerOffset
+          window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth'
+          })
         }
-      }, 100)
+      }, 300) // Increased delay to ensure full page load
     }
   }, [])
 

@@ -6,13 +6,18 @@ export const globalNavigation = {
     if (typeof window === 'undefined') return
     
     if (window.location.pathname === '/') {
-      // Already on homepage - just scroll
+      // Already on homepage - scroll with mobile header offset
       const element = document.getElementById('features')
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        const headerOffset = 80 // Account for mobile header height
+        const elementPosition = element.offsetTop - headerOffset
+        window.scrollTo({
+          top: elementPosition,
+          behavior: 'smooth'
+        })
       }
     } else {
-      // On another page - navigate to home with anchor
+      // On another page - navigate to home with anchor and scroll handler
       window.location.href = '/#features'
     }
   },
@@ -22,13 +27,18 @@ export const globalNavigation = {
     if (typeof window === 'undefined') return
     
     if (window.location.pathname === '/') {
-      // Already on homepage - just scroll
+      // Already on homepage - scroll with mobile header offset
       const element = document.getElementById('pricing')
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        const headerOffset = 80 // Account for mobile header height
+        const elementPosition = element.offsetTop - headerOffset
+        window.scrollTo({
+          top: elementPosition,
+          behavior: 'smooth'
+        })
       }
     } else {
-      // On another page - navigate to home with anchor
+      // On another page - navigate to home with anchor and scroll handler
       window.location.href = '/#pricing'
     }
   }
