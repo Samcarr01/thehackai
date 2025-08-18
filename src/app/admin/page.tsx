@@ -1179,24 +1179,22 @@ export default function AdminPage() {
                       const tierInfo = TIER_FEATURES[tier]
                       const accessSummary = getTierAccessSummary(tier)
                       
-                      // Debug logging
-                      console.log('🔍 Tier button render:', { 
-                        tier, 
-                        userTier: user?.user_tier, 
-                        isCurrentTier,
-                        userObject: user 
-                      })
+                      // Tier button logic working correctly
                       
                       return (
                         <button
                           key={`${tier}-${user?.user_tier || 'none'}`}
                           onClick={() => setConfirmTierChange({ isOpen: true, targetTier: tier })}
                           disabled={isCurrentTier || switchingTier}
+                          style={{
+                            backgroundColor: isCurrentTier ? '#166534' : '#374151',
+                            borderColor: isCurrentTier ? '#4ade80' : '#6b7280',
+                            color: isCurrentTier ? '#bbf7d0' : '#ffffff',
+                            opacity: switchingTier ? 0.5 : 1
+                          }}
                           className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                            isCurrentTier
-                              ? 'bg-green-900/30 border-green-400 text-green-200 cursor-not-allowed'
-                              : 'bg-slate-700/50 border-slate-500 hover:border-purple-400 hover:shadow-lg text-white hover:text-purple-200'
-                          } ${switchingTier ? 'opacity-50' : ''}`}
+                            isCurrentTier ? 'cursor-not-allowed' : 'hover:border-purple-400 hover:shadow-lg hover:text-purple-200'
+                          }`}
                         >
                           <div className="text-left">
                             <div className="flex items-center justify-between mb-2">
