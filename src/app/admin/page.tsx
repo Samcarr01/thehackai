@@ -22,6 +22,7 @@ interface AnalyzedContent {
   title: string
   description: string
   category: string
+  required_tier?: 'free' | 'pro' | 'ultra'
 }
 
 export default function AdminPage() {
@@ -245,7 +246,7 @@ export default function AdminPage() {
           description: analyzedContent.description,
           chatgpt_url: gptUrl,
           category: analyzedContent.category,
-          required_tier: 'ultra', // 🔒 CRITICAL FIX: New GPTs go to Ultra tier (Ultra gets everything)
+          required_tier: analyzedContent.required_tier || 'ultra',
         })
       } else if (uploadType === 'document' && documentFile) {
         await documentsService.createDocument({
@@ -253,7 +254,7 @@ export default function AdminPage() {
           description: analyzedContent.description,
           file: documentFile,
           category: analyzedContent.category,
-          required_tier: 'ultra', // 🔒 CRITICAL FIX: New Documents go to Ultra tier (Ultra gets everything)
+          required_tier: analyzedContent.required_tier || 'ultra',
         })
       }
 
@@ -721,6 +722,24 @@ export default function AdminPage() {
                           <option value="Design">Design</option>
                           <option value="Development">Development</option>
                         </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Tier Access</label>
+                        <select
+                          value={analyzedContent.required_tier || 'ultra'}
+                          onChange={(e) => setAnalyzedContent({ ...analyzedContent, required_tier: e.target.value as 'free' | 'pro' | 'ultra' })}
+                          className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        >
+                          <option value="free">Free - Everyone can access</option>
+                          <option value="pro">Pro - Pro and Ultra users</option>
+                          <option value="ultra">Ultra - Ultra users only</option>
+                        </select>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {analyzedContent.required_tier === 'free' && '🌐 Available to all users'}
+                          {analyzedContent.required_tier === 'pro' && '💎 Available to Pro and Ultra subscribers'}  
+                          {(analyzedContent.required_tier === 'ultra' || !analyzedContent.required_tier) && '👑 Exclusive to Ultra subscribers'}
+                        </p>
                       </div>
                     </div>
 

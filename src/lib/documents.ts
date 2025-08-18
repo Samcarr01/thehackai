@@ -232,7 +232,7 @@ export const documentsService = {
         pdf_url: publicUrl,
         category: documentData.category,
         is_featured: documentData.is_featured ?? false,
-        required_tier: documentData.required_tier ?? 'pro',
+        required_tier: documentData.required_tier ?? 'ultra',
         added_date: new Date().toISOString().split('T')[0]
       }])
       .select()
