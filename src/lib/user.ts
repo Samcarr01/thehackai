@@ -48,6 +48,97 @@ export const TIER_PRICES = {
   ultra: 19
 } as const
 
+// Dynamic content counts - will be fetched from database
+interface ContentCounts {
+  totalGPTs: number
+  totalDocuments: number
+  proGPTs: number
+  proDocuments: number
+}
+
+let contentCounts: ContentCounts = {
+  totalGPTs: 7,
+  totalDocuments: 4,
+  proGPTs: 3,
+  proDocuments: 2
+}
+
+// Function to get actual counts from database
+export const getContentCounts = async (): Promise<ContentCounts> => {
+  try {
+    const supabase = createClient()
+    
+    // Get total counts
+    const [gptsResult, docsResult] = await Promise.all([
+      supabase.from('gpts').select('id, required_tier'),
+      supabase.from('documents').select('id, required_tier')
+    ])
+    
+    const totalGPTs = gptsResult.data?.length || 0
+    const totalDocuments = docsResult.data?.length || 0
+    
+    // Count pro-accessible items (pro + ultra tiers)
+    const proGPTs = gptsResult.data?.filter(item => item.required_tier === 'pro' || item.required_tier === 'ultra').length || 0
+    const proDocuments = docsResult.data?.filter(item => item.required_tier === 'pro' || item.required_tier === 'ultra').length || 0
+    
+    const counts = {
+      totalGPTs,
+      totalDocuments,
+      proGPTs,
+      proDocuments
+    }
+    
+    contentCounts = counts
+    return counts
+  } catch (error) {
+    console.warn('Failed to fetch content counts, using cached values:', error)
+    return contentCounts
+  }
+}
+
+// Function to get tier features with dynamic counts
+export const getTierFeatures = async () => {
+  const counts = await getContentCounts()
+  
+  return {
+    free: {
+      name: 'Free',
+      price: 0,
+      description: 'Get started with AI',
+      features: [
+        'Blog access',
+        'GPT previews',
+        'Playbook previews',
+        'Community access'
+      ]
+    },
+    pro: {
+      name: 'Pro',
+      price: 7,
+      description: 'Daily AI Use',
+      features: [
+        'Everything in Free',
+        `${counts.proGPTs} essential GPTs`,
+        `${counts.proDocuments} core playbooks`,
+        'Email support'
+      ]
+    },
+    ultra: {
+      name: 'Ultra',
+      price: 19,
+      description: 'Upscale Your AI Game',
+      features: [
+        'Everything in Pro',
+        `All ${counts.totalGPTs} GPTs`,
+        `All ${counts.totalDocuments} playbooks`,
+        'Priority support',
+        'Early access'
+      ]
+    }
+  }
+}
+
+// Static fallback for backward compatibility
 export const TIER_FEATURES = {
   free: {
     name: 'Free',
@@ -514,8 +605,10 @@ export const userService = {
     return false
   },
 
-  // Get available content for user tier
-  getAvailableContent(userTier: UserTier) {
+  // Get available content for user tier (async version with live counts)
+  async getAvailableContent(userTier: UserTier) {
+    const counts = await getContentCounts()
+    
     switch (userTier) {
       case 'free':
         return {
@@ -525,33 +618,79 @@ export const userService = {
         }
       case 'pro':
         return {
-          gpts: 3,
-          documents: 2,
-          features: ['3 essential GPTs', '2 core playbooks', 'Email support']
+          gpts: counts.proGPTs,
+          documents: counts.proDocuments,
+          features: [`${counts.proGPTs} essential GPTs`, `${counts.proDocuments} core playbooks`, 'Email support']
         }
       case 'ultra':
         return {
-          gpts: 7,
-          documents: 4,
+          gpts: counts.totalGPTs,
+          documents: counts.totalDocuments,
           features: ['All GPTs', 'All playbooks', 'Priority support', 'Early access']
         }
     }
   },
 
-  // Get next tier upgrade info
-  getUpgradeInfo(currentTier: UserTier) {
+  // Get available content for user tier (sync version with cached counts - for backward compatibility)
+  getAvailableContentSync(userTier: UserTier) {
+    switch (userTier) {
+      case 'free':
+        return {
+          gpts: 0,
+          documents: 0,
+          features: ['Blog access', 'Previews only']
+        }
+      case 'pro':
+        return {
+          gpts: contentCounts.proGPTs,
+          documents: contentCounts.proDocuments,
+          features: [`${contentCounts.proGPTs} essential GPTs`, `${contentCounts.proDocuments} core playbooks`, 'Email support']
+        }
+      case 'ultra':
+        return {
+          gpts: contentCounts.totalGPTs,
+          documents: contentCounts.totalDocuments,
+          features: ['All GPTs', 'All playbooks', 'Priority support', 'Early access']
+        }
+    }
+  },
+
+  // Get next tier upgrade info (async version with live counts)
+  async getUpgradeInfo(currentTier: UserTier) {
+    const counts = await getContentCounts()
+    
     switch (currentTier) {
       case 'free':
         return {
           nextTier: 'pro' as UserTier,
           price: TIER_PRICES.pro,
-          benefits: ['Access to 3 essential GPTs', '2 core playbooks']
+          benefits: [`Access to ${counts.proGPTs} essential GPTs`, `${counts.proDocuments} core playbooks`]
         }
       case 'pro':
         return {
           nextTier: 'ultra' as UserTier,
           price: TIER_PRICES.ultra,
-          benefits: ['Access to all 7 GPTs', 'All 4 playbooks', 'Priority support']
+          benefits: [`Access to all ${counts.totalGPTs} GPTs`, `All ${counts.totalDocuments} playbooks`, 'Priority support']
+        }
+      case 'ultra':
+        return null // Already at highest tier
+    }
+  },
+
+  // Get next tier upgrade info (sync version with cached counts - for backward compatibility)
+  getUpgradeInfoSync(currentTier: UserTier) {
+    switch (currentTier) {
+      case 'free':
+        return {
+          nextTier: 'pro' as UserTier,
+          price: TIER_PRICES.pro,
+          benefits: [`Access to ${contentCounts.proGPTs} essential GPTs`, `${contentCounts.proDocuments} core playbooks`]
+        }
+      case 'pro':
+        return {
+          nextTier: 'ultra' as UserTier,
+          price: TIER_PRICES.ultra,
+          benefits: [`Access to all ${contentCounts.totalGPTs} GPTs`, `All ${contentCounts.totalDocuments} playbooks`, 'Priority support']
         }
       case 'ultra':
         return null // Already at highest tier

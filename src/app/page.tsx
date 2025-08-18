@@ -357,11 +357,11 @@ function HomePageContent() {
                   <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base flex-grow">
                     <li className="flex items-center space-x-3">
                       <span className="text-purple-200">✓</span>
-                      <span>3 essential GPTs for daily productivity</span>
+                      <span>{contentStats?.proAccessibleGPTs || 3} essential GPTs for daily productivity</span>
                     </li>
                     <li className="flex items-center space-x-3">
                       <span className="text-purple-200">✓</span>
-                      <span>2 core playbooks for any LLM</span>
+                      <span>{contentStats?.proAccessibleDocuments || 2} core playbooks for any LLM</span>
                     </li>
                     <li className="flex items-center space-x-3">
                       <span className="text-purple-200">✓</span>

@@ -209,9 +209,14 @@ export const documentsService = {
     
     // Upload file to Supabase Storage
     const fileName = `${Date.now()}-${documentData.file.name}`
+    console.log('🔧 Uploading file:', { fileName, fileSize: documentData.file.size, fileType: documentData.file.type })
+    
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('documents')
-      .upload(fileName, documentData.file)
+      .upload(fileName, documentData.file, {
+        contentType: 'application/pdf',
+        upsert: false
+      })
     
     if (uploadError) {
       console.error('Error uploading file:', uploadError)

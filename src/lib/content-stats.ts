@@ -9,20 +9,26 @@ export interface ContentStats {
   accessibleGPTs: number
   accessibleDocuments: number
   accessiblePlaybooks: number // alias for documents
+  proAccessibleGPTs?: number // Pro tier accessible count
+  proAccessibleDocuments?: number // Pro tier accessible count
 }
 
 export const contentStatsService = {
   async getContentStats(userTier: UserTier = 'free'): Promise<ContentStats> {
     try {
-      const [allGPTs, allDocuments, gptAccess, docAccess] = await Promise.all([
+      const [allGPTs, allDocuments, gptAccess, docAccess, proGPTAccess, proDocAccess] = await Promise.all([
         gptsService.getAllGPTs(),
         documentsService.getAllDocuments(),
         gptsService.getAllGPTsWithAccess(userTier),
-        documentsService.getAllDocumentsWithAccess(userTier)
+        documentsService.getAllDocumentsWithAccess(userTier),
+        gptsService.getAllGPTsWithAccess('pro'),
+        documentsService.getAllDocumentsWithAccess('pro')
       ])
 
       const accessibleGPTs = gptAccess.filter(gpt => gpt.hasAccess).length
       const accessibleDocuments = docAccess.filter(doc => doc.hasAccess).length
+      const proAccessibleGPTs = proGPTAccess.filter(gpt => gpt.hasAccess).length
+      const proAccessibleDocuments = proDocAccess.filter(doc => doc.hasAccess).length
 
       return {
         totalGPTs: allGPTs.length,
@@ -30,7 +36,9 @@ export const contentStatsService = {
         totalPlaybooks: allDocuments.length, // alias
         accessibleGPTs,
         accessibleDocuments,
-        accessiblePlaybooks: accessibleDocuments // alias
+        accessiblePlaybooks: accessibleDocuments, // alias
+        proAccessibleGPTs,
+        proAccessibleDocuments
       }
     } catch (error) {
       console.error('Error getting content stats:', error)
@@ -40,7 +48,9 @@ export const contentStatsService = {
         totalPlaybooks: 0,
         accessibleGPTs: 0,
         accessibleDocuments: 0,
-        accessiblePlaybooks: 0
+        accessiblePlaybooks: 0,
+        proAccessibleGPTs: 0,
+        proAccessibleDocuments: 0
       }
     }
   },
