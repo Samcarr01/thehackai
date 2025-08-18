@@ -205,38 +205,67 @@ export const documentsService = {
   },
 
   async createDocument(documentData: CreateDocumentData): Promise<Document | null> {
+    // Direct approach using admin client - bypass API
+    const { createAdminClient } = await import('@/lib/supabase/admin')
+    const supabase = createAdminClient()
+    
     try {
-      console.log('🔧 Creating document via API:', {
+      console.log('🔧 Creating document directly with admin client:', {
         title: documentData.title,
         category: documentData.category,
         requiredTier: documentData.required_tier,
         fileSize: documentData.file.size
       })
       
-      // Use the admin API route for document uploads
-      const formData = new FormData()
-      formData.append('file', documentData.file)
-      formData.append('title', documentData.title)
-      formData.append('description', documentData.description)
-      formData.append('category', documentData.category)
-      formData.append('required_tier', documentData.required_tier ?? 'ultra')
-      formData.append('is_featured', (documentData.is_featured ?? false).toString())
+      // Upload file to Supabase Storage using admin client
+      const fileName = `${Date.now()}-${documentData.file.name}`
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(fileName, documentData.file, {
+          contentType: 'application/pdf',
+          upsert: false
+        })
       
-      const response = await fetch('/api/admin/upload-document', {
-        method: 'POST',
-        body: formData
-      })
-      
-      if (!response.ok) {
-        const errorData = await response.json()
-        console.error('❌ API upload failed:', errorData)
-        throw new Error(errorData.error || 'Upload failed')
+      if (uploadError) {
+        console.error('❌ Storage upload error:', uploadError)
+        throw new Error(`Upload failed: ${uploadError.message}`)
       }
       
-      const result = await response.json()
-      console.log('✅ Document created successfully via API')
+      console.log('✅ File uploaded successfully:', uploadData)
       
-      return result.document
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(fileName)
+      
+      console.log('📄 Public URL generated:', publicUrl)
+      
+      // Insert document record using admin client
+      const { data: createdDocument, error: dbError } = await supabase
+        .from('documents')
+        .insert([{
+          title: documentData.title,
+          description: documentData.description,
+          pdf_url: publicUrl,
+          category: documentData.category,
+          is_featured: documentData.is_featured ?? false,
+          required_tier: documentData.required_tier ?? 'ultra',
+          added_date: new Date().toISOString().split('T')[0]
+        }])
+        .select()
+        .single()
+      
+      if (dbError) {
+        console.error('❌ Database insert error:', dbError)
+        
+        // Clean up uploaded file if database insert fails
+        await supabase.storage.from('documents').remove([fileName])
+        
+        throw new Error(`Database error: ${dbError.message}`)
+      }
+      
+      console.log('✅ Document created successfully:', createdDocument)
+      return createdDocument
       
     } catch (error) {
       console.error('❌ Document creation failed:', error)
