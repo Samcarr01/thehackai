@@ -1179,6 +1179,14 @@ export default function AdminPage() {
                       const tierInfo = TIER_FEATURES[tier]
                       const accessSummary = getTierAccessSummary(tier)
                       
+                      // Debug logging
+                      console.log('🔍 Tier button render:', { 
+                        tier, 
+                        userTier: user?.user_tier, 
+                        isCurrentTier,
+                        userObject: user 
+                      })
+                      
                       return (
                         <button
                           key={`${tier}-${user?.user_tier || 'none'}`}
@@ -1186,9 +1194,9 @@ export default function AdminPage() {
                           disabled={isCurrentTier || switchingTier}
                           className={`p-4 rounded-xl border-2 transition-all duration-200 ${
                             isCurrentTier
-                              ? 'bg-green-900/20 border-green-500/30 text-green-300 cursor-not-allowed'
-                              : 'bg-slate-700/50 border-slate-600 hover:border-purple-300 hover:shadow-md text-white'
-                          }`}
+                              ? 'bg-green-900/30 border-green-400 text-green-200 cursor-not-allowed'
+                              : 'bg-slate-700/50 border-slate-500 hover:border-purple-400 hover:shadow-lg text-white hover:text-purple-200'
+                          } ${switchingTier ? 'opacity-50' : ''}`}
                         >
                           <div className="text-left">
                             <div className="flex items-center justify-between mb-2">
