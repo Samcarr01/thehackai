@@ -562,33 +562,39 @@ export const userService = {
     currentPeriodEnd?: string | undefined
     cancelAtPeriodEnd?: boolean
   }): Promise<boolean> {
-    console.log('🔄 Updating user tier:', { userId, tier, subscriptionData })
+    console.log('🔄 UserService: Updating user tier:', { userId, tier, subscriptionData })
     
     try {
       // For admin tier switching, use API route to bypass RLS
+      const requestBody = {
+        userId,
+        tier,
+        ...subscriptionData
+      }
+      console.log('📡 UserService: Making API request to /api/admin/update-tier with:', requestBody)
+      
       const response = await fetch('/api/admin/update-tier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          userId,
-          tier,
-          ...subscriptionData
-        })
+        body: JSON.stringify(requestBody)
       })
       
+      console.log('📡 UserService: API response status:', response.status, response.statusText)
+      
       if (!response.ok) {
-        console.error('❌ Tier update API failed:', response.statusText)
+        const errorText = await response.text()
+        console.error('❌ UserService: Tier update API failed:', { status: response.status, statusText: response.statusText, body: errorText })
         return false
       }
       
       const result = await response.json()
-      console.log('✅ Tier updated successfully:', result)
-      return result.success
+      console.log('✅ UserService: Tier updated successfully:', result)
+      return result.success || false
       
     } catch (error) {
-      console.error('❌ Error updating user tier:', error)
+      console.error('❌ UserService: Error updating user tier:', error)
       return false
     }
   },

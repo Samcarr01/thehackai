@@ -114,15 +114,24 @@ export default function AdminPage() {
   }
 
   const handleTierChange = async (targetTier: UserTier) => {
-    if (!user) return
+    if (!user) {
+      console.error('❌ No user found for tier change')
+      return
+    }
     
+    console.log('🔄 Starting tier change:', { currentTier: user.user_tier, targetTier, userId: user.id })
     setSwitchingTier(true)
+    
     try {
       // Direct database update for admin user only
+      console.log('📡 Calling userService.updateTier...')
       const success = await userService.updateTier(user.id, targetTier)
+      
+      console.log('📡 updateTier result:', success)
       
       if (success) {
         // Update local user state
+        console.log('✅ Updating local user state')
         setUser(prev => prev ? { ...prev, user_tier: targetTier, is_pro: targetTier === 'pro' || targetTier === 'ultra' } : null)
         
         showNotification(
@@ -132,14 +141,17 @@ export default function AdminPage() {
         )
         
         // Refresh tier test data
+        console.log('🔄 Refreshing tier test data...')
         await loadTierTestData()
       } else {
+        console.error('❌ updateTier returned false')
         showNotification('Error', 'Failed to change tier', 'error')
       }
     } catch (error) {
-      console.error('Error changing tier:', error)
-      showNotification('Error', 'Failed to change tier', 'error')
+      console.error('❌ Error changing tier:', error)
+      showNotification('Error', `Failed to change tier: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error')
     } finally {
+      console.log('🏁 Tier change process completed')
       setSwitchingTier(false)
       setConfirmTierChange({ isOpen: false, targetTier: null })
     }
