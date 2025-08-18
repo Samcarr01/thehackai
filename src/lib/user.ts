@@ -562,25 +562,35 @@ export const userService = {
     currentPeriodEnd?: string | undefined
     cancelAtPeriodEnd?: boolean
   }): Promise<boolean> {
-    const supabase = createClient()
+    console.log('🔄 Updating user tier:', { userId, tier, subscriptionData })
     
-    const updates = {
-      user_tier: tier,
-      is_pro: tier === 'pro' || tier === 'ultra', // Backward compatibility
-      ...subscriptionData
-    }
-    
-    const { error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', userId)
-    
-    if (error) {
-      console.error('Error updating user tier:', error)
+    try {
+      // For admin tier switching, use API route to bypass RLS
+      const response = await fetch('/api/admin/update-tier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          tier,
+          ...subscriptionData
+        })
+      })
+      
+      if (!response.ok) {
+        console.error('❌ Tier update API failed:', response.statusText)
+        return false
+      }
+      
+      const result = await response.json()
+      console.log('✅ Tier updated successfully:', result)
+      return result.success
+      
+    } catch (error) {
+      console.error('❌ Error updating user tier:', error)
       return false
     }
-    
-    return true
   },
 
   // Backward compatibility method
