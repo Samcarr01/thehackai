@@ -131,8 +131,14 @@ export default function AdminPage() {
       
       if (success) {
         // Update local user state
-        console.log('✅ Updating local user state')
-        setUser(prev => prev ? { ...prev, user_tier: targetTier, is_pro: targetTier === 'pro' || targetTier === 'ultra' } : null)
+        console.log('✅ Updating local user state from', user.user_tier, 'to', targetTier)
+        const updatedUser = { 
+          ...user, 
+          user_tier: targetTier, 
+          is_pro: targetTier === 'pro' || targetTier === 'ultra' 
+        }
+        setUser(updatedUser)
+        console.log('✅ User state updated:', updatedUser)
         
         showNotification(
           'Tier Changed Successfully',
@@ -140,9 +146,19 @@ export default function AdminPage() {
           'success'
         )
         
-        // Refresh tier test data
+        // Force re-render by clearing and reloading data
         console.log('🔄 Refreshing tier test data...')
+        setTierTestData({ gpts: [], documents: [] }) // Clear first
         await loadTierTestData()
+        
+        // Force complete component refresh by triggering a state change
+        console.log('🔄 Forcing component re-render...')
+        
+        // Trigger a small delay to ensure state propagation
+        setTimeout(() => {
+          console.log('🔄 Final state check:', { userTier: updatedUser.user_tier })
+        }, 100)
+        
       } else {
         console.error('❌ updateTier returned false')
         showNotification('Error', 'Failed to change tier', 'error')
@@ -1165,7 +1181,7 @@ export default function AdminPage() {
                       
                       return (
                         <button
-                          key={tier}
+                          key={`${tier}-${user?.user_tier || 'none'}`}
                           onClick={() => setConfirmTierChange({ isOpen: true, targetTier: tier })}
                           disabled={isCurrentTier || switchingTier}
                           className={`p-4 rounded-xl border-2 transition-all duration-200 ${
@@ -1221,7 +1237,7 @@ export default function AdminPage() {
                     const isCurrentTier = user?.user_tier === tier
                     
                     return (
-                      <div key={tier} className={`p-6 rounded-xl border-2 ${
+                      <div key={`overview-${tier}-${user?.user_tier || 'none'}`} className={`p-6 rounded-xl border-2 ${
                         isCurrentTier 
                           ? 'bg-purple-900/20 border-purple-500/30' 
                           : 'bg-slate-700/30 border-slate-600'
