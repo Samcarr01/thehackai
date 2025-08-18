@@ -205,50 +205,43 @@ export const documentsService = {
   },
 
   async createDocument(documentData: CreateDocumentData): Promise<Document | null> {
-    const supabase = createClient()
-    
-    // Upload file to Supabase Storage
-    const fileName = `${Date.now()}-${documentData.file.name}`
-    console.log('🔧 Uploading file:', { fileName, fileSize: documentData.file.size, fileType: documentData.file.type })
-    
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('documents')
-      .upload(fileName, documentData.file, {
-        contentType: 'application/pdf',
-        upsert: false
-      })
-    
-    if (uploadError) {
-      console.error('Error uploading file:', uploadError)
-      throw uploadError
-    }
-    
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('documents')
-      .getPublicUrl(fileName)
-    
-    // Insert document record
-    const { data, error } = await supabase
-      .from('documents')
-      .insert([{
+    try {
+      console.log('🔧 Creating document via API:', {
         title: documentData.title,
-        description: documentData.description,
-        pdf_url: publicUrl,
         category: documentData.category,
-        is_featured: documentData.is_featured ?? false,
-        required_tier: documentData.required_tier ?? 'ultra',
-        added_date: new Date().toISOString().split('T')[0]
-      }])
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error creating document:', error)
+        requiredTier: documentData.required_tier,
+        fileSize: documentData.file.size
+      })
+      
+      // Use the admin API route for document uploads
+      const formData = new FormData()
+      formData.append('file', documentData.file)
+      formData.append('title', documentData.title)
+      formData.append('description', documentData.description)
+      formData.append('category', documentData.category)
+      formData.append('required_tier', documentData.required_tier ?? 'ultra')
+      formData.append('is_featured', (documentData.is_featured ?? false).toString())
+      
+      const response = await fetch('/api/admin/upload-document', {
+        method: 'POST',
+        body: formData
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('❌ API upload failed:', errorData)
+        throw new Error(errorData.error || 'Upload failed')
+      }
+      
+      const result = await response.json()
+      console.log('✅ Document created successfully via API')
+      
+      return result.document
+      
+    } catch (error) {
+      console.error('❌ Document creation failed:', error)
       throw error
     }
-    
-    return data
   },
 
   async deleteDocument(documentId: string): Promise<boolean> {
