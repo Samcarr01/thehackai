@@ -83,8 +83,6 @@ export const blogService = {
   },
 
   async createPost(post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost | null> {
-    const supabase = createClient()
-    
     // Log the post data being saved
     console.log('Creating blog post with data:', {
       title: post.title,
@@ -95,25 +93,25 @@ export const blogService = {
     })
     
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .insert([post]) // Don't add status field since it might not exist
-        .select()
-        .single()
+      // Use admin API route for blog post creation to bypass RLS
+      const response = await fetch('/api/admin/create-blog-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(post)
+      })
 
-      if (error) {
-        console.error('Supabase error creating blog post:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        })
-        console.error('Post data that failed:', post)
-        throw error // Re-throw to catch in UI
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('❌ Blog API creation failed:', errorData)
+        throw new Error(errorData.error || 'Blog post creation failed')
       }
 
-      console.log('Blog post created successfully:', data?.id)
-      return data
+      const result = await response.json()
+      console.log('✅ Blog post created successfully via API:', result.post?.id)
+      return result.post
+
     } catch (err) {
       console.error('Exception creating blog post:', err)
       throw err // Re-throw to catch in UI
