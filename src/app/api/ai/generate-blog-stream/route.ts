@@ -1001,7 +1001,13 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
                   
                   // Add timeout and performance optimizations
                   console.log(`🎨 Generating image ${index + 1} with DALL-E 3...`)
+                  console.log(`🎨 Enhanced prompt: ${enhancedImagePrompt}`)
                   const imageStartTime = Date.now()
+                  
+                  if (!OPENAI_API_KEY) {
+                    console.error('❌ OPENAI_API_KEY is missing!')
+                    throw new Error('OpenAI API key not configured')
+                  }
                   
                   const imageResponse = await Promise.race([
                     fetch('https://api.openai.com/v1/images/generations', {
@@ -1028,9 +1034,15 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
 
                   const imageGenerationTime = Date.now() - imageStartTime
                   console.log(`⚡ Image ${index + 1} generated in ${imageGenerationTime}ms`)
+                  console.log(`📊 Image response status: ${imageResponse.status} ${imageResponse.statusText}`)
 
                   if (imageResponse.ok) {
                     const responseData = await imageResponse.json()
+                    console.log(`✅ DALL-E response received for image ${index + 1}:`, {
+                      hasData: !!responseData?.data,
+                      dataLength: responseData?.data?.length || 0,
+                      firstImageUrl: responseData?.data?.[0]?.url ? 'present' : 'missing'
+                    })
                     
                     if (responseData.data && responseData.data[0]?.url) {
                       console.log(`✅ Image ${index + 1} URL received successfully`)
@@ -1043,7 +1055,14 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
                     }
                   } else {
                     const errorText = await imageResponse.text()
-                    console.error(`❌ Image generation failed: ${imageResponse.status} - ${errorText}`)
+                    console.error(`❌ DALL-E API Error for image ${index + 1}:`, {
+                      status: imageResponse.status,
+                      statusText: imageResponse.statusText,
+                      error: errorText,
+                      prompt: enhancedImagePrompt.substring(0, 100) + '...',
+                      hasApiKey: !!OPENAI_API_KEY,
+                      apiKeyPrefix: OPENAI_API_KEY?.substring(0, 10) + '...'
+                    })
                   }
                   return null
                 } catch (err: any) {
