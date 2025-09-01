@@ -382,31 +382,32 @@ function HomePageContent() {
                 
                 {/* Card content */}
                 <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl text-white transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:rotate-1 relative z-10 h-full flex flex-col touch-feedback">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-white text-pink-700 px-3 py-1 rounded-full text-xs font-semibold shadow-md">Best Value</span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative z-10 flex flex-col h-full">
-                  <h3 className="text-xl sm:text-2xl font-bold font-display mb-2">Ultra - Upscale Your AI Game</h3>
-                  <div className="text-3xl sm:text-4xl font-bold mb-4">£<AnimatedCounter end={19} duration={2500} className="inline" /><span className="text-lg sm:text-xl">/month</span></div>
-                  <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base flex-grow">
-                    <li className="flex items-center space-x-3">
-                      <span className="text-pink-300">✓</span>
-                      <span>All {contentStats?.totalGPTs || 7} GPTs for complete AI mastery</span>
-                    </li>
-                    <li className="flex items-center space-x-3">
-                      <span className="text-pink-300">✓</span>
-                      <span>All {contentStats?.totalPlaybooks || 10} playbooks for expert knowledge</span>
-                    </li>
-                    <li className="flex items-center space-x-3">
-                      <span className="text-pink-300">✓</span>
-                      <span>Priority support + early access</span>
-                    </li>
-                    <li className="flex items-center space-x-3">
-                      <span className="text-pink-300">✓</span>
-                      <span>For serious AI power users</span>
-                    </li>
-                  </ul>
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                    <span className="bg-white text-pink-700 px-3 py-1 rounded-full text-xs font-semibold shadow-md">Best Value</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative z-10 flex flex-col h-full">
+                    <h3 className="text-xl sm:text-2xl font-bold font-display mb-2">Ultra - Upscale Your AI Game</h3>
+                    <div className="text-3xl sm:text-4xl font-bold mb-4">£<AnimatedCounter end={19} duration={2500} className="inline" /><span className="text-lg sm:text-xl">/month</span></div>
+                    <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base flex-grow">
+                      <li className="flex items-center space-x-3">
+                        <span className="text-pink-300">✓</span>
+                        <span>All {contentStats?.totalGPTs || 7} GPTs for complete AI mastery</span>
+                      </li>
+                      <li className="flex items-center space-x-3">
+                        <span className="text-pink-300">✓</span>
+                        <span>All {contentStats?.totalPlaybooks || 10} playbooks for expert knowledge</span>
+                      </li>
+                      <li className="flex items-center space-x-3">
+                        <span className="text-pink-300">✓</span>
+                        <span>Priority support + early access</span>
+                      </li>
+                      <li className="flex items-center space-x-3">
+                        <span className="text-pink-300">✓</span>
+                        <span>For serious AI power users</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </ScrollAnimation>
