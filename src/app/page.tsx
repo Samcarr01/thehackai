@@ -109,7 +109,7 @@ function HomePageContent() {
             <span className="text-purple-300 text-sm font-medium">Battle-tested AI Playbooks & GPTs</span>
           </div>
           
-          <h1 className="text-[1.75rem] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight text-center min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px] xl:min-h-[100px] flex items-center justify-center px-1">
+          <h1 className="text-[1.75rem] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold font-display text-white mb-6 leading-tight text-center min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px] xl:min-h-[100px] flex items-center justify-center px-1">
             <>
               {/* Mobile text - shorter to prevent line breaks */}
               <div className="sm:hidden">

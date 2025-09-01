@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head><title>Create Missing Favicon</title></head>
+<body style="background: #0a0a0a; color: white; text-align: center; padding: 50px;">
+<h1>Creating 32x32 Favicon...</h1>
+<canvas id="canvas" width="64" height="64" style="border: 1px solid white;"></canvas>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = 64;
+canvas.height = 64;
+ctx.scale(2, 2);
+
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'high';
+
+// Background gradient
+const gradient = ctx.createLinearGradient(0, 0, 32, 32);
+gradient.addColorStop(0, '#000000');
+gradient.addColorStop(1, '#1a1a2e');
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 32, 32);
+
+// Text gradient  
+const textGradient = ctx.createLinearGradient(0, 0, 32, 0);
+textGradient.addColorStop(0, '#8b5cf6');
+textGradient.addColorStop(1, '#ec4899');
+ctx.fillStyle = textGradient;
+
+ctx.font = 'bold 20px Courier New, monospace';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('<>', 16, 16);
+
+// Auto download
+setTimeout(() => {
+  canvas.toBlob(function(blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'favicon-32x32.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png', 1.0);
+}, 500);
+</script>
+</body>
+</html>

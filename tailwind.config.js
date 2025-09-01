@@ -8,10 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'display': ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        'body': ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        'sans': ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'], // Default sans-serif
-        'headline': ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'display': ['Space Grotesk', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'body': ['Roboto', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'sans': ['Roboto', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'headline': ['Space Grotesk', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
     },
   },
