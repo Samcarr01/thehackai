@@ -370,13 +370,36 @@ function HomePageContent() {
             {/* Ultra Tier */}
             <ScrollAnimation animation="slide-right" delay={300}>
               <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl text-white transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:rotate-1 relative overflow-visible h-full flex flex-col touch-feedback mt-4 group">
-                {/* Smooth flowing border animation */}
-                <div className="absolute -inset-1 rounded-2xl overflow-hidden">
-                  <div className="absolute inset-0 rounded-2xl animate-spin" style={{
-                    background: `conic-gradient(from 0deg, transparent 0%, transparent 80%, #ff69b4 85%, #8b5cf6 90%, #00d4ff 95%, transparent 100%)`,
-                    animationDuration: '3s',
-                    animationTimingFunction: 'linear'
-                  }}></div>
+                {/* Advanced glowing border animation */}
+                <div className="absolute -inset-1 rounded-2xl overflow-hidden opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                  {/* Primary animated border */}
+                  <div 
+                    className="absolute inset-0 rounded-2xl"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 60%, #ff69b4 70%, #8b5cf6 80%, #00d4ff 90%, transparent 100%)`,
+                      animation: 'spin 4s linear infinite'
+                    }}
+                  />
+                  
+                  {/* Secondary glow layer */}
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-50"
+                    style={{
+                      background: `conic-gradient(from 180deg, transparent 70%, #ff1493 80%, #9d4edd 90%, transparent 100%)`,
+                      animation: 'spin 6s linear infinite reverse'
+                    }}
+                  />
+                </div>
+                
+                {/* Outer glow effect */}
+                <div className="absolute -inset-2 rounded-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-700">
+                  <div 
+                    className="absolute inset-0 rounded-2xl blur-md"
+                    style={{
+                      background: `radial-gradient(ellipse at center, #ff69b4 0%, #8b5cf6 50%, transparent 70%)`,
+                      animation: 'pulse 2s ease-in-out infinite'
+                    }}
+                  />
                 </div>
                 
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 z-10"></div>
