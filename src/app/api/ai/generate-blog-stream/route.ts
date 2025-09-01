@@ -456,7 +456,7 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
             apiKey = PERPLEXITY_API_KEY
           } else {
             // Use OpenAI for regular generation (no search)
-            modelToUse = 'gpt-4o'
+            modelToUse = 'gpt-5'
             apiEndpoint = 'https://api.openai.com/v1/chat/completions'
             apiKey = OPENAI_API_KEY
           }
@@ -985,14 +985,16 @@ FORMAT YOUR COMPLETE RESPONSE AS THIS EXACT JSON STRUCTURE (no additional text b
                     // Diverse secondary content images - different styles and concepts
                     const secondaryBrandText = primaryBrand ? ` ${brandVisuals} integrated into the design.` : ''
                     
-                    // Create varied image types for secondary images
+                    // Create diverse and complex image types for secondary images
                     const imageTypes = [
-                      `Isometric 3D illustration showing workflow process with interconnected elements, user icons, and data flow arrows. Modern vector art style with purple gradient accents.${secondaryBrandText} Clean tech illustration, high detail, 8K resolution.`,
-                      `Split-screen before/after comparison showing transformation results. Left: traditional method, right: optimized solution with clear visual improvements and success metrics. Professional infographic style.${secondaryBrandText} High detail, 8K resolution.`,
-                      `Step-by-step visual guide with numbered circular icons, flowing connection lines, and progress indicators. Educational diagram style with engaging graphics and purple theme.${secondaryBrandText} Instructional design, high detail, 8K resolution.`,
-                      `Interactive data visualization with floating holographic charts, metrics, and KPI indicators in 3D space. Futuristic analytics interface with glowing purple data points.${secondaryBrandText} Sci-fi UI design, high detail, 8K resolution.`,
-                      `Creative conceptual metaphor using symbolic imagery and abstract shapes to represent the topic. Artistic interpretation with meaningful visual elements and purple color palette.${secondaryBrandText} Contemporary art style, high detail, 8K resolution.`,
-                      `Technical schematic diagram showing system architecture, connections, and process flows in clean blueprint style. Professional technical illustration with purple accent colors.${secondaryBrandText} Engineering aesthetic, high detail, 8K resolution.`
+                      `Photorealistic isometric diorama of a bustling digital workspace with miniature office buildings, conveyor belts of data, and tiny workers managing automated processes. Dramatic studio lighting with purple neon accents illuminating the scene.${secondaryBrandText} Architectural model photography style, ultra-high detail, cinematic composition.`,
+                      `Abstract data sculpture made of floating crystalline structures and liquid mercury streams, with mathematical equations and code syntax carved into translucent geometric forms. Ethereal backlighting creates rainbow prisms.${secondaryBrandText} Contemporary art installation photography, museum quality, 8K detail.`,
+                      `Cyberpunk cityscape at night with towering holographic displays showing analytics dashboards, neon-lit data streams flowing between buildings like rivers of light. Rain-soaked streets reflect the glowing information architecture.${secondaryBrandText} Blade Runner aesthetic, cinematic noir lighting, hyper-detailed urban photography.`,
+                      `Steampunk-inspired mechanical brain with visible copper gears, brass neural pathways, and steam-powered synapses. Vintage gauges and clockwork mechanisms control the flow of golden information particles.${secondaryBrandText} Victorian engineering meets AI, warm bronze tones, intricate mechanical illustration.`,
+                      `Surreal M.C. Escher-style impossible architecture where staircases of code syntax lead to floating platforms of user interfaces, with gravity-defying data structures and paradoxical geometric patterns.${secondaryBrandText} Mathematical surrealism, black and white with purple accents, optical illusion artwork.`,
+                      `Organic bio-tech fusion showing neural networks as living tree roots intertwining with fiber optic cables, bioluminescent data nodes pulsing like fireflies through a digital forest ecosystem.${secondaryBrandText} Nature-tech hybrid, ethereal forest lighting, botanical photography meets sci-fi.`,
+                      `Minimalist Japanese zen garden where raked sand patterns represent data flows, stone arrangements symbolize system architecture, and a single cherry blossom tree drops digital petals that transform into floating UI elements.${secondaryBrandText} Zen aesthetic, natural lighting, contemplative composition with subtle tech integration.`,
+                      `Space opera scene with massive data processing stations orbiting a digital planet, where information streams create aurora-like phenomena in the cosmic void. Spaceships navigate through clouds of algorithmic stardust.${secondaryBrandText} Epic space photography, cosmic scale, deep field astronomy aesthetic with technological elements.`
                     ]
                     
                     // Use different image type based on index, cycling through options
