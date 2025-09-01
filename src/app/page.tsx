@@ -369,24 +369,19 @@ function HomePageContent() {
             
             {/* Ultra Tier */}
             <ScrollAnimation animation="slide-right" delay={300}>
-              <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl text-white transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:rotate-1 relative overflow-visible h-full flex flex-col touch-feedback mt-4 group">
-                {/* Clean flowing border animation */}
-                <div className="absolute -inset-0.5 rounded-2xl overflow-hidden">
-                  <div 
-                    className="absolute inset-0 rounded-2xl"
-                    style={{
-                      background: `conic-gradient(from 0deg, transparent 50%, #ff69b4 65%, #8b5cf6 75%, #00d4ff 85%, transparent 100%)`,
-                      animation: 'spin 3s ease-in-out infinite'
-                    }}
-                  />
+              <div className="relative h-full flex flex-col mt-4 group">
+                {/* Professional animated border glow */}
+                <div className="ultra-border-glow absolute inset-0 rounded-2xl overflow-hidden z-0" style={{ filter: 'blur(15px)' }}>
+                  <div className="ultra-border-animation"></div>
                 </div>
                 
-                {/* Subtle hover glow */}
-                <div className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500">
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 blur-sm" />
+                {/* Professional animated border */}
+                <div className="ultra-border absolute inset-0 rounded-2xl overflow-hidden z-0">
+                  <div className="ultra-border-animation"></div>
                 </div>
                 
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 z-10"></div>
+                {/* Card content */}
+                <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl text-white transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:rotate-1 relative z-10 h-full flex flex-col touch-feedback">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
                   <span className="bg-white text-pink-700 px-3 py-1 rounded-full text-xs font-semibold shadow-md">Best Value</span>
                 </div>

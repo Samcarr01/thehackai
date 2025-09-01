@@ -15,6 +15,65 @@
   }
 }
 
+/* Premium Ultra card animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Professional Animated Border for Ultra Card */
+.ultra-border, .ultra-border-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.ultra-border-animation::before {
+  content: '';
+  z-index: -2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  width: 99999px;
+  height: 99999px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  /* thehackai brand colors - pink to purple to cyan */
+  background-image: conic-gradient(
+    rgba(0,0,0,0), 
+    #ff69b4, 
+    #8b5cf6, 
+    #00d4ff, 
+    rgba(0,0,0,0) 30%
+  );
+  animation: ultra-rotate 4s linear infinite;
+}
+
+.ultra-border::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 2px;
+  top: 2px;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  background: transparent;
+  border-radius: calc(1rem - 2px);
+}
+
+@keyframes ultra-rotate {
+  100% {
+    transform: translate(-50%, -50%) rotate(1turn);
+  }
+}
+
 /* STABLE BLOG IMAGES - Clean approach with React key stability */
 .blog-image {
   min-height: 300px;
