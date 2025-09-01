@@ -195,7 +195,7 @@ export default function BlogPostClient({ post, user }: Props) {
           <em className="italic text-gray-200">{children}</em>
         ),
         h1: ({ children }) => (
-          <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-white mb-5 sm:mb-6 mt-8 sm:mt-8">{children}</h1>
+          <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold font-display text-white mb-5 sm:mb-6 mt-8 sm:mt-8">{children}</h1>
         ),
         h2: ({ children, ...props }) => {
           // Ensure stable ID generation that matches TOC
@@ -257,7 +257,7 @@ export default function BlogPostClient({ post, user }: Props) {
             </span>
           </div>
           
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-display text-white mb-4 sm:mb-6 leading-tight">
             {post.title}
           </h1>
           

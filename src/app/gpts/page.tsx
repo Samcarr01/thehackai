@@ -234,7 +234,7 @@ export default function GPTsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-4 sm:pb-8">
         {/* Header Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-white mb-3 sm:mb-4">
             AI GPTs Collection 🤖
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-100 max-w-3xl mx-auto px-2 sm:px-0 mobile-readable">
@@ -316,7 +316,7 @@ export default function GPTsPage() {
         {/* Featured GPTs - Only show when viewing "All" category */}
         {featuredGpts.length > 0 && selectedCategory === 'All' && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <h2 className="text-2xl font-bold font-display text-white mb-6 flex items-center">
               <span className="text-3xl mr-3">⭐</span>
               Featured GPTs
             </h2>
@@ -361,7 +361,7 @@ export default function GPTsPage() {
         {/* Category GPTs or Regular GPTs */}
         {(selectedCategory === 'All' ? regularGpts : filteredGpts).length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <h2 className="text-2xl font-bold font-display text-white mb-6 flex items-center">
               <span className="text-3xl mr-3">{selectedCategory === 'All' ? '🤖' : getCategoryInfo(selectedCategory).emoji}</span>
               {selectedCategory === 'All' ? 'All GPTs' : `${selectedCategory} GPTs`}
             </h2>

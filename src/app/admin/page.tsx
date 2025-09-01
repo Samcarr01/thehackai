@@ -582,7 +582,7 @@ export default function AdminPage() {
                   <span className="text-white text-2xl">⚙️</span>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
+                  <h1 className="text-2xl font-bold font-display text-white">Admin Panel</h1>
                   <p className="text-gray-400">Content Management System</p>
                 </div>
               </div>
@@ -1409,7 +1409,7 @@ export default function AdminPage() {
           <div className="relative bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
             {/* Header */}
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold font-display text-gray-900">
                 📝 Preview Generated Blog Post
               </h2>
             </div>
@@ -1418,7 +1418,7 @@ export default function AdminPage() {
             <div className="flex-1 overflow-y-auto p-6 sm:p-8">
               <div className="max-w-4xl mx-auto">
                 {/* Blog Title */}
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl sm:text-4xl font-bold font-display text-gray-900 mb-4">
                   {previewBlog.title}
                 </h1>
                 
@@ -1670,7 +1670,7 @@ export default function AdminPage() {
                     <span className="text-2xl text-white">✨</span>
                   </div>
                   
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-3xl font-bold font-display text-gray-900 mb-2">
                     AI Blog Generator
                   </h2>
                   <p className="text-gray-600 max-w-2xl mx-auto">
@@ -1880,7 +1880,7 @@ export default function AdminPage() {
               <div className="p-8 bg-gray-50">
                 <div className="max-w-4xl mx-auto">
                   <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-2xl font-bold font-display text-gray-900 mb-2">
                       🎆 Generating Your Blog Post
                     </h2>
                     <p className="text-gray-600">Please wait while we create your professional blog post with AI</p>

@@ -182,7 +182,7 @@ function HomePageContent() {
         <div className="max-w-6xl mx-auto">
           <ScrollAnimation animation="fade-up">
             <div className="text-center mb-8 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-white mb-3 sm:mb-4">
                 What&apos;s Inside thehackai 🚀
               </h2>
               <p className="text-xl text-gray-300">
@@ -266,7 +266,7 @@ function HomePageContent() {
         <div className="max-w-6xl mx-auto">
           <ScrollAnimation animation="fade-up">
             <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold font-display text-white mb-3 sm:mb-4">
                 See What You Get 🎯
               </h2>
               <p className="text-base sm:text-lg lg:text-xl text-gray-300 px-2 sm:px-0">
@@ -298,7 +298,7 @@ function HomePageContent() {
         
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <ScrollAnimation animation="fade-up">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold font-display text-white mb-3 sm:mb-4">
               Choose Your AI Mastery Level 🚀
             </h2>
             <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-8 sm:mb-12 px-2 sm:px-0">
@@ -311,7 +311,7 @@ function HomePageContent() {
               <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-600/50 hover:border-gray-500/50 transform hover:scale-105 hover:-translate-y-2 hover:-rotate-1 relative overflow-hidden h-full flex flex-col touch-feedback mt-4">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-700/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10 flex flex-col h-full">
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Free Preview</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold font-display text-white mb-2">Free Preview</h3>
                   <div className="text-3xl sm:text-4xl font-bold text-gray-300 mb-4">£0</div>
                   <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-300 flex-grow">
                     <li className="flex items-center space-x-3">
@@ -343,7 +343,7 @@ function HomePageContent() {
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10 flex flex-col h-full">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Pro - Daily AI Use</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold font-display mb-2">Pro - Daily AI Use</h3>
                   <div className="text-3xl sm:text-4xl font-bold mb-4">£<AnimatedCounter end={7} duration={2500} className="inline" /><span className="text-lg sm:text-xl">/month</span></div>
                   <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base flex-grow">
                     <li className="flex items-center space-x-3">
@@ -383,7 +383,7 @@ function HomePageContent() {
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10 flex flex-col h-full">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Ultra - Upscale Your AI Game</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold font-display mb-2">Ultra - Upscale Your AI Game</h3>
                   <div className="text-3xl sm:text-4xl font-bold mb-4">£<AnimatedCounter end={19} duration={2500} className="inline" /><span className="text-lg sm:text-xl">/month</span></div>
                   <ul className="text-left space-y-2 sm:space-y-3 text-sm sm:text-base flex-grow">
                     <li className="flex items-center space-x-3">
@@ -416,7 +416,7 @@ function HomePageContent() {
           <div className="max-w-4xl mx-auto text-center bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl sm:rounded-3xl p-8 sm:p-12 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 relative overflow-hidden touch-feedback">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-white mb-3 sm:mb-4">
             Ready to Hack Your AI? 🔓
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-purple-100 mb-6 sm:mb-8 px-2 sm:px-0">

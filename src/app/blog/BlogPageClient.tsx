@@ -102,7 +102,7 @@ export default function BlogPageClient() {
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-12">
         {/* Header Section - Mobile optimized */}
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-4 sm:mb-6">
             AI Tools & Strategies 🧠
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-100 max-w-2xl mx-auto leading-relaxed px-2">
@@ -203,7 +203,7 @@ export default function BlogPageClient() {
             <div className="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-8">
               <span className="text-4xl">📚</span>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold font-display text-white mb-4">
               Content Coming Soon!
             </h2>
             <p className="text-xl text-gray-100 mb-8 max-w-lg mx-auto">
@@ -239,7 +239,7 @@ export default function BlogPageClient() {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
               <span className="text-4xl">🔍</span>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold font-display text-white mb-4">
               No articles found
             </h2>
             <p className="text-xl text-gray-100 mb-8 max-w-lg mx-auto">

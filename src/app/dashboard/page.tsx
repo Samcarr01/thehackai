@@ -312,7 +312,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="text-red-400 text-6xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-white mb-2">Unable to Load Dashboard</h2>
+            <h2 className="text-xl font-bold font-display text-white mb-2">Unable to Load Dashboard</h2>
             <p className="text-gray-400 mb-4">There was an error loading your profile.</p>
             <div className="space-x-4">
               <button 
@@ -445,7 +445,7 @@ export default function DashboardPage() {
                   <span className="text-2xl">👋</span>
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-white">
+                  <h1 className="text-4xl font-bold font-display text-white">
                     Welcome back, {getUserDisplayName(user)}!
                   </h1>
                   <div className="flex items-center space-x-2 mt-2">
