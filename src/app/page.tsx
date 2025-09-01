@@ -370,31 +370,14 @@ function HomePageContent() {
             {/* Ultra Tier */}
             <ScrollAnimation animation="slide-right" delay={300}>
               <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl text-white transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:rotate-1 relative overflow-visible h-full flex flex-col touch-feedback mt-4 group">
-                {/* Enhanced multi-layer glowing border animation */}
-                <div className="absolute -inset-1 rounded-2xl overflow-hidden opacity-75 group-hover:opacity-100 transition-opacity duration-500">
-                  {/* Primary rotating glow */}
+                {/* Smooth flowing border animation */}
+                <div className="absolute -inset-1 rounded-2xl overflow-hidden">
                   <div className="absolute inset-0 rounded-2xl animate-spin" style={{
-                    background: `conic-gradient(from 0deg, transparent 0%, transparent 70%, #ff1493 80%, #00ffff 85%, #ff69b4 90%, #8b5cf6 95%, transparent 100%)`,
-                    animationDuration: '4s'
-                  }}></div>
-                  
-                  {/* Secondary counter-rotating pulse */}
-                  <div className="absolute inset-0 rounded-2xl animate-spin opacity-60" style={{
-                    background: `conic-gradient(from 180deg, transparent 0%, transparent 75%, #ffd700 85%, #ff4500 90%, transparent 100%)`,
-                    animationDirection: 'reverse',
-                    animationDuration: '6s'
-                  }}></div>
-                  
-                  {/* Pulsing inner glow */}
-                  <div className="absolute inset-0 rounded-2xl animate-pulse bg-gradient-to-r from-pink-400/30 via-purple-400/30 to-cyan-400/30" style={{
-                    animationDuration: '2s'
+                    background: `conic-gradient(from 0deg, transparent 0%, transparent 80%, #ff69b4 85%, #8b5cf6 90%, #00d4ff 95%, transparent 100%)`,
+                    animationDuration: '3s',
+                    animationTimingFunction: 'linear'
                   }}></div>
                 </div>
-                
-                {/* Hover enhancement glow */}
-                <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-all duration-700 blur-xl animate-pulse" style={{
-                  animationDuration: '3s'
-                }}></div>
                 
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 z-10"></div>
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
