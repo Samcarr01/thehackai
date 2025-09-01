@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Space Grotesk Font Import */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/SpaceGrotesk-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-display: swap;
+}
+
 /* STABLE BLOG IMAGES - Clean approach with React key stability */
 .blog-image {
   min-height: 300px;

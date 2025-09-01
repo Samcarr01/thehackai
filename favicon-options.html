@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thehackai Favicon Options</title>
+    <style>
+        @font-face {
+            font-family: 'Space Grotesk';
+            src: url('./SpaceGrotesk-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-display: swap;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .title {
+            color: #a855f7;
+            font-size: 2rem;
+            margin-bottom: 40px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .option-card {
+            background: #1a1a2e;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+        
+        .favicon-preview {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .favicon-content {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        
+        .option-title {
+            color: #a855f7;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .option-desc {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .download-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .emoji-icon {
+            font-size: 40px;
+            line-height: 1;
+        }
+        
+        .symbol-icon {
+            font-size: 36px;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Choose Your Favicon Style</h1>
+        
+        <div class="options-grid">
+            <!-- Option 1: Single H -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 42px;">h</div>
+                </div>
+                <div class="option-title">Letter "h"</div>
+                <div class="option-desc">Clean, minimal single letter from "hackai"</div>
+                <button class="download-btn" onclick="downloadFavicon('h', 'letter-h')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 2: Robot Emoji -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="emoji-icon">🤖</div>
+                </div>
+                <div class="option-title">Robot Emoji</div>
+                <div class="option-desc">Perfect AI representation, works at all sizes</div>
+                <button class="download-btn" onclick="downloadEmojiFavicon('🤖', 'robot-emoji')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 3: Brain Emoji -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="emoji-icon">🧠</div>
+                </div>
+                <div class="option-title">Brain Emoji</div>
+                <div class="option-desc">Represents AI intelligence and thinking</div>
+                <button class="download-btn" onclick="downloadEmojiFavicon('🧠', 'brain-emoji')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 4: Lightning Bolt -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="emoji-icon">⚡</div>
+                </div>
+                <div class="option-title">Lightning Bolt</div>
+                <div class="option-desc">Speed, power, and AI automation</div>
+                <button class="download-btn" onclick="downloadEmojiFavicon('⚡', 'lightning-bolt')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 5: Geometric Symbol -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content symbol-icon">◊</div>
+                </div>
+                <div class="option-title">Diamond Symbol</div>
+                <div class="option-desc">Modern, geometric, premium feel</div>
+                <button class="download-btn" onclick="downloadFavicon('◊', 'diamond-symbol')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 6: Hexagon -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content symbol-icon">⬢</div>
+                </div>
+                <div class="option-title">Hexagon</div>
+                <div class="option-desc">Tech-inspired, honeycomb structure</div>
+                <button class="download-btn" onclick="downloadFavicon('⬢', 'hexagon')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 7: Circle Dot -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 48px;">●</div>
+                </div>
+                <div class="option-title">Circle Dot</div>
+                <div class="option-desc">Ultra minimal, always readable</div>
+                <button class="download-btn" onclick="downloadFavicon('●', 'circle-dot')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 8: Star -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="emoji-icon">⭐</div>
+                </div>
+                <div class="option-title">Star</div>
+                <div class="option-desc">Excellence, premium quality</div>
+                <button class="download-btn" onclick="downloadEmojiFavicon('⭐', 'star')">Download All Sizes</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load font first
+        const font = new FontFace('Space Grotesk', 'url(./SpaceGrotesk-Bold.ttf)');
+        font.load().then(() => {
+            document.fonts.add(font);
+        });
+        
+        function downloadFavicon(content, name) {
+            const sizes = [16, 32, 64, 192];
+            
+            sizes.forEach(size => {
+                setTimeout(() => createFavicon(content, size, name, false), size * 2);
+            });
+        }
+        
+        function downloadEmojiFavicon(content, name) {
+            const sizes = [16, 32, 64, 192];
+            
+            sizes.forEach(size => {
+                setTimeout(() => createFavicon(content, size, name, true), size * 2);
+            });
+        }
+        
+        function createFavicon(content, size, name, isEmoji) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // High DPI scaling
+            const scale = 2;
+            const scaledSize = size * scale;
+            
+            canvas.width = scaledSize;
+            canvas.height = scaledSize;
+            ctx.scale(scale, scale);
+            
+            // Enable font smoothing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Dark gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#000000');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Text settings
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (isEmoji) {
+                // For emojis, use system font
+                ctx.font = `${size * 0.7}px system-ui, -apple-system, sans-serif`;
+                ctx.fillStyle = 'white'; // Emojis have their own colors
+            } else {
+                // For text/symbols, use gradient
+                const textGradient = ctx.createLinearGradient(0, 0, size, 0);
+                textGradient.addColorStop(0, '#8b5cf6');
+                textGradient.addColorStop(1, '#ec4899');
+                ctx.fillStyle = textGradient;
+                ctx.font = `bold ${size * 0.7}px Space Grotesk, Arial, sans-serif`;
+            }
+            
+            // Draw content
+            ctx.fillText(content, size / 2, size / 2);
+            
+            // Download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                let filename;
+                if (size === 16) filename = `favicon-16x16-${name}.png`;
+                else if (size === 32) filename = `favicon-32x32-${name}.png`;
+                else if (size === 64) filename = `favicon-64x64-${name}.png`;
+                else if (size === 192) filename = `apple-touch-icon-${name}.png`;
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png', 1.0);
+        }
+    </script>
+</body>
+</html>

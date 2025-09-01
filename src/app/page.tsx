@@ -106,15 +106,6 @@ function HomePageContent() {
         <div className="max-w-6xl mx-auto text-center">
           <ScrollAnimation animation="fade-up">
           <div className="inline-flex items-center justify-center px-4 py-2 mb-8 rounded-full bg-purple-500/20 border border-purple-500/30">
-            <div className="w-6 h-6 mr-2 flex items-center justify-center">
-              <Image
-                src="/logo.png"
-                alt="thehackai logo"
-                width={24}
-                height={24}
-                className="w-full h-full object-contain logo-dark-purple-blue-glow"
-              />
-            </div>
             <span className="text-purple-300 text-sm font-medium">Battle-tested AI Playbooks & GPTs</span>
           </div>
           

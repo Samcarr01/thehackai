@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create 32px Favicon</title>
+    <style>
+        @font-face {
+            font-family: 'Space Grotesk';
+            src: url('./SpaceGrotesk-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-display: swap;
+        }
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            font-family: 'Space Grotesk', sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .preview {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+            width: 64px;
+            height: 64px;
+            margin: 20px auto;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon {
+            font-family: 'Courier New', monospace;
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        button {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        button:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <h1>Create 32x32 Favicon</h1>
+    <div class="preview">
+        <div class="icon"><></div>
+    </div>
+    <button onclick="createFavicon()">Download 32x32 Favicon</button>
+    
+    <canvas id="canvas" style="display: none;"></canvas>
+    
+    <script>
+        function createFavicon() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 32;
+            
+            // High DPI
+            const scale = 2;
+            canvas.width = size * scale;
+            canvas.height = size * scale;
+            ctx.scale(scale, scale);
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#000000');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Text gradient
+            const textGradient = ctx.createLinearGradient(0, 0, size, 0);
+            textGradient.addColorStop(0, '#8b5cf6');
+            textGradient.addColorStop(1, '#ec4899');
+            ctx.fillStyle = textGradient;
+            
+            // Draw angle brackets
+            ctx.font = 'bold 20px Courier New, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('<>', size / 2, size / 2);
+            
+            // Download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'favicon-32x32.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png', 1.0);
+        }
+    </script>
+</body>
+</html>

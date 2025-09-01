@@ -189,17 +189,13 @@ export default function SignupPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           {/* Logo */}
           <div className="flex justify-center">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg p-3 border border-purple-200/30">
-                <Image
-                  src="/logo.png"
-                  alt="thehackai logo"
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <span className="text-2xl font-bold text-gradient">thehackai</span>
+            <Link href="/" className="flex items-center">
+              <span 
+                className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                thehackai
+              </span>
             </Link>
           </div>
           
@@ -334,15 +330,7 @@ export default function SignupPage() {
                     <h3 className="text-sm font-semibold text-purple-200 mb-3">Upgrade to Pro for:</h3>
                     <div className="space-y-2 text-sm text-purple-100">
                       <div className="flex items-center space-x-2">
-                        <div className="w-5 h-5 flex items-center justify-center">
-                          <Image
-                            src="/logo.png"
-                            alt="AI"
-                            width={20}
-                            height={20}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
+                        <span>🤖</span>
                         <span>Direct links to all GPTs</span>
                       </div>
                       <div className="flex items-center space-x-2">

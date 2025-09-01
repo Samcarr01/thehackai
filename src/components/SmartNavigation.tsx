@@ -151,19 +151,12 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
           {/* Logo Section */}
           <Link 
             href={effectiveUser ? "/dashboard" : "/"} 
-            className="flex items-center space-x-3 group"
+            className="flex items-center group"
           >
-            <div className="w-12 h-12 sm:w-20 sm:h-20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
-              <Image
-                src="/logo.png"
-                alt="thehackai logo"
-                width={80}
-                height={80}
-                className="w-full h-full object-contain"
-                priority
-              />
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300">
+            <span 
+              className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               thehackai
             </span>
           </Link>

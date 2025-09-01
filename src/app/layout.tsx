@@ -16,16 +16,18 @@ export const metadata: Metadata = {
   description: 'Access curated AI tools and guides. Pro £7/month, Ultra £19/month. Proven GPTs, PDF guides, and monthly additions.',
   icons: {
     icon: [
-      { url: '/logo.png', sizes: 'any', type: 'image/png' }
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-64x64.png', sizes: '64x64', type: 'image/png' }
     ],
     apple: [
-      { url: '/logo.png', sizes: '192x192', type: 'image/png' }
+      { url: '/apple-touch-icon.png', sizes: '192x192', type: 'image/png' }
     ],
     other: [
       {
         rel: 'mask-icon',
-        url: '/logo.png',
-        color: '#7C3AED'
+        url: '/favicon-64x64.png',
+        color: '#8b5cf6'
       }
     ]
   }

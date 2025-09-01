@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thehackai Logo Generator</title>
+    <style>
+        @font-face {
+            font-family: 'Space Grotesk';
+            src: url('./SpaceGrotesk-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-display: swap;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .title {
+            color: #a855f7;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #9ca3af;
+            margin-bottom: 40px;
+        }
+        
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .logo-card {
+            background: #1a1a2e;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo-standard {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+            padding: 60px 40px;
+        }
+        
+        .logo-instagram {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border-radius: 40px;
+        }
+        
+        .logo-transparent {
+            background: transparent;
+            padding: 40px;
+        }
+        
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin: 0;
+            text-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+        }
+        
+        .logo-large { font-size: 4rem; }
+        .logo-medium { font-size: 3rem; }
+        .logo-instagram-text { font-size: 3.5rem; }
+        
+        .card-title {
+            color: #a855f7;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .download-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .color-info {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .color-swatch {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">thehackai Logo Generator</h1>
+        <p class="subtitle">Click "Download" buttons to save logo images</p>
+        
+        <div class="color-info">
+            <h3>🎨 Gradient Colors:</h3>
+            <p><span class="color-swatch" style="background: #8b5cf6;"></span> Purple: #8b5cf6</p>
+            <p><span class="color-swatch" style="background: #ec4899;"></span> Pink: #ec4899</p>
+        </div>
+        
+        <div class="logo-grid">
+            <!-- Standard Logo -->
+            <div class="logo-card">
+                <div class="card-title">Standard Logo</div>
+                <div class="logo-standard">
+                    <canvas id="logo-standard" width="600" height="200" style="display: none;"></canvas>
+                    <div class="logo-text logo-large">thehackai</div>
+                </div>
+                <button class="download-btn" onclick="downloadLogo('standard', 1200, 400)">Download PNG (1200x400)</button>
+            </div>
+            
+            <!-- Instagram Profile -->
+            <div class="logo-card">
+                <div class="card-title">Instagram Profile (320x320)</div>
+                <div class="logo-instagram">
+                    <canvas id="logo-instagram" width="320" height="320" style="display: none;"></canvas>
+                    <div class="logo-text logo-instagram-text">thehackai</div>
+                </div>
+                <button class="download-btn" onclick="downloadLogo('instagram', 320, 320)">Download PNG (320x320)</button>
+            </div>
+            
+            <!-- Transparent Version -->
+            <div class="logo-card">
+                <div class="card-title">Transparent Background</div>
+                <div class="logo-transparent">
+                    <canvas id="logo-transparent" width="1000" height="300" style="display: none;"></canvas>
+                    <div class="logo-text logo-medium">thehackai</div>
+                </div>
+                <button class="download-btn" onclick="downloadLogo('transparent', 1000, 300)">Download PNG (1000x300)</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load font first
+        const font = new FontFace('Space Grotesk', 'url(./SpaceGrotesk-Bold.ttf)');
+        font.load().then(() => {
+            document.fonts.add(font);
+        });
+        
+        function downloadLogo(type, width, height) {
+            const canvas = document.getElementById(`logo-${type}`);
+            const ctx = canvas.getContext('2d');
+            
+            // High DPI scaling for crisp images
+            const scale = window.devicePixelRatio || 2;
+            const scaledWidth = width * scale;
+            const scaledHeight = height * scale;
+            
+            // Set actual canvas size
+            canvas.width = scaledWidth;
+            canvas.height = scaledHeight;
+            
+            // Scale the context for high DPI
+            ctx.scale(scale, scale);
+            
+            // Enable font smoothing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Background based on type
+            if (type === 'standard' || type === 'instagram') {
+                // Dark gradient background
+                const gradient = ctx.createLinearGradient(0, 0, width, height);
+                gradient.addColorStop(0, '#000000');
+                gradient.addColorStop(1, '#1a1a2e');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+            }
+            // transparent version has no background
+            
+            // Create text gradient
+            const textGradient = ctx.createLinearGradient(0, 0, width, 0);
+            textGradient.addColorStop(0, '#8b5cf6'); // Purple
+            textGradient.addColorStop(1, '#ec4899'); // Pink
+            
+            // Text settings
+            ctx.fillStyle = textGradient;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Font size based on type - adjusted for better fit
+            let fontSize;
+            if (type === 'instagram') {
+                fontSize = width * 0.18; // Smaller to prevent cutoff
+            } else if (type === 'transparent') {
+                fontSize = height * 0.5;
+            } else {
+                fontSize = height * 0.5;
+            }
+            
+            ctx.font = `bold ${fontSize}px Space Grotesk, Arial, sans-serif`;
+            
+            // Measure text to ensure it fits
+            const textMetrics = ctx.measureText('thehackai');
+            const textWidth = textMetrics.width;
+            
+            // If text is too wide, reduce font size
+            if (textWidth > width * 0.9) {
+                fontSize = fontSize * (width * 0.9) / textWidth;
+                ctx.font = `bold ${fontSize}px Space Grotesk, Arial, sans-serif`;
+            }
+            
+            // Draw text
+            ctx.fillText('thehackai', width / 2, height / 2);
+            
+            // Download with high quality
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `thehackai-logo-${type}-${width}x${height}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png', 1.0); // Maximum quality
+        }
+    </script>
+</body>
+</html>

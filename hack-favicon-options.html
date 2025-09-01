@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thehackai - Hack Symbol Favicons</title>
+    <style>
+        @font-face {
+            font-family: 'Space Grotesk';
+            src: url('./SpaceGrotesk-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-display: swap;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .title {
+            color: #a855f7;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #9ca3af;
+            margin-bottom: 40px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .option-card {
+            background: #1a1a2e;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+        }
+        
+        .favicon-preview {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        
+        .favicon-content {
+            font-family: 'Space Grotesk', 'Courier New', monospace;
+            font-weight: bold;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        
+        .option-title {
+            color: #a855f7;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .option-desc {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .download-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .code-symbol {
+            font-family: 'Courier New', monospace;
+            font-size: 36px;
+            line-height: 1;
+        }
+        
+        .bracket-symbol {
+            font-family: 'Courier New', monospace;
+            font-size: 42px;
+            line-height: 1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Hack Symbol Favicons</h1>
+        <p class="subtitle">Perfect symbols for "thehackai" - choose your favorite hack/tech icon</p>
+        
+        <div class="options-grid">
+            <!-- Option 1: Curly Braces -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content bracket-symbol">{}</div>
+                </div>
+                <div class="option-title">Curly Braces { }</div>
+                <div class="option-desc">Classic coding symbol, represents programming and hacking</div>
+                <button class="download-btn" onclick="downloadFavicon('{}', 'curly-braces')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 2: Angle Brackets -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content bracket-symbol"><></div>
+                </div>
+                <div class="option-title">Angle Brackets < ></div>
+                <div class="option-desc">HTML/XML tags, web development symbol</div>
+                <button class="download-btn" onclick="downloadFavicon('<>', 'angle-brackets')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 3: Hash/Pound -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 48px;">#</div>
+                </div>
+                <div class="option-title">Hash Symbol #</div>
+                <div class="option-desc">Hashtag, comments in code, social media ready</div>
+                <button class="download-btn" onclick="downloadFavicon('#', 'hash-symbol')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 4: Terminal Prompt -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content code-symbol">$</div>
+                </div>
+                <div class="option-title">Terminal Prompt $</div>
+                <div class="option-desc">Command line interface, hacker terminal</div>
+                <button class="download-btn" onclick="downloadFavicon('$', 'terminal-prompt')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 5: Forward Slash -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 52px;">/</div>
+                </div>
+                <div class="option-title">Forward Slash /</div>
+                <div class="option-desc">File paths, URLs, command switches</div>
+                <button class="download-btn" onclick="downloadFavicon('/', 'forward-slash')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 6: Backslash -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 52px;">\\</div>
+                </div>
+                <div class="option-title">Backslash \\</div>
+                <div class="option-desc">Escape character, Windows paths, regex</div>
+                <button class="download-btn" onclick="downloadFavicon('\\\\', 'backslash')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 7: Pipe Symbol -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 52px;">|</div>
+                </div>
+                <div class="option-title">Pipe Symbol |</div>
+                <div class="option-desc">Command line pipes, logical OR, data flow</div>
+                <button class="download-btn" onclick="downloadFavicon('|', 'pipe-symbol')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 8: Ampersand -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 44px;">&</div>
+                </div>
+                <div class="option-title">Ampersand &</div>
+                <div class="option-desc">Logical AND, background processes, URL parameters</div>
+                <button class="download-btn" onclick="downloadFavicon('&', 'ampersand')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 9: Greater Than -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 48px;">></div>
+                </div>
+                <div class="option-title">Greater Than ></div>
+                <div class="option-desc">Terminal prompt, output redirection, progression</div>
+                <button class="download-btn" onclick="downloadFavicon('>', 'greater-than')">Download All Sizes</button>
+            </div>
+            
+            <!-- Option 10: Tilde -->
+            <div class="option-card">
+                <div class="favicon-preview">
+                    <div class="favicon-content" style="font-size: 48px;">~</div>
+                </div>
+                <div class="option-title">Tilde ~</div>
+                <div class="option-desc">Home directory, regex patterns, approximation</div>
+                <button class="download-btn" onclick="downloadFavicon('~', 'tilde')">Download All Sizes</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load font first
+        const font = new FontFace('Space Grotesk', 'url(./SpaceGrotesk-Bold.ttf)');
+        font.load().then(() => {
+            document.fonts.add(font);
+        });
+        
+        function downloadFavicon(content, name) {
+            const sizes = [16, 32, 64, 192];
+            
+            sizes.forEach((size, index) => {
+                setTimeout(() => createFavicon(content, size, name), index * 200);
+            });
+        }
+        
+        function createFavicon(content, size, name) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // High DPI scaling
+            const scale = 2;
+            const scaledSize = size * scale;
+            
+            canvas.width = scaledSize;
+            canvas.height = scaledSize;
+            ctx.scale(scale, scale);
+            
+            // Enable font smoothing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Dark gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#000000');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Create text gradient
+            const textGradient = ctx.createLinearGradient(0, 0, size, 0);
+            textGradient.addColorStop(0, '#8b5cf6');
+            textGradient.addColorStop(1, '#ec4899');
+            ctx.fillStyle = textGradient;
+            
+            // Text settings
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Font size based on content and size
+            let fontSize;
+            if (content === '{}' || content === '<>') {
+                fontSize = size * 0.6;
+                ctx.font = `bold ${fontSize}px Courier New, monospace`;
+            } else if (content === '\\\\') {
+                fontSize = size * 0.7;
+                ctx.font = `bold ${fontSize}px Space Grotesk, Arial, sans-serif`;
+            } else {
+                fontSize = size * 0.7;
+                ctx.font = `bold ${fontSize}px Space Grotesk, Arial, sans-serif`;
+            }
+            
+            // Draw content
+            ctx.fillText(content, size / 2, size / 2);
+            
+            // Download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                let filename;
+                if (size === 16) filename = `favicon-16x16-${name}.png`;
+                else if (size === 32) filename = `favicon-32x32-${name}.png`;
+                else if (size === 64) filename = `favicon-64x64-${name}.png`;
+                else if (size === 192) filename = `apple-touch-icon-${name}.png`;
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png', 1.0);
+        }
+    </script>
+</body>
+</html>

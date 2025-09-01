@@ -8,17 +8,13 @@ export default function AuthCodeErrorPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Logo */}
         <div className="flex justify-center">
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 gradient-purple rounded-xl flex items-center justify-center shadow-lg p-3">
-              <Image
-                src="/logo.png"
-                alt="thehackai logo"
-                width={48}
-                height={48}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span className="text-2xl font-bold text-gradient">thehackai</span>
+          <Link href="/" className="flex items-center">
+            <span 
+              className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              thehackai
+            </span>
           </Link>
         </div>
         

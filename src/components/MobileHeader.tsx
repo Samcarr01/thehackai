@@ -21,18 +21,11 @@ export default function MobileHeader({ showLogo = true, className = '' }: Mobile
     >
       <div className="flex items-center justify-between px-4 py-3 min-h-[64px]">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="w-10 h-10 flex items-center justify-center">
-            <Image
-              src="/logo.png"
-              alt="thehackai logo"
-              width={40}
-              height={40}
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-          <span className="text-lg font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <Link href="/" className="flex items-center">
+          <span 
+            className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+          >
             thehackai
           </span>
         </Link>
