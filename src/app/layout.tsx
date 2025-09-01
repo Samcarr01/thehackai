@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import './globals.css'
 import '../styles/mobile-optimizations.css'
 import { AdminProvider } from '@/contexts/AdminContext'
 import UniversalLayout from '@/components/UniversalLayout'
 
-const inter = Inter({ 
+const roboto = Roboto({ 
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['300', '400', '500', '700'],
+  variable: '--font-roboto',
   display: 'swap',
 })
 
@@ -45,8 +46,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} font-sans`}>
+    <html lang="en" className={roboto.variable}>
+      <body className={`${roboto.className} font-body`}>
         <AdminProvider>
           <UniversalLayout>
             {children}

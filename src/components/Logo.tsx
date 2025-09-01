@@ -13,8 +13,7 @@ export default function Logo({ className = '', size = 'md' }: LogoProps) {
 
   return (
     <span 
-      className={`font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ${sizeClasses[size]} ${className}`}
-      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+      className={`font-bold font-display bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ${sizeClasses[size]} ${className}`}
     >
       thehackai
     </span>

@@ -6,7 +6,14 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'display': ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'body': ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'sans': ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'], // Default sans-serif
+        'headline': ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

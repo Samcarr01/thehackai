@@ -129,8 +129,7 @@ export default function LoginPage() {
           <div className="flex justify-center">
             <Link href="/" className="flex items-center">
               <span 
-                className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                className="text-3xl font-bold font-display bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
               >
                 thehackai
               </span>

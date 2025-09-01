@@ -13,8 +13,7 @@ export default function Footer() {
           <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-3">
               <span 
-                className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                className="text-xl font-bold font-display bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
               >
                 thehackai
               </span>
@@ -102,8 +101,7 @@ export default function Footer() {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-6">
                 <span 
-                  className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  className="text-3xl font-bold font-display bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
                 >
                   thehackai
                 </span>

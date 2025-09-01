@@ -150,12 +150,11 @@ export default function SmartNavigation({ user, currentPage, onFeatureClick, onP
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo Section */}
           <Link 
-            href={effectiveUser ? "/dashboard" : "/"} 
-            className="flex items-center group"
+            href="/" 
+            className="flex items-center group mr-8"
           >
             <span 
-              className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              className="text-2xl sm:text-3xl font-bold font-display bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all duration-300"
             >
               thehackai
             </span>
