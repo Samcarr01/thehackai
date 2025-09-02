@@ -107,6 +107,12 @@ Respond in clean JSON format:
 }`
 
     console.log('🤖 Making OpenAI request...')
+    console.log('🔧 Request details:', {
+      model: 'gpt-5',
+      promptLength: prompt.length,
+      hasApiKey: !!OPENAI_API_KEY,
+      documentTextLength: documentText.length
+    })
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -163,8 +169,13 @@ You excel at transforming technical or business content into compelling, AI-inte
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('❌ OpenAI API failed:', response.status, errorText)
-      throw new Error(`OpenAI API failed: ${response.status}`)
+      console.error('❌ OpenAI API failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        headers: Object.fromEntries(response.headers.entries())
+      })
+      throw new Error(`OpenAI API failed: ${response.status} - ${errorText}`)
     }
 
     const aiResult = await response.json()
@@ -181,10 +192,16 @@ You excel at transforming technical or business content into compelling, AI-inte
     try {
       // Clean the content in case there are markdown code blocks
       const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      console.log('🧹 Cleaning content for JSON parse...')
+      console.log('🔍 Clean content preview:', cleanContent.substring(0, 500))
       analyzed = JSON.parse(cleanContent)
       console.log('✅ Parsed successfully:', analyzed)
     } catch (parseError) {
-      console.error('❌ JSON parse failed:', parseError)
+      console.error('❌ JSON parse failed:', {
+        error: parseError instanceof Error ? parseError.message : 'Unknown parse error',
+        contentLength: content ? content.length : 0,
+        contentPreview: content ? content.substring(0, 500) : 'No content'
+      })
       console.error('Raw content was:', content)
       
       // Create fallback result with AI integration
@@ -206,6 +223,12 @@ You excel at transforming technical or business content into compelling, AI-inte
 
   } catch (error) {
     console.error('💥 Analysis failed:', error)
+    console.error('💥 Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error,
+      name: error instanceof Error ? error.name : 'Unknown'
+    })
     
     // Create intelligent fallback based on actual filename
     let fallbackTitle = 'Document Analysis'
