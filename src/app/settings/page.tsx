@@ -168,9 +168,15 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white flex items-center justify-center">
-        <PageLoading text="Loading settings..." />
-      </div>
+      <DarkThemeBackground>
+        <SmartNavigation user={null} />
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <div className="text-center">
+            <PageLoading text="Loading settings..." />
+            <p className="text-gray-500 text-sm mt-4">Loading your account settings</p>
+          </div>
+        </div>
+      </DarkThemeBackground>
     )
   }
 
