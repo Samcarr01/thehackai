@@ -449,14 +449,12 @@ function HomePageContent() {
 export default function HomePage() {
   return (
     <Suspense fallback={
-      <DarkThemeBackground>
-        <div className="relative min-h-screen">
-          <PageLoading text="Loading homepage..." />
-          <div className="absolute bottom-8 left-0 right-0 text-center">
-            <p className="text-gray-500 text-sm">Preparing your AI workflow experience</p>
-          </div>
+      <>
+        <PageLoading text="Loading homepage..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Preparing your AI workflow experience</p>
         </div>
-      </DarkThemeBackground>
+      </>
     }>
       <HomePageContent />
     </Suspense>

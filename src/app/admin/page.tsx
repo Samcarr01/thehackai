@@ -581,9 +581,12 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <DarkThemeBackground>
+      <>
         <PageLoading text="Loading admin panel..." />
-      </DarkThemeBackground>
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Initializing admin interface</p>
+        </div>
+      </>
     )
   }
 

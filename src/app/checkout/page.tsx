@@ -101,12 +101,12 @@ function CheckoutContent() {
 
   if (!user) {
     return (
-      <DarkThemeBackground>
-        <SmartNavigation user={null} />
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <PageLoading text="Loading checkout..." />
+      <>
+        <PageLoading text="Loading checkout..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Preparing your subscription checkout</p>
         </div>
-      </DarkThemeBackground>
+      </>
     )
   }
 
@@ -309,12 +309,12 @@ function CheckoutContent() {
 export default function CheckoutPage() {
   return (
     <Suspense fallback={
-      <DarkThemeBackground>
-        <SmartNavigation user={null} />
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <PageLoading text="Loading..." />
+      <>
+        <PageLoading text="Loading checkout..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Preparing your subscription checkout</p>
         </div>
-      </DarkThemeBackground>
+      </>
     }>
       <CheckoutContent />
     </Suspense>

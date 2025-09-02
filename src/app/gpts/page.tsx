@@ -209,14 +209,12 @@ export default function GPTsPage() {
 
   if (loading) {
     return (
-      <DarkThemeBackground>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <PageLoading text="Loading GPTs..." />
-            <p className="text-gray-500 text-sm mt-4">Fetching AI tools and access permissions</p>
-          </div>
+      <>
+        <PageLoading text="Loading GPTs..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Fetching AI tools and access permissions</p>
         </div>
-      </DarkThemeBackground>
+      </>
     )
   }
 

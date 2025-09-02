@@ -83,9 +83,12 @@ export default function BlogPageClient() {
 
   if (loading) {
     return (
-      <DarkThemeBackground>
+      <>
         <PageLoading text="Loading blog posts..." />
-      </DarkThemeBackground>
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Loading AI insights and tutorials</p>
+        </div>
+      </>
     )
   }
 

@@ -289,17 +289,15 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <DarkThemeBackground>
-        <div className="relative min-h-screen">
-          <PageLoading text="Loading your dashboard..." />
-          <div className="absolute bottom-8 left-0 right-0 text-center">
-            <p className="text-gray-500 text-sm">Authenticating and loading your profile</p>
-            {authDebugInfo && (
-              <p className="text-xs text-gray-600 mt-1">Status: {authDebugInfo.step}</p>
-            )}
-          </div>
+      <>
+        <PageLoading text="Loading your dashboard..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Authenticating and loading your profile</p>
+          {authDebugInfo && (
+            <p className="text-xs text-gray-500 mt-1">Status: {authDebugInfo.step}</p>
+          )}
         </div>
-      </DarkThemeBackground>
+      </>
     )
   }
 

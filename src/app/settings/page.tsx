@@ -168,15 +168,12 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <DarkThemeBackground>
-        <SmartNavigation user={null} />
-        <div className="relative min-h-screen">
-          <PageLoading text="Loading settings..." />
-          <div className="absolute bottom-8 left-0 right-0 text-center">
-            <p className="text-gray-500 text-sm">Loading your account settings</p>
-          </div>
+      <>
+        <PageLoading text="Loading settings..." />
+        <div className="fixed bottom-8 left-0 right-0 text-center z-40">
+          <p className="text-gray-400 text-sm">Loading your account settings</p>
         </div>
-      </DarkThemeBackground>
+      </>
     )
   }
 
