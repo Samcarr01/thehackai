@@ -137,9 +137,9 @@ Respond in clean JSON format:
       clientInitialized: !!client
     })
 
-    let response
+    let openaiResponse
     try {
-      response = await client.chat.completions.create({
+      openaiResponse = await client.chat.completions.create({
       model: 'gpt-5',
       messages: [
         {
@@ -192,7 +192,7 @@ You excel at transforming technical or business content into compelling, AI-inte
       throw openaiError
     }
 
-    const content = response.choices[0]?.message?.content
+    const content = openaiResponse.choices[0]?.message?.content
 
     console.log('🎯 AI raw response:', content)
 
