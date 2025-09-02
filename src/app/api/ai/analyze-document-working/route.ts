@@ -148,7 +148,7 @@ FINAL INSTRUCTION: Write a LONG detailed description with specific AI usage exam
 
     console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
-      model: 'gpt-5',
+      model: 'gpt-4o',
       promptLength: prompt.length,
       hasApiKey: !!process.env.OPENAI_API_KEY,
       documentTextLength: documentText.length,
@@ -158,7 +158,7 @@ FINAL INSTRUCTION: Write a LONG detailed description with specific AI usage exam
     let openaiResponse
     try {
       openaiResponse = await client.chat.completions.create({
-      model: 'gpt-5',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
@@ -199,7 +199,7 @@ FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ wo
           content: prompt
         }
       ],
-        max_completion_tokens: 1500
+        max_tokens: 1200
       })
       console.log('📡 OpenAI SDK response received successfully')
     } catch (openaiError) {
@@ -222,9 +222,9 @@ FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ wo
     })
 
     if (!content || content.trim().length === 0) {
-      console.error('❌ GPT-5 returned empty content. This often happens when all tokens are used for reasoning.')
-      console.error('💡 Suggestion: The model may need more max_completion_tokens or simpler prompts.')
-      throw new Error('No content from OpenAI - likely hit token limit during reasoning')
+      console.error('❌ AI model returned empty content.')
+      console.error('💡 Suggestion: The model may need more max_tokens or simpler prompts.')
+      throw new Error('No content from OpenAI - empty response')
     }
 
     // Parse the JSON response
