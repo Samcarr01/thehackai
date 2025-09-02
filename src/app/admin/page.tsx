@@ -242,21 +242,43 @@ export default function AdminPage() {
   }
 
   const handleAnalyze = async () => {
-    if (!gptUrl && !documentFile) return
+    console.log('🎯 Admin: handleAnalyze called', {
+      uploadType,
+      hasGptUrl: !!gptUrl,
+      hasDocumentFile: !!documentFile,
+      gptUrl,
+      documentFileName: documentFile?.name
+    })
+
+    if (!gptUrl && !documentFile) {
+      console.warn('❌ Admin: No URL or file provided')
+      return
+    }
 
     setAnalyzing(true)
     try {
       let analyzed: AnalyzedContent | null = null
 
       if (uploadType === 'gpt' && gptUrl) {
+        console.log('🔍 Admin: Analyzing GPT URL:', gptUrl)
         analyzed = await aiService.analyzeGPT(gptUrl)
       } else if (uploadType === 'document' && documentFile) {
+        console.log('🔍 Admin: Analyzing document:', {
+          name: documentFile.name,
+          size: documentFile.size,
+          type: documentFile.type
+        })
         analyzed = await aiService.analyzeDocument(documentFile)
       }
 
+      console.log('✅ Admin: Analysis completed:', analyzed)
       setAnalyzedContent(analyzed)
     } catch (err) {
-      console.error('Analysis failed:', err)
+      console.error('💥 Admin: Analysis failed:', {
+        error: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined,
+        name: err instanceof Error ? err.name : 'Unknown'
+      })
       showNotification('Error', 'Analysis failed. Please try again.', 'error')
     } finally {
       setAnalyzing(false)
