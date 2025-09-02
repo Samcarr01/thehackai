@@ -188,8 +188,8 @@ export default function LoadingSpinner({
 
 // Preset components for common use cases
 export const PageLoading = ({ text = "Loading page..." }: { text?: string }) => (
-  <div className="min-h-[50vh] flex items-center justify-center px-4">
-    <div className="text-center w-full max-w-sm mx-auto">
+  <div className="absolute inset-0 flex items-center justify-center z-10">
+    <div className="text-center px-4">
       <LoadingSpinner size="lg" text={text} />
     </div>
   </div>

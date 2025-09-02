@@ -275,10 +275,10 @@ export default function DocumentsPage() {
   if (loading) {
     return (
       <DarkThemeBackground>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <PageLoading text="Loading Playbooks..." />
-            <p className="text-gray-500 text-sm mt-4">Fetching AI playbooks and access permissions</p>
+        <div className="relative min-h-screen">
+          <PageLoading text="Loading Playbooks..." />
+          <div className="absolute bottom-8 left-0 right-0 text-center">
+            <p className="text-gray-500 text-sm">Fetching AI playbooks and access permissions</p>
           </div>
         </div>
       </DarkThemeBackground>

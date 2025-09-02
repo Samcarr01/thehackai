@@ -450,10 +450,10 @@ export default function HomePage() {
   return (
     <Suspense fallback={
       <DarkThemeBackground>
-        <div className="flex items-center justify-center min-h-screen px-4">
-          <div className="text-center">
-            <PageLoading text="Loading homepage..." />
-            <p className="text-gray-500 text-sm mt-4">Preparing your AI workflow experience</p>
+        <div className="relative min-h-screen">
+          <PageLoading text="Loading homepage..." />
+          <div className="absolute bottom-8 left-0 right-0 text-center">
+            <p className="text-gray-500 text-sm">Preparing your AI workflow experience</p>
           </div>
         </div>
       </DarkThemeBackground>

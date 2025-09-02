@@ -134,10 +134,10 @@ export default function ToolkitPage() {
     return (
       <DarkThemeBackground>
         <SmartNavigation user={null} />
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <div className="text-center">
-            <PageLoading text="Loading our toolkit..." />
-            <p className="text-gray-500 text-sm mt-4">Discovering battle-tested tools that transformed our business</p>
+        <div className="relative min-h-screen">
+          <PageLoading text="Loading our toolkit..." />
+          <div className="absolute bottom-8 left-0 right-0 text-center">
+            <p className="text-gray-500 text-sm">Discovering battle-tested tools that transformed our business</p>
           </div>
         </div>
       </DarkThemeBackground>

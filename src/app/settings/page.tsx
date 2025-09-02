@@ -170,10 +170,10 @@ export default function SettingsPage() {
     return (
       <DarkThemeBackground>
         <SmartNavigation user={null} />
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <div className="text-center">
-            <PageLoading text="Loading settings..." />
-            <p className="text-gray-500 text-sm mt-4">Loading your account settings</p>
+        <div className="relative min-h-screen">
+          <PageLoading text="Loading settings..." />
+          <div className="absolute bottom-8 left-0 right-0 text-center">
+            <p className="text-gray-500 text-sm">Loading your account settings</p>
           </div>
         </div>
       </DarkThemeBackground>

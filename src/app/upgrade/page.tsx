@@ -15,10 +15,10 @@ export default function UpgradePage() {
 
   return (
     <DarkThemeBackground>
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="text-center">
-          <PageLoading text="Redirecting to pricing..." />
-          <p className="text-gray-500 text-sm mt-4">Taking you to our pricing plans</p>
+      <div className="relative min-h-screen">
+        <PageLoading text="Redirecting to pricing..." />
+        <div className="absolute bottom-8 left-0 right-0 text-center">
+          <p className="text-gray-500 text-sm">Taking you to our pricing plans</p>
         </div>
       </div>
     </DarkThemeBackground>
