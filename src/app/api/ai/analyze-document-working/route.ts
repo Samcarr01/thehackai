@@ -41,7 +41,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Document file is required' }, { status: 400 })
     }
 
-    console.log('📁 Processing file:', file.name, 'Size:', file.size)
+    // Cache file info to avoid formData reuse issues
+    const fileInfo = {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    }
+
+    console.log('📁 Processing file:', fileInfo.name, 'Size:', fileInfo.size)
 
     // Extract text content from PDF using proper PDF parser
     let documentText = ''
@@ -77,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get filename insights
-    const fileName = file.name
+    const fileName = fileInfo.name
     const nameWithoutExt = fileName.replace(/\.(pdf|docx?|txt)$/i, '')
     const cleanName = nameWithoutExt.replace(/[-_]/g, ' ')
 
@@ -180,7 +187,7 @@ You excel at transforming technical or business content into compelling, AI-inte
         }
       ],
         temperature: 0.2,
-        max_tokens: 500
+        max_completion_tokens: 500
       })
       console.log('📡 OpenAI SDK response received successfully')
     } catch (openaiError) {
@@ -254,10 +261,8 @@ You excel at transforming technical or business content into compelling, AI-inte
     let fallbackCategory = 'Business Planning'
     
     try {
-      const formData = await request.formData()
-      const file = formData.get('document') as File
-      if (file) {
-        const fileName = file.name
+      if (fileInfo) {
+        const fileName = fileInfo.name
         const nameWithoutExt = fileName.replace(/\.(pdf|docx?|txt)$/i, '')
         const cleanName = nameWithoutExt.replace(/[-_]/g, ' ')
         
