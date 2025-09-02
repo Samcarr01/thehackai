@@ -132,12 +132,16 @@ ANALYSIS REQUIREMENTS:
 ANALYSIS CONTEXT:
 ${documentText ? 'Base your analysis primarily on the document content, using the filename as supporting context.' : 'Since no text could be extracted, create a professional analysis based on the filename and common document patterns.'}
 
+CRITICAL: Your response must be comprehensive. The description field should be 4-6 detailed sentences (minimum 150 words) with multiple specific AI usage examples.
+
 Respond in clean JSON format:
 {
   "title": "Professional Descriptive Title",
-  "description": "Compelling 2-3 sentence description explaining what this covers, who it's for, and key benefits.",
+  "description": "Comprehensive 4-6 sentence description (150-300 words) explaining the problem this solves, specific benefits, target audience, multiple detailed AI integration examples, unique methodologies covered, and actionable outcomes users can expect.",
   "category": "Most Accurate Category"
-}`
+}
+
+REMEMBER: The description must be comprehensive and detailed, not brief!`
 
     console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
@@ -183,7 +187,9 @@ CRITICAL REQUIREMENT: Every description MUST include a specific example of how u
 - "Apply with Claude to create automated content calendars"
 - "Combine with AI writing tools to produce high-converting sales copy"
 
-You excel at transforming technical or business content into compelling, AI-integrated descriptions that help users understand both the value AND the AI-powered implementation possibilities.`
+You excel at transforming technical or business content into compelling, AI-integrated descriptions that help users understand both the value AND the AI-powered implementation possibilities.
+
+FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ words) with multiple specific AI examples. Never write short descriptions!`
         },
         {
           role: 'user',
@@ -206,6 +212,12 @@ You excel at transforming technical or business content into compelling, AI-inte
     const content = openaiResponse.choices[0]?.message?.content
 
     console.log('🎯 AI raw response:', content)
+    console.log('📏 Response length:', content ? content.length : 0)
+    console.log('🔍 Full response object:', {
+      choices: openaiResponse.choices?.length || 0,
+      finishReason: openaiResponse.choices[0]?.finish_reason,
+      usage: openaiResponse.usage
+    })
 
     if (!content) {
       throw new Error('No content from OpenAI')
