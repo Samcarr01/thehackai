@@ -116,7 +116,7 @@ Respond in clean JSON format:
 
     console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
-      model: 'gpt-4-turbo',
+      model: 'gpt-5',
       promptLength: prompt.length,
       hasApiKey: !!process.env.OPENAI_API_KEY,
       documentTextLength: documentText.length,
@@ -126,7 +126,7 @@ Respond in clean JSON format:
     let response
     try {
       response = await client.chat.completions.create({
-      model: 'gpt-4-turbo',
+      model: 'gpt-5',
       messages: [
         {
           role: 'system',
