@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import pdf from 'pdf-parse'
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
@@ -21,31 +22,35 @@ export async function POST(request: NextRequest) {
 
     console.log('📁 Processing file:', file.name, 'Size:', file.size)
 
-    // Extract text content from PDF
+    // Extract text content from PDF using proper PDF parser
     let documentText = ''
     try {
       const arrayBuffer = await file.arrayBuffer()
-      const uint8Array = new Uint8Array(arrayBuffer)
+      const buffer = Buffer.from(arrayBuffer)
       
-      // Simple PDF text extraction - look for readable text patterns
-      const decoder = new TextDecoder('utf-8', { ignoreBOM: true })
-      const rawText = decoder.decode(uint8Array)
+      console.log('📖 Parsing PDF with pdf-parse...')
+      const pdfData = await pdf(buffer)
       
-      // Extract readable text from PDF (basic approach that works well)
-      const textMatches = rawText.match(/[A-Za-z][A-Za-z\s\.\,\!\?\:\;\-\(\)]{20,200}/g)
-      if (textMatches) {
-        documentText = textMatches
-          .slice(0, 20) // First 20 meaningful text chunks
-          .join(' ')
-          .replace(/\s+/g, ' ')
+      if (pdfData.text && pdfData.text.trim().length > 0) {
+        // Clean and limit the extracted text
+        documentText = pdfData.text
+          .replace(/\s+/g, ' ') // Normalize whitespace
+          .replace(/[^\w\s\.\,\!\?\:\;\-\(\)]/g, ' ') // Remove special chars
           .trim()
-          .substring(0, 2000) // Limit to 2000 chars
+          .substring(0, 3000) // First 3000 characters for better context
+          
+        console.log('✅ Successfully extracted text:', documentText.length, 'characters')
+        console.log('📝 Text sample:', documentText.substring(0, 300) + '...')
+        console.log('📊 PDF Info:', {
+          pages: pdfData.numpages,
+          textLength: pdfData.text.length,
+          hasText: pdfData.text.trim().length > 0
+        })
+      } else {
+        console.warn('⚠️ No readable text found in PDF')
       }
-      
-      console.log('📖 Extracted text length:', documentText.length)
-      console.log('📝 Text sample:', documentText.substring(0, 200) + '...')
     } catch (textError) {
-      console.warn('⚠️ Text extraction failed, using filename only:', textError instanceof Error ? textError.message : 'Unknown error')
+      console.warn('⚠️ PDF parsing failed, using filename only:', textError instanceof Error ? textError.message : 'Unknown error')
     }
 
     // Get filename insights
@@ -192,15 +197,51 @@ You excel at transforming technical or business content into compelling, searcha
   } catch (error) {
     console.error('💥 Analysis failed:', error)
     
-    // Robust fallback
-    const fileName = 'ai_developers_playbook.pdf' // Default for your case
-    const fallback = {
-      title: 'AI Developers Playbook',
-      description: 'Comprehensive guide for AI developers covering coding practices, development workflows, and practical implementation strategies for building AI applications.',
-      category: 'Development'
+    // Create intelligent fallback based on actual filename
+    let fallbackTitle = 'Document Analysis'
+    let fallbackDescription = 'Professional guide with practical insights and actionable strategies.'
+    let fallbackCategory = 'Business Planning'
+    
+    try {
+      const formData = await request.formData()
+      const file = formData.get('document') as File
+      if (file) {
+        const fileName = file.name
+        const nameWithoutExt = fileName.replace(/\.(pdf|docx?|txt)$/i, '')
+        const cleanName = nameWithoutExt.replace(/[-_]/g, ' ')
+        
+        // Generate better fallback based on filename
+        fallbackTitle = cleanName
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ')
+        
+        // Smart category assignment
+        const lowerName = cleanName.toLowerCase()
+        if (lowerName.includes('social media') || lowerName.includes('marketing')) {
+          fallbackCategory = 'Marketing'
+          fallbackDescription = 'Strategic guide for building social media presence and marketing authority with proven tactics and frameworks.'
+        } else if (lowerName.includes('ai') || lowerName.includes('developer')) {
+          fallbackCategory = 'Development'  
+          fallbackDescription = 'Technical guide covering AI development practices, coding strategies, and implementation frameworks.'
+        } else if (lowerName.includes('business') || lowerName.includes('strategy')) {
+          fallbackCategory = 'Business Planning'
+          fallbackDescription = 'Business strategy guide with actionable frameworks for growth, planning, and execution.'
+        } else {
+          fallbackDescription = 'Comprehensive guide with practical insights, proven strategies, and actionable frameworks for professional development.'
+        }
+      }
+    } catch (fallbackError) {
+      console.warn('Error creating intelligent fallback:', fallbackError)
     }
 
-    console.log('🔄 Returning fallback:', fallback)
+    const fallback = {
+      title: fallbackTitle,
+      description: fallbackDescription,
+      category: fallbackCategory
+    }
+
+    console.log('🔄 Returning intelligent fallback:', fallback)
     return NextResponse.json(fallback)
   }
 }
