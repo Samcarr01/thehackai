@@ -39,8 +39,7 @@ export async function GET() {
     const response = await client.chat.completions.create({
       model: 'gpt-5',
       messages: [{ role: 'user', content: 'Say "test successful" in JSON format with a message field' }],
-      temperature: 0.1,
-      max_tokens: 50
+      max_completion_tokens: 50
     })
     
     results.tests.gpt5Test = {

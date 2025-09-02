@@ -196,7 +196,6 @@ FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ wo
           content: prompt
         }
       ],
-        temperature: 0.2,
         max_completion_tokens: 800
       })
       console.log('📡 OpenAI SDK response received successfully')
