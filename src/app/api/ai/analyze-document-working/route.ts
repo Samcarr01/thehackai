@@ -121,7 +121,7 @@ Respond in clean JSON format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
