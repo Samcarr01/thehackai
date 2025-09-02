@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
 
 export async function POST(request: NextRequest) {
   console.log('🔥 Document analysis started')
 
   try {
-    if (!OPENAI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       console.error('❌ No OpenAI API key')
       return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 })
     }
@@ -106,26 +109,20 @@ Respond in clean JSON format:
   "category": "Most Accurate Category"
 }`
 
-    console.log('🤖 Making OpenAI request...')
+    console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
       model: 'gpt-5',
       promptLength: prompt.length,
-      hasApiKey: !!OPENAI_API_KEY,
+      hasApiKey: !!process.env.OPENAI_API_KEY,
       documentTextLength: documentText.length
     })
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a document analysis specialist for a premium AI tools platform. Your expertise includes analyzing business documents, technical guides, and educational materials to help users understand both their value AND how to use them with AI tools.
+    const response = await client.chat.completions.create({
+      model: 'gpt-5',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a document analysis specialist for a premium AI tools platform. Your expertise includes analyzing business documents, technical guides, and educational materials to help users understand both their value AND how to use them with AI tools.
 
 CORE COMPETENCIES:
 - Extracting key insights from document content and metadata
@@ -154,32 +151,18 @@ CRITICAL REQUIREMENT: Every description MUST include a specific example of how u
 - "Combine with AI writing tools to produce high-converting sales copy"
 
 You excel at transforming technical or business content into compelling, AI-integrated descriptions that help users understand both the value AND the AI-powered implementation possibilities.`
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.2,
-        max_tokens: 500
-      })
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.2,
+      max_tokens: 500
     })
 
-    console.log('📡 OpenAI response status:', response.status)
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('❌ OpenAI API failed:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText,
-        headers: Object.fromEntries(response.headers.entries())
-      })
-      throw new Error(`OpenAI API failed: ${response.status} - ${errorText}`)
-    }
-
-    const aiResult = await response.json()
-    const content = aiResult.choices[0]?.message?.content
+    console.log('📡 OpenAI SDK response received')
+    const content = response.choices[0]?.message?.content
 
     console.log('🎯 AI raw response:', content)
 
