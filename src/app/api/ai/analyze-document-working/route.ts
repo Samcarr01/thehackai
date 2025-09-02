@@ -21,38 +21,82 @@ export async function POST(request: NextRequest) {
 
     console.log('📁 Processing file:', file.name, 'Size:', file.size)
 
-    // Simple but effective approach
+    // Extract text content from PDF
+    let documentText = ''
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      const uint8Array = new Uint8Array(arrayBuffer)
+      
+      // Simple PDF text extraction - look for readable text patterns
+      const decoder = new TextDecoder('utf-8', { ignoreBOM: true })
+      const rawText = decoder.decode(uint8Array)
+      
+      // Extract readable text from PDF (basic approach that works well)
+      const textMatches = rawText.match(/[A-Za-z][A-Za-z\s\.\,\!\?\:\;\-\(\)]{20,200}/g)
+      if (textMatches) {
+        documentText = textMatches
+          .slice(0, 20) // First 20 meaningful text chunks
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, 2000) // Limit to 2000 chars
+      }
+      
+      console.log('📖 Extracted text length:', documentText.length)
+      console.log('📝 Text sample:', documentText.substring(0, 200) + '...')
+    } catch (textError) {
+      console.warn('⚠️ Text extraction failed, using filename only:', textError.message)
+    }
+
+    // Get filename insights
     const fileName = file.name
-    const nameWithoutExt = fileName.replace('.pdf', '')
+    const nameWithoutExt = fileName.replace(/\.(pdf|docx?|txt)$/i, '')
     const cleanName = nameWithoutExt.replace(/[-_]/g, ' ')
-    
-    console.log('🧹 Clean filename:', cleanName)
 
-    // Enhanced AI prompt that works with filenames but gives great results
-    const prompt = `You are analyzing a PDF document with the filename: "${fileName}"
+    // Enhanced AI prompt with actual document content
+    const prompt = `You are analyzing a business/technical document for a curated AI tools platform.
 
-The clean filename is: "${cleanName}"
+DOCUMENT INFORMATION:
+Filename: "${fileName}"
+Clean name: "${cleanName}"
+${documentText ? `Document content sample: "${documentText}"` : 'No readable text extracted - analyze based on filename.'}
 
-Based on the filename, create a professional analysis. This appears to be a business or technical document.
+ANALYSIS REQUIREMENTS:
 
-Guidelines:
-- For "ai_developers_playbook" → Focus on AI development, coding practices, developer tools
-- For "business_strategy" → Focus on business planning, strategy, growth
-- For "marketing_guide" → Focus on marketing tactics, campaigns, audience
-- For "automation_workflows" → Focus on process automation, efficiency, tools
+1. **Professional Title Creation:**
+   - Make it descriptive and searchable (2-8 words)
+   - Remove file extensions and technical suffixes
+   - Focus on core topic/value (e.g., "AI Development Playbook" not "ai_dev_guide_v2")
+   - Use title case formatting
 
-Create:
-1. A professional, clear title (make it readable and searchable)
-2. A compelling 2-3 sentence description explaining what this document covers and its value
-3. The best category: Business Planning, Productivity, Communication, Automation, Marketing, Design, Development
+2. **Compelling Description (2-3 sentences):**
+   - Start with what problem/need this addresses
+   - Include 2-3 specific benefits or use cases  
+   - Mention target audience (developers, marketers, entrepreneurs, etc.)
+   - Highlight practical value and actionable insights
+   - Keep it engaging but professional
 
-For the filename "${cleanName}", this seems to be about: ${cleanName.includes('ai') || cleanName.includes('developer') || cleanName.includes('code') ? 'AI development and coding' : cleanName.includes('business') ? 'business strategy' : cleanName.includes('marketing') ? 'marketing' : 'productivity and workflows'}
+3. **Accurate Categorization:**
+   - Business Planning: Strategy, business models, market analysis, planning frameworks
+   - Productivity: Workflows, efficiency, task management, optimization techniques  
+   - Communication: Writing, presentations, messaging, social media strategies
+   - Automation: Process automation, workflow automation, tool integration
+   - Marketing: Content marketing, advertising, growth strategies, campaigns
+   - Design: UI/UX, visual design, creative processes, design thinking
+   - Development: Programming, coding, technical implementation, software development
+   - Education: Learning, teaching, training materials, educational content
+   - Writing: Content creation, copywriting, editing, creative writing techniques
+   - Analysis: Data analysis, research methods, reporting, analytical frameworks
+   - Research: Information gathering, competitive analysis, market research
 
-Respond in valid JSON:
+ANALYSIS CONTEXT:
+${documentText ? 'Base your analysis primarily on the document content, using the filename as supporting context.' : 'Since no text could be extracted, create a professional analysis based on the filename and common document patterns.'}
+
+Respond in clean JSON format:
 {
-  "title": "Professional Title Here",
-  "description": "Detailed description explaining the document's content, target audience, and key benefits.",
-  "category": "Most Appropriate Category"
+  "title": "Professional Descriptive Title",
+  "description": "Compelling 2-3 sentence description explaining what this covers, who it's for, and key benefits.",
+  "category": "Most Accurate Category"
 }`
 
     console.log('🤖 Making OpenAI request...')
@@ -64,19 +108,39 @@ Respond in valid JSON:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model: 'gpt-5',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert document analyst. Always respond with valid JSON. Focus on creating professional, searchable titles and compelling descriptions that highlight practical value.'
+            content: `You are a document analysis specialist for a premium AI tools platform. Your expertise includes analyzing business documents, technical guides, and educational materials.
+
+CORE COMPETENCIES:
+- Extracting key insights from document content and metadata
+- Creating professional, SEO-friendly titles that attract the right audience
+- Writing compelling descriptions that clearly communicate value proposition
+- Accurate categorization based on primary content focus
+
+ANALYSIS STANDARDS:
+- Titles: Professional, descriptive, 2-8 words, immediately clear purpose
+- Descriptions: 2-3 sentences, problem-focused, benefit-driven, audience-specific
+- Categories: Primary function only, most specific match available
+
+APPROACH:
+1. Analyze document content first, filename second
+2. Focus on practical value and actionable insights
+3. Identify target audience and their specific needs
+4. Highlight unique benefits and use cases
+5. Use professional but engaging language
+
+You excel at transforming technical or business content into compelling, searchable descriptions that help users understand exactly what value they'll receive.`
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 400
+        temperature: 0.2,
+        max_tokens: 500
       })
     })
 

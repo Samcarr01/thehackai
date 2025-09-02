@@ -100,34 +100,57 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error fetching GPT page:', fetchError)
     }
 
-    // Use OpenAI to analyze and enhance the content
+    // Enhanced AI analysis with deeper understanding
     const analysisPrompt = `
-You are analyzing a ChatGPT GPT from this URL: ${url}
+You are a specialist in analyzing AI tools and GPTs. Analyze this ChatGPT GPT:
 
-${gptData.title ? `Extracted title: ${gptData.title}` : ''}
-${gptData.description ? `Extracted description: ${gptData.description}` : ''}
+URL: ${url}
+${gptData.title ? `Extracted title: "${gptData.title}"` : ''}
+${gptData.description ? `Extracted description: "${gptData.description}"` : ''}
 
-Based on the URL and any extracted information, provide:
+ANALYSIS INSTRUCTIONS:
 
-1. A clean, professional title that clearly conveys what the GPT does
-   - Remove excessive emojis (keep 1-2 if relevant)
-   - Make it descriptive and searchable
-   - Focus on function over flashy language
+1. **URL Intelligence:** Extract meaning from the URL path:
+   - Look for keywords in the GPT ID section after "/g/"
+   - Identify patterns that suggest functionality
+   - Consider common GPT naming conventions
 
-2. A compelling description (2-3 sentences) that explains:
-   - What specific problem this GPT solves
-   - Key benefits and use cases
-   - Who would find it most valuable
+2. **Title Optimization:** Create a professional, searchable title:
+   - Remove marketing fluff and excessive emojis
+   - Focus on core functionality (e.g., "Email Writer" not "🚀 Amazing Email Creator Pro!")
+   - Make it immediately understandable to potential users
+   - Use title case formatting
 
-3. The most appropriate category from: Business Planning, Productivity, Communication, Automation, Marketing, Design, Development, Education, Writing, Analysis, Research, Customer Service
+3. **Description Excellence:** Write a compelling 2-3 sentence description:
+   - Start with the specific problem it solves
+   - Include 2-3 concrete use cases or benefits
+   - Mention the target audience (entrepreneurs, marketers, developers, etc.)
+   - Use active voice and benefit-focused language
 
-Analyze the URL path and any extracted content to understand the GPT's actual purpose and functionality.
+4. **Smart Categorization:** Choose the most accurate category:
+   - Business Planning: Strategy, business models, market analysis, planning
+   - Productivity: Task management, workflows, efficiency tools
+   - Communication: Email, messaging, presentations, social media
+   - Automation: Process automation, workflow automation, task automation  
+   - Marketing: Content marketing, advertising, campaigns, growth
+   - Design: UI/UX, graphics, visual content, creative work
+   - Development: Programming, coding, technical implementation
+   - Education: Learning, teaching, training, educational content
+   - Writing: Content creation, copywriting, editing, creative writing
+   - Analysis: Data analysis, research analysis, reporting
+   - Research: Information gathering, fact-checking, competitive research
+   - Customer Service: Support, help desk, customer communication
 
-Respond in JSON format:
+QUALITY STANDARDS:
+- Titles should be 2-6 words, descriptive, and professional
+- Descriptions should be 150-250 characters, benefit-focused
+- Categories should reflect primary function, not secondary features
+
+Respond in clean JSON:
 {
-  "title": "Clear Descriptive Title",
-  "description": "Specific description explaining the GPT's purpose, benefits, and ideal use cases.",
-  "category": "Most Appropriate Category"
+  "title": "Professional Descriptive Title",
+  "description": "Compelling description explaining what it does, key benefits, and who should use it for maximum value.",
+  "category": "Most Accurate Primary Category"
 }
 `
 
@@ -138,35 +161,39 @@ Respond in JSON format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model: 'gpt-5',
         messages: [
           {
             role: 'system',
-            content: `You are an expert at analyzing and categorizing AI tools. Provide clean, professional titles and compelling descriptions for GPTs.
+            content: `You are an AI tool analysis specialist with expertise in ChatGPT GPTs and productivity tools. Your job is to create professional, accurate, and compelling titles and descriptions.
 
-CATEGORY GUIDELINES:
-- Business Planning: Strategy, planning, market analysis, business models
-- Productivity: Task management, workflows, optimization, efficiency
-- Communication: Email writing, messaging, social media, presentations  
-- Automation: Process automation, workflow automation, task automation
-- Marketing: Content marketing, advertising, campaigns, growth strategies
-- Design: UI/UX design, graphics, visual content, creative work
-- Development: Coding, programming, software development, technical tasks
-- Education: Learning, teaching, training, educational content
-- Writing: Content creation, copywriting, editing, creative writing
-- Analysis: Data analysis, research analysis, report generation
-- Research: Information gathering, fact-checking, competitive research
-- Customer Service: Support, help desk, customer communication
+EXPERTISE AREAS:
+- Understanding GPT functionality from URLs and metadata
+- Writing benefit-focused, conversion-optimized descriptions  
+- Professional categorization of AI tools
+- Creating searchable, SEO-friendly titles
 
-Choose the most specific category that accurately represents the GPT's primary function.`
+ANALYSIS APPROACH:
+1. Extract meaningful insights from URLs, especially GPT ID patterns
+2. Focus on core functionality over marketing language
+3. Write for the target user, not generic audiences
+4. Prioritize clarity and immediate value proposition
+5. Use professional, confident tone without hype
+
+QUALITY METRICS:
+- Titles: Clear, searchable, 2-6 words, immediately understandable
+- Descriptions: 150-250 chars, problem-focused, benefit-driven, audience-specific
+- Categories: Primary function only, most specific available option
+
+You excel at transforming vague or marketing-heavy GPT information into professional, actionable content that helps users make informed decisions.`
           },
           {
             role: 'user',
             content: analysisPrompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 500
+        temperature: 0.2,
+        max_tokens: 600
       })
     })
 
