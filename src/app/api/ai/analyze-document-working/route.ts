@@ -107,13 +107,14 @@ ANALYSIS REQUIREMENTS:
    - Focus on core topic/value (e.g., "AI Development Playbook" not "ai_dev_guide_v2")
    - Use title case formatting
 
-2. **Compelling Description (3-4 sentences):**
-   - Start with what problem/need this addresses
-   - Include 2-3 specific benefits or use cases  
-   - Mention target audience (developers, marketers, entrepreneurs, etc.)
-   - **REQUIRED: Include a specific AI usage example** - How users can apply this playbook with AI tools like ChatGPT, Claude, or other AI assistants (e.g., "Use with ChatGPT to automate social media content creation" or "Apply with AI writing tools to generate marketing copy")
-   - Highlight practical value and actionable insights
-   - Keep it engaging but professional
+2. **Comprehensive Description (4-6 sentences, 150-300 words):**
+   - Start with the specific problem/challenge this document solves
+   - Detail 3-4 concrete benefits and practical applications
+   - Clearly identify the target audience (developers, marketers, entrepreneurs, etc.)
+   - **REQUIRED: Include detailed AI integration examples** - Provide 2-3 specific ways users can leverage this content with AI tools like ChatGPT, Claude, or other AI assistants (e.g., "Use with ChatGPT to automatically generate 30-day content calendars and engagement-driving post variations" or "Apply with Claude to create personalized outreach sequences and automated response templates")
+   - Highlight unique methodologies, frameworks, or strategies covered
+   - Emphasize actionable takeaways and measurable outcomes
+   - Make it comprehensive yet engaging and professional
 
 3. **Accurate Categorization:**
    - Business Planning: Strategy, business models, market analysis, planning frameworks
@@ -165,8 +166,8 @@ CORE COMPETENCIES:
 
 ANALYSIS STANDARDS:
 - Titles: Professional, descriptive, 2-8 words, immediately clear purpose
-- Descriptions: 3-4 sentences, problem-focused, benefit-driven, audience-specific
-- **AI Integration: ALWAYS include practical AI usage examples** (ChatGPT prompts, Claude applications, automation workflows)
+- Descriptions: 4-6 sentences, 150-300 words, comprehensive and detailed, problem-focused, benefit-driven, audience-specific
+- **AI Integration: ALWAYS include multiple detailed AI usage examples** (specific ChatGPT prompts, Claude applications, automation workflows with concrete examples)
 - Categories: Primary function only, most specific match available
 
 APPROACH:
@@ -190,7 +191,7 @@ You excel at transforming technical or business content into compelling, AI-inte
         }
       ],
         temperature: 0.2,
-        max_completion_tokens: 500
+        max_completion_tokens: 800
       })
       console.log('📡 OpenAI SDK response received successfully')
     } catch (openaiError) {
