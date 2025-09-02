@@ -153,7 +153,7 @@ export default function LoadingSpinner({
   const content = (
     <div
       className={cn(
-        'flex flex-col items-center justify-center',
+        'flex flex-col items-center justify-center text-center',
         sizeStyles.container,
         className
       )}
@@ -162,7 +162,7 @@ export default function LoadingSpinner({
       {text && (
         <p
           className={cn(
-            'font-medium animate-pulse',
+            'font-medium animate-pulse text-center',
             sizeStyles.text,
             colorStyles.text
           )}
@@ -188,8 +188,10 @@ export default function LoadingSpinner({
 
 // Preset components for common use cases
 export const PageLoading = ({ text = "Loading page..." }: { text?: string }) => (
-  <div className="min-h-[50vh] flex items-center justify-center">
-    <LoadingSpinner size="lg" text={text} />
+  <div className="min-h-[50vh] flex items-center justify-center px-4">
+    <div className="text-center w-full max-w-sm mx-auto">
+      <LoadingSpinner size="lg" text={text} />
+    </div>
   </div>
 )
 

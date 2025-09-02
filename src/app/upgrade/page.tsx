@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import DarkThemeBackground from '@/components/DarkThemeBackground'
+import { PageLoading } from '@/components/LoadingSpinner'
 
 export default function UpgradePage() {
   const router = useRouter()
@@ -12,11 +14,13 @@ export default function UpgradePage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-        <p className="text-white">Redirecting to pricing...</p>
+    <DarkThemeBackground>
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <div className="text-center">
+          <PageLoading text="Redirecting to pricing..." />
+          <p className="text-gray-500 text-sm mt-4">Taking you to our pricing plans</p>
+        </div>
       </div>
-    </div>
+    </DarkThemeBackground>
   )
 }

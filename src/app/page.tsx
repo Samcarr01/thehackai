@@ -17,6 +17,7 @@ import PromptRefinerDemo from '@/components/PromptRefinerDemo'
 import PlaybookFlipDemo from '@/components/PlaybookFlipDemo'
 import SmartNavigation from '@/components/SmartNavigation'
 import Footer from '@/components/Footer'
+import { PageLoading } from '@/components/LoadingSpinner'
 
 function HomePageContent() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -448,9 +449,14 @@ function HomePageContent() {
 export default function HomePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
+      <DarkThemeBackground>
+        <div className="flex items-center justify-center min-h-screen px-4">
+          <div className="text-center">
+            <PageLoading text="Loading homepage..." />
+            <p className="text-gray-500 text-sm mt-4">Preparing your AI workflow experience</p>
+          </div>
+        </div>
+      </DarkThemeBackground>
     }>
       <HomePageContent />
     </Suspense>
