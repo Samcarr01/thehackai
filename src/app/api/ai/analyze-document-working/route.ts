@@ -5,9 +5,23 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
+}
+
 export async function POST(request: NextRequest) {
   console.log('🔥 Document analysis started')
-  console.log('🔧 Environment check:', {
+  console.log('🔧 Request details:', {
+    method: request.method,
+    url: request.url,
+    headers: Object.fromEntries(request.headers.entries()),
     hasOpenAIKey: !!process.env.OPENAI_API_KEY,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString()
@@ -218,7 +232,12 @@ You excel at transforming technical or business content into compelling, AI-inte
     }
 
     console.log('🎉 Final result:', result)
-    return NextResponse.json(result)
+    
+    const response = NextResponse.json(result)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
   } catch (error) {
     console.error('💥 Analysis failed:', error)
@@ -274,6 +293,11 @@ You excel at transforming technical or business content into compelling, AI-inte
     }
 
     console.log('🔄 Returning intelligent fallback:', fallback)
-    return NextResponse.json(fallback)
+    
+    const response = NextResponse.json(fallback)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return response
   }
 }
