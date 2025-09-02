@@ -9,6 +9,7 @@ import SmartNavigation from '@/components/SmartNavigation'
 import { AffiliateCard } from '@/components/AffiliateCard'
 import { AffiliateModal } from '@/components/AffiliateModal'
 import { AffiliateTool } from '@/types/affiliate'
+import { PageLoading } from '@/components/LoadingSpinner'
 import Footer from '@/components/Footer'
 
 export default function ToolkitPage() {
@@ -132,13 +133,11 @@ export default function ToolkitPage() {
   if (loading) {
     return (
       <DarkThemeBackground>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="relative">
-              <div className="w-20 h-20 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-              <div className="w-20 h-20 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1s'}}></div>
-            </div>
-            <p className="text-white font-medium text-lg">Loading our toolkit...</p>
+        <SmartNavigation user={null} />
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <div className="text-center">
+            <PageLoading text="Loading our toolkit..." />
+            <p className="text-gray-500 text-sm mt-4">Discovering battle-tested tools that transformed our business</p>
           </div>
         </div>
       </DarkThemeBackground>
