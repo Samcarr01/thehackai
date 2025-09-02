@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       console.log('📖 Extracted text length:', documentText.length)
       console.log('📝 Text sample:', documentText.substring(0, 200) + '...')
     } catch (textError) {
-      console.warn('⚠️ Text extraction failed, using filename only:', textError.message)
+      console.warn('⚠️ Text extraction failed, using filename only:', textError instanceof Error ? textError.message : 'Unknown error')
     }
 
     // Get filename insights
