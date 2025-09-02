@@ -16,6 +16,8 @@ import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
 import NotificationModal from '@/components/NotificationModal'
 import BlogGenerationProgress from '@/components/BlogGenerationProgress'
+import LoadingSpinner, { PageLoading, ButtonLoading, CardLoading, ListSkeleton } from '@/components/LoadingSpinner'
+import { withLoading } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 
 interface AnalyzedContent {
@@ -580,9 +582,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <DarkThemeBackground>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-        </div>
+        <PageLoading text="Loading admin panel..." />
       </DarkThemeBackground>
     )
   }
@@ -800,8 +800,8 @@ export default function AdminPage() {
                     >
                       {uploading ? (
                         <span className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Uploading...
+                          <ButtonLoading />
+                          <span className="ml-2">Uploading...</span>
                         </span>
                       ) : (
                         '🚀 Upload Content'
@@ -1058,7 +1058,8 @@ export default function AdminPage() {
                     >
                       {uploading ? (
                         <span className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          <ButtonLoading size="sm" />
+                          <span className="ml-2"></span>
                           Publishing Tool...
                         </span>
                       ) : (

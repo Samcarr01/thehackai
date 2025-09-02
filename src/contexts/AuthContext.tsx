@@ -18,7 +18,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Cache for user profile to prevent excessive database calls
 let profileCache: { profile: UserProfile | null; timestamp: number } | null = null
-const PROFILE_CACHE_TTL = 10 * 60 * 1000 // 10 minutes - longer cache for better performance
+const PROFILE_CACHE_TTL = 15 * 60 * 1000 // 15 minutes - extended cache for better performance
+
+// In-memory session cache to reduce auth checks
+let sessionCache: { user: User | null; timestamp: number } | null = null
+const SESSION_CACHE_TTL = 5 * 60 * 1000 // 5 minutes session cache
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -79,9 +83,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true
 
-    // Get initial session
+    // Get initial session with caching
     const initializeAuth = async () => {
       try {
+        // Check session cache first
+        const now = Date.now()
+        if (sessionCache && sessionCache.timestamp + SESSION_CACHE_TTL > now) {
+          console.log('🚀 Auth: Using cached session')
+          if (sessionCache.user && mounted) {
+            setUser(sessionCache.user)
+            await fetchProfile(sessionCache.user.id)
+          }
+          if (mounted) {
+            setLoading(false)
+          }
+          return
+        }
+
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error) {
@@ -89,8 +107,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setError(error.message)
         } else if (session?.user && mounted) {
           console.log('✅ Auth: Initial session found')
+          // Update session cache
+          sessionCache = {
+            user: session.user,
+            timestamp: now
+          }
           setUser(session.user)
           await fetchProfile(session.user.id)
+        } else {
+          // Cache null user as well
+          sessionCache = {
+            user: null,
+            timestamp: now
+          }
         }
       } catch (err) {
         console.error('❌ Auth: Initialization error:', err)

@@ -10,6 +10,7 @@ import { contentStatsService, type ContentStats } from '@/lib/content-stats'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
+import { PageLoading } from '@/components/LoadingSpinner'
 import GradientBackground from '@/components/NetworkBackground'
 import DescriptionModal from '@/components/DescriptionModal'
 
@@ -211,12 +212,8 @@ export default function GPTsPage() {
       <DarkThemeBackground>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
-              <div className="animate-ping absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-purple-400 opacity-20"></div>
-            </div>
-            <p className="text-gray-300 text-lg font-medium">Loading GPTs...</p>
-            <p className="text-gray-500 text-sm mt-2">Fetching AI tools and access permissions</p>
+            <PageLoading text="Loading GPTs..." />
+            <p className="text-gray-500 text-sm mt-4">Fetching AI tools and access permissions</p>
           </div>
         </div>
       </DarkThemeBackground>
