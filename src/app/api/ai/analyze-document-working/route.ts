@@ -27,6 +27,9 @@ export async function POST(request: NextRequest) {
     timestamp: new Date().toISOString()
   })
 
+  // Declare fileInfo at function scope for error handler access
+  let fileInfo: { name: string; size: number; type: string } | null = null
+
   try {
     if (!process.env.OPENAI_API_KEY) {
       console.error('❌ No OpenAI API key')
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Cache file info to avoid formData reuse issues
-    const fileInfo = {
+    fileInfo = {
       name: file.name,
       size: file.size,
       type: file.type
@@ -261,7 +264,7 @@ You excel at transforming technical or business content into compelling, AI-inte
     let fallbackCategory = 'Business Planning'
     
     try {
-      if (fileInfo) {
+      if (fileInfo && fileInfo.name) {
         const fileName = fileInfo.name
         const nameWithoutExt = fileName.replace(/\.(pdf|docx?|txt)$/i, '')
         const cleanName = nameWithoutExt.replace(/[-_]/g, ' ')
