@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pdf from 'pdf-parse'
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
@@ -29,6 +28,8 @@ export async function POST(request: NextRequest) {
       const buffer = Buffer.from(arrayBuffer)
       
       console.log('📖 Parsing PDF with pdf-parse...')
+      // Dynamic import to prevent build issues
+      const pdf = (await import('pdf-parse')).default
       const pdfData = await pdf(buffer)
       
       if (pdfData.text && pdfData.text.trim().length > 0) {
@@ -74,10 +75,11 @@ ANALYSIS REQUIREMENTS:
    - Focus on core topic/value (e.g., "AI Development Playbook" not "ai_dev_guide_v2")
    - Use title case formatting
 
-2. **Compelling Description (2-3 sentences):**
+2. **Compelling Description (3-4 sentences):**
    - Start with what problem/need this addresses
    - Include 2-3 specific benefits or use cases  
    - Mention target audience (developers, marketers, entrepreneurs, etc.)
+   - **REQUIRED: Include a specific AI usage example** - How users can apply this playbook with AI tools like ChatGPT, Claude, or other AI assistants (e.g., "Use with ChatGPT to automate social media content creation" or "Apply with AI writing tools to generate marketing copy")
    - Highlight practical value and actionable insights
    - Keep it engaging but professional
 
@@ -117,27 +119,35 @@ Respond in clean JSON format:
         messages: [
           {
             role: 'system',
-            content: `You are a document analysis specialist for a premium AI tools platform. Your expertise includes analyzing business documents, technical guides, and educational materials.
+            content: `You are a document analysis specialist for a premium AI tools platform. Your expertise includes analyzing business documents, technical guides, and educational materials to help users understand both their value AND how to use them with AI tools.
 
 CORE COMPETENCIES:
 - Extracting key insights from document content and metadata
 - Creating professional, SEO-friendly titles that attract the right audience
 - Writing compelling descriptions that clearly communicate value proposition
 - Accurate categorization based on primary content focus
+- **CRITICAL: Identifying specific AI usage applications** for every playbook/document
 
 ANALYSIS STANDARDS:
 - Titles: Professional, descriptive, 2-8 words, immediately clear purpose
-- Descriptions: 2-3 sentences, problem-focused, benefit-driven, audience-specific
+- Descriptions: 3-4 sentences, problem-focused, benefit-driven, audience-specific
+- **AI Integration: ALWAYS include practical AI usage examples** (ChatGPT prompts, Claude applications, automation workflows)
 - Categories: Primary function only, most specific match available
 
 APPROACH:
 1. Analyze document content first, filename second
 2. Focus on practical value and actionable insights
 3. Identify target audience and their specific needs
-4. Highlight unique benefits and use cases
-5. Use professional but engaging language
+4. **Highlight how users can amplify this content with AI tools**
+5. Provide concrete AI integration examples (specific prompts, tools, workflows)
+6. Use professional but engaging language
 
-You excel at transforming technical or business content into compelling, searchable descriptions that help users understand exactly what value they'll receive.`
+CRITICAL REQUIREMENT: Every description MUST include a specific example of how users can apply this playbook with AI tools like ChatGPT, Claude, Midjourney, etc. Examples:
+- "Use with ChatGPT to generate personalized outreach sequences"
+- "Apply with Claude to create automated content calendars"
+- "Combine with AI writing tools to produce high-converting sales copy"
+
+You excel at transforming technical or business content into compelling, AI-integrated descriptions that help users understand both the value AND the AI-powered implementation possibilities.`
           },
           {
             role: 'user',
@@ -177,10 +187,10 @@ You excel at transforming technical or business content into compelling, searcha
       console.error('❌ JSON parse failed:', parseError)
       console.error('Raw content was:', content)
       
-      // Create fallback result
+      // Create fallback result with AI integration
       analyzed = {
         title: cleanName.replace(/\b\w/g, l => l.toUpperCase()),
-        description: 'Comprehensive guide with practical insights and actionable strategies for professional development.',
+        description: 'Comprehensive guide with practical insights and actionable strategies for professional development. Use with AI writing tools to customize implementation and accelerate your learning process.',
         category: cleanName.includes('ai') || cleanName.includes('developer') || cleanName.includes('code') ? 'Development' : 'Business Planning'
       }
     }
@@ -216,19 +226,19 @@ You excel at transforming technical or business content into compelling, searcha
           .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
           .join(' ')
         
-        // Smart category assignment
+        // Smart category assignment with AI integration
         const lowerName = cleanName.toLowerCase()
         if (lowerName.includes('social media') || lowerName.includes('marketing')) {
           fallbackCategory = 'Marketing'
-          fallbackDescription = 'Strategic guide for building social media presence and marketing authority with proven tactics and frameworks.'
+          fallbackDescription = 'Strategic guide for building social media presence and marketing authority with proven tactics and frameworks. Use with ChatGPT to generate engaging content calendars and automated posting schedules.'
         } else if (lowerName.includes('ai') || lowerName.includes('developer')) {
           fallbackCategory = 'Development'  
-          fallbackDescription = 'Technical guide covering AI development practices, coding strategies, and implementation frameworks.'
+          fallbackDescription = 'Technical guide covering AI development practices, coding strategies, and implementation frameworks. Apply with Claude to accelerate code generation and debugging workflows.'
         } else if (lowerName.includes('business') || lowerName.includes('strategy')) {
           fallbackCategory = 'Business Planning'
-          fallbackDescription = 'Business strategy guide with actionable frameworks for growth, planning, and execution.'
+          fallbackDescription = 'Business strategy guide with actionable frameworks for growth, planning, and execution. Combine with AI writing tools to create comprehensive business plans and strategic presentations.'
         } else {
-          fallbackDescription = 'Comprehensive guide with practical insights, proven strategies, and actionable frameworks for professional development.'
+          fallbackDescription = 'Comprehensive guide with practical insights, proven strategies, and actionable frameworks for professional development. Use with AI assistants to personalize implementation and accelerate results.'
         }
       }
     } catch (fallbackError) {
