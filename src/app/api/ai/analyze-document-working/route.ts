@@ -107,14 +107,17 @@ ANALYSIS REQUIREMENTS:
    - Focus on core topic/value (e.g., "AI Development Playbook" not "ai_dev_guide_v2")
    - Use title case formatting
 
-2. **Comprehensive Description (4-6 sentences, 150-300 words):**
+2. **MANDATORY COMPREHENSIVE Description (MINIMUM 200-350 words, 6-8 sentences):**
+   - **WORD COUNT REQUIREMENT: Your description MUST be between 200-350 words. Count every word.**
    - Start with the specific problem/challenge this document solves
-   - Detail 3-4 concrete benefits and practical applications
+   - Detail 4-5 concrete benefits and practical applications with specific examples
    - Clearly identify the target audience (developers, marketers, entrepreneurs, etc.)
-   - **REQUIRED: Include detailed AI integration examples** - Provide 2-3 specific ways users can leverage this content with AI tools like ChatGPT, Claude, or other AI assistants (e.g., "Use with ChatGPT to automatically generate 30-day content calendars and engagement-driving post variations" or "Apply with Claude to create personalized outreach sequences and automated response templates")
-   - Highlight unique methodologies, frameworks, or strategies covered
-   - Emphasize actionable takeaways and measurable outcomes
-   - Make it comprehensive yet engaging and professional
+   - **REQUIRED: Include 3-4 detailed AI integration examples** - Provide specific ways users can leverage this content with AI tools like ChatGPT, Claude, or other AI assistants (e.g., "Use with ChatGPT to automatically generate 30-day content calendars and engagement-driving post variations" or "Apply with Claude to create personalized outreach sequences and automated response templates")
+   - Highlight unique methodologies, frameworks, or strategies covered with concrete examples
+   - Emphasize actionable takeaways and measurable outcomes with specific metrics
+   - Include implementation steps and expected results
+   - Make it comprehensive, detailed, engaging and professional
+   - **CRITICAL: If your description is under 200 words, expand it with more specific details, examples, and AI usage scenarios**
 
 3. **Accurate Categorization:**
    - Business Planning: Strategy, business models, market analysis, planning frameworks
@@ -132,16 +135,16 @@ ANALYSIS REQUIREMENTS:
 ANALYSIS CONTEXT:
 ${documentText ? 'Base your analysis primarily on the document content, using the filename as supporting context.' : 'Since no text could be extracted, create a professional analysis based on the filename and common document patterns.'}
 
-CRITICAL: Your response must be comprehensive. The description field should be 4-6 detailed sentences (minimum 150 words) with multiple specific AI usage examples.
+CRITICAL: Your response must be comprehensive. The description field should be 6-8 detailed sentences (minimum 200 words) with multiple specific AI usage examples.
 
-Respond in clean JSON format:
+OUTPUT FORMAT: Return ONLY valid JSON, no other text:
 {
   "title": "Professional Descriptive Title",
-  "description": "Comprehensive 4-6 sentence description (150-300 words) explaining the problem this solves, specific benefits, target audience, multiple detailed AI integration examples, unique methodologies covered, and actionable outcomes users can expect.",
+  "description": "Comprehensive 6-8 sentence description (200-350 words) explaining the problem this solves, specific benefits, target audience, multiple detailed AI integration examples, unique methodologies covered, and actionable outcomes users can expect.",
   "category": "Most Accurate Category"
 }
 
-REMEMBER: The description must be comprehensive and detailed, not brief!`
+FINAL INSTRUCTION: Write a LONG detailed description with specific AI usage examples. Make it 200+ words!`
 
     console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
@@ -196,7 +199,7 @@ FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ wo
           content: prompt
         }
       ],
-        max_completion_tokens: 800
+        max_completion_tokens: 1500
       })
       console.log('📡 OpenAI SDK response received successfully')
     } catch (openaiError) {
@@ -218,8 +221,10 @@ FINAL REMINDER: Always write LONG, DETAILED descriptions (4-6 sentences, 150+ wo
       usage: openaiResponse.usage
     })
 
-    if (!content) {
-      throw new Error('No content from OpenAI')
+    if (!content || content.trim().length === 0) {
+      console.error('❌ GPT-5 returned empty content. This often happens when all tokens are used for reasoning.')
+      console.error('💡 Suggestion: The model may need more max_completion_tokens or simpler prompts.')
+      throw new Error('No content from OpenAI - likely hit token limit during reasoning')
     }
 
     // Parse the JSON response
