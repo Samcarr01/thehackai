@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { auth } from '@/lib/auth'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import { ButtonLoading } from '@/components/LoadingSpinner'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -130,10 +131,10 @@ export default function ForgotPasswordPage() {
                   className="w-full flex justify-center items-center space-x-2 gradient-purple text-white py-3 px-4 rounded-xl text-sm font-semibold button-hover shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Sending...</span>
-                    </>
+                    <span className="flex items-center">
+                      <ButtonLoading size="sm" />
+                      <span className="ml-2">Sending...</span>
+                    </span>
                   ) : (
                     <>
                       <span>Send reset link</span>

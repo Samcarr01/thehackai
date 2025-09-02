@@ -6,6 +6,7 @@ import { auth } from '@/lib/auth'
 import { userService, type UserProfile } from '@/lib/user'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
+import { PageLoading, ButtonLoading } from '@/components/LoadingSpinner'
 import SubscriptionManagement from '@/components/SubscriptionManagement'
 
 export default function SettingsPage() {
@@ -168,7 +169,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-purple-50/30 to-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        <PageLoading text="Loading settings..." />
       </div>
     )
   }
@@ -342,10 +343,10 @@ export default function SettingsPage() {
                         className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {changePasswordLoading ? (
-                          <div className="flex items-center justify-center space-x-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            <span>Updating...</span>
-                          </div>
+                          <span className="flex items-center justify-center">
+                            <ButtonLoading size="sm" />
+                            <span className="ml-2">Updating...</span>
+                          </span>
                         ) : (
                           'Update Password'
                         )}
@@ -468,10 +469,10 @@ export default function SettingsPage() {
                   className="bg-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
                   {deleteLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Deleting...</span>
-                    </>
+                    <span className="flex items-center">
+                      <ButtonLoading size="sm" />
+                      <span className="ml-2">Deleting...</span>
+                    </span>
                   ) : (
                     <span>Delete My Account</span>
                   )}

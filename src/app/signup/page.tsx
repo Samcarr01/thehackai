@@ -9,6 +9,7 @@ import { userService, type UserProfile } from '@/lib/user'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import Footer from '@/components/Footer'
 import SmartNavigation from '@/components/SmartNavigation'
+import { ButtonLoading } from '@/components/LoadingSpinner'
 
 export default function SignupPage() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -465,10 +466,10 @@ export default function SignupPage() {
                       className="w-full flex justify-center items-center space-x-2 gradient-purple text-white py-3 px-4 rounded-xl text-sm font-semibold button-hover shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          <span>Creating account & sending confirmation...</span>
-                        </>
+                        <span className="flex items-center">
+                          <ButtonLoading size="sm" />
+                          <span className="ml-2">Creating account & sending confirmation...</span>
+                        </span>
                       ) : (
                         <>
                           <span>Create Free Account</span>

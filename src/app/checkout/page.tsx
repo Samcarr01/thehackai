@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getStripe, STRIPE_CONFIG } from '@/lib/stripe-config'
 import SmartNavigation from '@/components/SmartNavigation'
+import { PageLoading, ButtonLoading } from '@/components/LoadingSpinner'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import { UserTier } from '@/lib/user'
 
@@ -103,10 +104,7 @@ function CheckoutContent() {
       <DarkThemeBackground>
         <SmartNavigation user={null} />
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-white">Loading checkout...</p>
-          </div>
+          <PageLoading text="Loading checkout..." />
         </div>
       </DarkThemeBackground>
     )
@@ -200,10 +198,10 @@ function CheckoutContent() {
                   className="w-full h-12 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mb-6"
                 >
                   {loading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Creating secure checkout...</span>
-                    </div>
+                    <span className="flex items-center justify-center">
+                      <ButtonLoading size="sm" />
+                      <span className="ml-2">Creating secure checkout...</span>
+                    </span>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <span>Continue to Secure Checkout</span>
@@ -314,7 +312,7 @@ export default function CheckoutPage() {
       <DarkThemeBackground>
         <SmartNavigation user={null} />
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <PageLoading text="Loading..." />
         </div>
       </DarkThemeBackground>
     }>

@@ -8,6 +8,7 @@ import { userService, type UserProfile } from '@/lib/user'
 import { blogService, type BlogPost } from '@/lib/blog'
 import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
+import { PageLoading } from '@/components/LoadingSpinner'
 import SmartNavigation from '@/components/SmartNavigation'
 import { globalNavigation } from '@/lib/navigation'
 
@@ -82,8 +83,8 @@ export default function BlogPageClient() {
 
   if (loading) {
     return (
-      <DarkThemeBackground className="flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <DarkThemeBackground>
+        <PageLoading text="Loading blog posts..." />
       </DarkThemeBackground>
     )
   }
