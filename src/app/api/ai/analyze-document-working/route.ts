@@ -7,6 +7,11 @@ const client = new OpenAI({
 
 export async function POST(request: NextRequest) {
   console.log('🔥 Document analysis started')
+  console.log('🔧 Environment check:', {
+    hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+    nodeEnv: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  })
 
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -111,14 +116,17 @@ Respond in clean JSON format:
 
     console.log('🤖 Making OpenAI request with SDK...')
     console.log('🔧 Request details:', {
-      model: 'gpt-5',
+      model: 'gpt-4-turbo',
       promptLength: prompt.length,
       hasApiKey: !!process.env.OPENAI_API_KEY,
-      documentTextLength: documentText.length
+      documentTextLength: documentText.length,
+      clientInitialized: !!client
     })
 
-    const response = await client.chat.completions.create({
-      model: 'gpt-5',
+    let response
+    try {
+      response = await client.chat.completions.create({
+      model: 'gpt-4-turbo',
       messages: [
         {
           role: 'system',
@@ -157,11 +165,19 @@ You excel at transforming technical or business content into compelling, AI-inte
           content: prompt
         }
       ],
-      temperature: 0.2,
-      max_tokens: 500
-    })
+        temperature: 0.2,
+        max_tokens: 500
+      })
+      console.log('📡 OpenAI SDK response received successfully')
+    } catch (openaiError) {
+      console.error('❌ OpenAI SDK call failed:', {
+        error: openaiError instanceof Error ? openaiError.message : 'Unknown OpenAI error',
+        stack: openaiError instanceof Error ? openaiError.stack : undefined,
+        name: openaiError instanceof Error ? openaiError.name : 'Unknown'
+      })
+      throw openaiError
+    }
 
-    console.log('📡 OpenAI SDK response received')
     const content = response.choices[0]?.message?.content
 
     console.log('🎯 AI raw response:', content)
