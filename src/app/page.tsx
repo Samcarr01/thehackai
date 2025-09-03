@@ -140,7 +140,8 @@ function HomePageContent() {
           <p className="text-lg sm:text-xl lg:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
             Skip months of trial and error. Access my personal collection 
             of proven GPTs and PDF playbooks you can upload directly to any LLM as knowledge. Choose from{' '}
-            <span className="text-purple-400 font-medium">Pro (£7/month)</span> or <span className="text-pink-400 font-medium">Ultra (£19/month)</span> — with free preview access.
+            <span className="text-purple-400 font-medium">Pro (£7/month)</span>{' '}or{' '}
+            <span className="text-pink-400 font-medium">Ultra (£19/month)</span> — with free preview access.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
