@@ -8,24 +8,47 @@ interface AdminContextType {
   adminViewMode: AdminViewMode
   setAdminViewMode: (mode: AdminViewMode) => void
   getEffectiveUser: (user: any) => any
+  isHydrated: boolean
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined)
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [adminViewMode, setAdminViewModeState] = useState<AdminViewMode>('admin')
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
-    // Load admin view mode preference from localStorage
+    // Load admin view mode preference from localStorage after hydration
     if (typeof window !== 'undefined') {
       const savedMode = localStorage.getItem('adminViewMode') as AdminViewMode
+      console.log('AdminContext: Loading from localStorage:', savedMode)
       if (savedMode && ['admin', 'free', 'pro', 'ultra'].includes(savedMode)) {
+        console.log('AdminContext: Setting admin view mode to:', savedMode)
         setAdminViewModeState(savedMode)
       }
+      setIsHydrated(true)
+    }
+  }, [])
+
+  // Listen for localStorage changes from other tabs/windows
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleStorageChange = (e: StorageEvent) => {
+        if (e.key === 'adminViewMode' && e.newValue) {
+          const newMode = e.newValue as AdminViewMode
+          if (['admin', 'free', 'pro', 'ultra'].includes(newMode)) {
+            setAdminViewModeState(newMode)
+          }
+        }
+      }
+
+      window.addEventListener('storage', handleStorageChange)
+      return () => window.removeEventListener('storage', handleStorageChange)
     }
   }, [])
 
   const setAdminViewMode = (mode: AdminViewMode) => {
+    console.log('AdminContext: Changing admin view mode from', adminViewMode, 'to', mode)
     setAdminViewModeState(mode)
     if (typeof window !== 'undefined') {
       localStorage.setItem('adminViewMode', mode)
@@ -63,7 +86,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AdminContext.Provider value={{ adminViewMode, setAdminViewMode, getEffectiveUser }}>
+    <AdminContext.Provider value={{ adminViewMode, setAdminViewMode, getEffectiveUser, isHydrated }}>
       {children}
     </AdminContext.Provider>
   )
