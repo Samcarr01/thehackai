@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Purpose:** Subscription platform for curated AI documents and GPTs
 - **Business Model:** Freemium with Pro/Ultra tiers
 - **Value Proposition:** "Battle-tested AI workflows that actually work"
+- **Social Media:** X [@Sam_thehackai](https://twitter.com/Sam_thehackai), Instagram [@thehackai](https://www.instagram.com/thehackai/)
 
 ## 🛠️ **Tech Stack**
 - **Frontend:** Next.js 14 with TypeScript and Tailwind CSS
@@ -374,6 +375,10 @@ git push origin main  # Auto-deploys to Vercel
 - ✅ **Comprehensive Descriptions**: Enhanced prompts for 200-350 word detailed descriptions with AI usage examples
 - ✅ **Error Handling**: Added specific detection for reasoning token exhaustion and empty responses
 - ✅ **OpenAI SDK Integration**: Migrated from manual fetch to official OpenAI SDK for better reliability
+- ✅ **Social Media Integration**: Added X (Twitter) and Instagram links to footer with brand colors
+- ✅ **Footer Enhancement**: Professional social media section with official SVG icons and hover animations
+- ✅ **Brand Consistency**: Purple/pink gradient styling matching platform theme across all social links
+- ✅ **Affiliate Tool API**: Fixed max_tokens compatibility issues for toolkit AI analysis system
 
 ### **Previous Fixes (February 2025):**
 - ✅ **Blog Image Stability**: Fixed scroll-induced image reloading with lazy loading and fixed aspect ratios
