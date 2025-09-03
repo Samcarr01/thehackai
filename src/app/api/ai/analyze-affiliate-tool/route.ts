@@ -78,7 +78,7 @@ Focus on factual, current information that would help someone understand why thi
             content: researchPrompt
           }
         ],
-        max_tokens: 2000,
+        max_completion_tokens: 2000,
         temperature: 0.3
       })
     })
@@ -163,7 +163,7 @@ Respond in JSON format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -175,7 +175,7 @@ Respond in JSON format:
           }
         ],
         temperature: 0.7,
-        max_tokens: 1200,
+        max_completion_tokens: 1200,
         response_format: { type: "json_object" }
       })
     })
