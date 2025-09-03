@@ -2,8 +2,36 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { auth } from '@/lib/auth'
+import { userService, type UserProfile } from '@/lib/user'
 
 export default function Footer() {
+  const [user, setUser] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { user: authUser } = await auth.getUser()
+        if (authUser) {
+          let userProfile = await userService.getProfile(authUser.id)
+          if (!userProfile) {
+            const firstName = authUser.user_metadata?.first_name || ''
+            const lastName = authUser.user_metadata?.last_name || ''
+            userProfile = await userService.createProfile(authUser.id, authUser.email || '', firstName, lastName)
+          }
+          setUser(userProfile)
+        }
+      } catch (error) {
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    checkAuth()
+  }, [])
   return (
     <footer className="bg-gradient-to-b from-slate-900 to-black border-t border-white/10">
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -57,21 +85,56 @@ export default function Footer() {
             <div>
               <h3 className="text-white font-semibold text-sm mb-3">Account</h3>
               <ul className="space-y-2">
-                <li>
-                  <Link href="/login" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
-                    🔑 Sign In
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/signup" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
-                    🚀 Get Started
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
-                    💬 Contact
-                  </Link>
-                </li>
+                {user ? (
+                  // Authenticated user links
+                  <>
+                    <li>
+                      <Link href="/dashboard" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        🏠 Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/settings" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        ⚙️ Settings
+                      </Link>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={async () => {
+                          await auth.signOut()
+                          window.location.reload()
+                        }} 
+                        className="text-gray-400 hover:text-purple-300 transition-colors text-sm text-left"
+                      >
+                        🚪 Sign Out
+                      </button>
+                    </li>
+                    <li>
+                      <Link href="/contact" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        💬 Contact
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  // Guest user links
+                  <>
+                    <li>
+                      <Link href="/login" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        🔑 Sign In
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/signup" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        🚀 Get Started
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/contact" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
+                        💬 Contact
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link href="/terms" className="text-gray-400 hover:text-purple-300 transition-colors text-sm">
                     📄 Terms
@@ -196,33 +259,81 @@ export default function Footer() {
             <div>
               <h3 className="text-white font-semibold text-lg mb-6">Account</h3>
               <ul className="space-y-4">
-                <li>
-                  <Link 
-                    href="/login" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
-                  >
-                    <span>🔑</span>
-                    <span>Sign In</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    href="/signup" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
-                  >
-                    <span>🚀</span>
-                    <span>Get Started</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    href="/contact" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
-                  >
-                    <span>💬</span>
-                    <span>Contact</span>
-                  </Link>
-                </li>
+                {user ? (
+                  // Authenticated user links
+                  <>
+                    <li>
+                      <Link 
+                        href="/dashboard" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>🏠</span>
+                        <span>Dashboard</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link 
+                        href="/settings" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>⚙️</span>
+                        <span>Settings</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={async () => {
+                          await auth.signOut()
+                          window.location.reload()
+                        }} 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2 text-left"
+                      >
+                        <span>🚪</span>
+                        <span>Sign Out</span>
+                      </button>
+                    </li>
+                    <li>
+                      <Link 
+                        href="/contact" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>💬</span>
+                        <span>Contact</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  // Guest user links
+                  <>
+                    <li>
+                      <Link 
+                        href="/login" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>🔑</span>
+                        <span>Sign In</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link 
+                        href="/signup" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>🚀</span>
+                        <span>Get Started</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link 
+                        href="/contact" 
+                        className="text-gray-400 hover:text-purple-300 transition-colors duration-300 flex items-center space-x-2"
+                      >
+                        <span>💬</span>
+                        <span>Contact</span>
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link 
                     href="/terms" 
