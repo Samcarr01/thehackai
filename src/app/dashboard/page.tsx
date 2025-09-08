@@ -534,23 +534,22 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* GPTs Section */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-purple-500/30">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-3xl">🤖</span>
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="relative">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 via-purple-500 to-pink-600 rounded-3xl flex items-center justify-center shadow-xl">
+                  <span className="text-4xl">🤖</span>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white">AI GPTs</h3>
-                  <p className="text-sm text-gray-300">
-                    {user.user_tier === 'free' ? 'Preview available • Upgrade for full access' : 
-                     user.user_tier === 'pro' ? 'Access to 3 essential GPTs' : 
-                     'Full access to all 7 GPTs'}
-                  </p>
-                </div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-slate-800"></div>
               </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-purple-400">{stats.gpts}</div>
-                <div className="text-xs text-gray-400">Available</div>
+              <div>
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  AI GPTs
+                </h3>
+                <p className="text-sm text-gray-300 mt-1">
+                  {user.user_tier === 'free' ? 'Preview available • Upgrade for full access' : 
+                   user.user_tier === 'pro' ? 'Access to 3 essential GPTs' : 
+                   'Full access to all 7 GPTs'}
+                </p>
               </div>
             </div>
             
@@ -591,23 +590,22 @@ export default function DashboardPage() {
 
           {/* Playbooks Section */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-purple-500/30">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-3xl">📚</span>
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="relative">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 via-purple-500 to-pink-600 rounded-3xl flex items-center justify-center shadow-xl">
+                  <span className="text-4xl">📚</span>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white">AI Playbooks</h3>
-                  <p className="text-sm text-gray-300">
-                    {user.user_tier === 'free' ? 'Preview available • Upgrade to download' :
-                     user.user_tier === 'pro' ? 'Download 2 core playbooks' :
-                     'Download all playbooks for any LLM'}
-                  </p>
-                </div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full border-2 border-slate-800"></div>
               </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-purple-400">{stats.documents}</div>
-                <div className="text-xs text-gray-400">Available</div>
+              <div>
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  AI Playbooks
+                </h3>
+                <p className="text-sm text-gray-300 mt-1">
+                  {user.user_tier === 'free' ? 'Preview available • Upgrade to download' :
+                   user.user_tier === 'pro' ? 'Download 2 core playbooks' :
+                   'Download all playbooks for any LLM'}
+                </p>
               </div>
             </div>
             
