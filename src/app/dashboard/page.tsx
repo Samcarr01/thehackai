@@ -532,156 +532,154 @@ export default function DashboardPage() {
 
         {/* Content Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* GPTs Section */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-purple-500/30">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white">AI GPTs</h3>
-                  <p className="text-sm text-gray-300">
-                    {user.user_tier === 'free' ? 'Preview available • Upgrade for access' : 
-                     user.user_tier === 'pro' ? 'Access to 3 essential GPTs' : 
-                     'Full access to all 7 GPTs'}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* GPTs Section - Enhanced */}
+          <div className="group relative">
+            {/* Animated background glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
             
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">💼</span>
-                  <span className="font-medium text-gray-100">Business Planning</span>
+            <div className="relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-purple-500/30 hover:border-purple-400/50 transition-all duration-500 hover:transform hover:scale-[1.02]">
+              {/* Header with floating animation */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
+                      <span className="text-3xl filter drop-shadow-lg">🤖</span>
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center animate-bounce">
+                      <span className="text-xs">✨</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      AI GPTs
+                    </h3>
+                    <p className="text-sm text-gray-300 font-medium">
+                      {user.user_tier === 'free' ? '🔍 Preview available • Upgrade for full access' : 
+                       user.user_tier === 'pro' ? '⚡ Access to 3 essential GPTs' : 
+                       '🚀 Full access to all 7 GPTs'}
+                    </p>
+                  </div>
                 </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">✅ Access</span>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">⚡</span>
-                  <span className="font-medium text-gray-100">Productivity</span>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-purple-400">{stats.gpts}</div>
+                  <div className="text-xs text-gray-400">Available</div>
                 </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">✅ Access</span>
-                )}
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">🗣️</span>
-                  <span className="font-medium text-gray-100">Communication</span>
+            
+            {/* Enhanced category cards */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {[
+                { emoji: '💼', title: 'Business Planning', gradient: 'from-blue-500/20 to-cyan-500/20', border: 'border-blue-500/30' },
+                { emoji: '⚡', title: 'Productivity', gradient: 'from-yellow-500/20 to-orange-500/20', border: 'border-yellow-500/30' },
+                { emoji: '🗣️', title: 'Communication', gradient: 'from-green-500/20 to-emerald-500/20', border: 'border-green-500/30' },
+                { emoji: '🤖', title: 'Automation', gradient: 'from-purple-500/20 to-pink-500/20', border: 'border-purple-500/30' }
+              ].map((category, index) => (
+                <div key={category.title} className={`group/card relative p-4 bg-gradient-to-br ${category.gradient} rounded-xl border ${category.border} hover:border-opacity-60 transition-all duration-300 hover:transform hover:scale-105`}>
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <div className="text-2xl mb-1 group-hover/card:scale-110 transition-transform duration-300">{category.emoji}</div>
+                    <div className="font-medium text-white text-sm">{category.title}</div>
+                    <div className="flex items-center justify-center">
+                      {user.user_tier === 'free' ? (
+                        <span className="text-purple-400 text-xs font-medium bg-purple-500/20 px-2 py-1 rounded-full border border-purple-500/30">
+                          👀 Preview
+                        </span>
+                      ) : (
+                        <span className="text-green-400 text-xs font-medium bg-green-500/20 px-2 py-1 rounded-full border border-green-500/30">
+                          ✅ Access
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">✅ Access</span>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">🤖</span>
-                  <span className="font-medium text-gray-100">Automation</span>
-                </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">✅ Access</span>
-                )}
-              </div>
+              ))}
             </div>
 
-            <Link
-              href="/gpts"
-              className="w-full block text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 rounded-xl font-semibold button-hover shadow-lg"
-            >
-              Browse All GPTs →
-            </Link>
+              {/* Enhanced Browse Button */}
+              <Link
+                href="/gpts"
+                className="w-full block text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl font-bold hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-purple-500/25"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span>Browse All GPTs</span>
+                  <span className="text-xl animate-bounce">🚀</span>
+                </div>
+              </Link>
+            </div>
           </div>
 
-          {/* Playbooks Section */}
-          <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-purple-500/30">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">📚</span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-100">AI Playbooks</h3>
-                  <p className="text-sm text-gray-100">
-                    {user.user_tier === 'free' ? 'Preview available • Upgrade to download' :
-                     user.user_tier === 'pro' ? 'Download 2 core playbooks' :
-                     'Download all playbooks for any LLM knowledge'}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Playbooks Section - Enhanced */}
+          <div className="group relative">
+            {/* Animated background glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
             
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">💼</span>
-                  <span className="font-medium text-gray-100">Business Strategy</span>
+            <div className="relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-500 hover:transform hover:scale-[1.02]">
+              {/* Header with floating animation */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
+                      <span className="text-3xl filter drop-shadow-lg">📚</span>
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-orange-400 to-red-400 rounded-full flex items-center justify-center animate-bounce">
+                      <span className="text-xs">📥</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                      AI Playbooks
+                    </h3>
+                    <p className="text-sm text-gray-300 font-medium">
+                      {user.user_tier === 'free' ? '🔍 Preview available • Upgrade to download' :
+                       user.user_tier === 'pro' ? '📥 Download 2 core playbooks' :
+                       '🚀 Download all playbooks for any LLM knowledge'}
+                    </p>
+                  </div>
                 </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">📥 Download</span>
-                )}
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-emerald-400">{stats.documents}</div>
+                  <div className="text-xs text-gray-400">Available</div>
+                </div>
               </div>
               
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">⚡</span>
-                  <span className="font-medium text-gray-100">Productivity Systems</span>
-                </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">📥 Download</span>
-                )}
+              {/* Enhanced category cards */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {[
+                  { emoji: '💼', title: 'Business Strategy', gradient: 'from-blue-500/20 to-cyan-500/20', border: 'border-blue-500/30' },
+                  { emoji: '⚡', title: 'Productivity Systems', gradient: 'from-yellow-500/20 to-orange-500/20', border: 'border-yellow-500/30' },
+                  { emoji: '🎯', title: 'Marketing & Content', gradient: 'from-pink-500/20 to-rose-500/20', border: 'border-pink-500/30' },
+                  { emoji: '🤖', title: 'AI Workflows', gradient: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/30' }
+                ].map((category, index) => (
+                  <div key={category.title} className={`group/card relative p-4 bg-gradient-to-br ${category.gradient} rounded-xl border ${category.border} hover:border-opacity-60 transition-all duration-300 hover:transform hover:scale-105`}>
+                    <div className="flex flex-col items-center text-center space-y-2">
+                      <div className="text-2xl mb-1 group-hover/card:scale-110 transition-transform duration-300">{category.emoji}</div>
+                      <div className="font-medium text-white text-sm">{category.title}</div>
+                      <div className="flex items-center justify-center">
+                        {user.user_tier === 'free' ? (
+                          <span className="text-purple-400 text-xs font-medium bg-purple-500/20 px-2 py-1 rounded-full border border-purple-500/30">
+                            👀 Preview
+                          </span>
+                        ) : (
+                          <span className="text-emerald-400 text-xs font-medium bg-emerald-500/20 px-2 py-1 rounded-full border border-emerald-500/30">
+                            📥 Download
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">🎯</span>
-                  <span className="font-medium text-gray-100">Marketing & Content</span>
-                </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">📥 Download</span>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">🤖</span>
-                  <span className="font-medium text-gray-100">AI Workflows</span>
-                </div>
-                {user.user_tier === 'free' ? (
-                  <span className="text-purple-600 text-sm">👀 Preview</span>
-                ) : (
-                  <span className="text-green-600 text-sm">📥 Download</span>
-                )}
-              </div>
-            </div>
 
-            <Link
-              href="/documents"
-              className="w-full block text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 rounded-xl font-semibold button-hover shadow-lg"
-            >
-              Browse All Playbooks →
-            </Link>
+              {/* Enhanced Browse Button */}
+              <Link
+                href="/documents"
+                className="w-full block text-center bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-4 px-6 rounded-xl font-bold hover:from-emerald-500 hover:to-teal-500 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-emerald-500/25"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span>Browse All Playbooks</span>
+                  <span className="text-xl animate-bounce">📚</span>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
 
