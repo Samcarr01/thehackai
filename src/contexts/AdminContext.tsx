@@ -9,6 +9,7 @@ interface AdminContextType {
   setAdminViewMode: (mode: AdminViewMode) => void
   getEffectiveUser: (user: any) => any
   isHydrated: boolean
+  resetToAdmin: () => void
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined)
@@ -25,6 +26,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       if (savedMode && ['admin', 'free', 'pro', 'ultra'].includes(savedMode)) {
         console.log('AdminContext: Setting admin view mode to:', savedMode)
         setAdminViewModeState(savedMode)
+      } else {
+        // If no valid saved mode, default to 'admin' and clear localStorage
+        console.log('AdminContext: No valid saved mode, defaulting to admin')
+        localStorage.removeItem('adminViewMode')
+        setAdminViewModeState('admin')
       }
       setIsHydrated(true)
     }
@@ -52,6 +58,14 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     setAdminViewModeState(mode)
     if (typeof window !== 'undefined') {
       localStorage.setItem('adminViewMode', mode)
+    }
+  }
+
+  const resetToAdmin = () => {
+    console.log('AdminContext: Resetting to admin mode for tier testing')
+    setAdminViewModeState('admin')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('adminViewMode')
     }
   }
 
@@ -86,7 +100,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AdminContext.Provider value={{ adminViewMode, setAdminViewMode, getEffectiveUser, isHydrated }}>
+    <AdminContext.Provider value={{ adminViewMode, setAdminViewMode, getEffectiveUser, isHydrated, resetToAdmin }}>
       {children}
     </AdminContext.Provider>
   )
