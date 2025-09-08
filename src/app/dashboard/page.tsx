@@ -13,7 +13,6 @@ import { useAdmin } from '@/contexts/AdminContext'
 import DarkThemeBackground from '@/components/DarkThemeBackground'
 import SmartNavigation from '@/components/SmartNavigation'
 import LoadingSpinner, { PageLoading } from '@/components/LoadingSpinner'
-import AdminToggle from '@/components/AdminToggle'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'
 
@@ -472,13 +471,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
-        {/* Admin Toggle Section - Only for admin users */}
-        {user.email === 'samcarr1232@gmail.com' && (
-          <div className="mb-8">
-            <AdminToggle />
-          </div>
-        )}
 
         {/* Plan Management Section */}
         <div className="mb-8 text-center">
