@@ -15,6 +15,7 @@ import SmartNavigation from '@/components/SmartNavigation'
 import LoadingSpinner, { PageLoading } from '@/components/LoadingSpinner'
 import { gptsService } from '@/lib/gpts'
 import { documentsService } from '@/lib/documents'
+import { blogService } from '@/lib/blog'
 
 export default function DashboardPage() {
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -194,21 +195,23 @@ export default function DashboardPage() {
     const loadStats = async (userTier: UserTier = 'free') => {
       try {
         console.log('Dashboard: Loading stats for tier:', userTier)
-        const [gptsData, documentsData, contentStatsData] = await Promise.all([
+        const [gptsData, documentsData, blogPostsData, contentStatsData] = await Promise.all([
           gptsService.getAllGPTs(),
           documentsService.getAllDocuments(),
+          blogService.getAllPosts(),
           contentStatsService.getContentStats(userTier)
         ])
         
         console.log('Dashboard: Stats loaded successfully', { 
           gpts: gptsData.length, 
-          documents: documentsData.length 
+          documents: documentsData.length,
+          blogPosts: blogPostsData.length
         })
         
         setStats({
           gpts: gptsData.length,
           documents: documentsData.length,
-          blogPosts: 0 // Will be updated when blog is implemented
+          blogPosts: blogPostsData.length
         })
         
         setContentStats(contentStatsData)
@@ -517,7 +520,7 @@ export default function DashboardPage() {
               <div>
                 <p className="text-sm font-medium text-gray-100 mb-1">Blog Posts</p>
                 <p className="text-4xl font-bold text-purple-600">{stats.blogPosts}</p>
-                <p className="text-xs text-gray-400 mt-1">Coming soon</p>
+                <p className="text-xs text-gray-400 mt-1">Live & published</p>
               </div>
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-3xl">📝</span>
