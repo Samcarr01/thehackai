@@ -51,6 +51,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.variable}>
       <body className={`${roboto.className} font-body`}>
+        {/* iOS 26 Safari Liquid Glass background coverage */}
+        <div className="ios26-full-coverage md:hidden"></div>
         <AdminProvider>
           <UniversalLayout>
             {children}

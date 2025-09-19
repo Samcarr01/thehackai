@@ -204,38 +204,59 @@
     min-height: 100dvh !important;
   }
   
-  /* iOS 26 Safari Liquid Glass Bottom Padding Elimination */
+  /* iOS 26 Safari Liquid Glass White Space Fix */
   @media screen and (max-width: 768px) {
-    /* iOS 26 Safari - VH unit now consistently takes 1 point of window.outerHeight */
-    html, body {
-      min-height: 100vh !important;
-      height: 100vh !important;
-      /* Extend content behind Liquid Glass navigation */
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
+    /* iOS 26 Safari - Use window.outerHeight for full viewport coverage */
+    html {
+      background: #0f172a !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
-    /* Force full viewport usage with iOS 26 behavior */
-    #__next, [data-reactroot] {
+    body {
+      background: #0f172a !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      /* iOS 26 fix: Use window.outerHeight equivalent */
       min-height: 100vh !important;
       height: 100vh !important;
-      /* Allow content to extend behind floating Safari UI */
-      overflow: visible !important;
+      /* Extend behind Safari's floating UI */
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
     
-    /* Main container extends to full viewport */
+    /* Critical: Set background on html for iOS 26 modal/overlay coverage */
+    html {
+      background: #0f172a !important;
+    }
+    
+    /* Force full coverage including behind floating bars */
+    #__next, [data-reactroot], body > div {
+      min-height: 100vh !important;
+      background: #0f172a !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    /* Main containers use full viewport */
     .main-container, main, [class*="DarkThemeBackground"] {
       min-height: 100vh !important;
-      height: auto !important;
-      /* No bottom padding - let content flow behind Liquid Glass UI */
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
+      background: #0f172a !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     
-    /* Critical: Remove any bottom spacing from content containers */
-    .container, .max-w-7xl, .mx-auto {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
+    /* iOS 26 WKWebView obscuredContentInsets workaround */
+    .ios26-full-coverage {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: #0f172a !important;
+      z-index: -1 !important;
     }
   }
   
