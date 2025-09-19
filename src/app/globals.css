@@ -204,59 +204,36 @@
     min-height: 100dvh !important;
   }
   
-  /* Mobile bottom padding removal & transparency */
+  /* Remove white gap between content and Safari navigation bar */
   @media screen and (max-width: 768px) {
-    /* Method 1: Complete removal using safe-area-inset */
+    /* Eliminate the white gap - make content touch browser UI directly */
     html, body {
-      padding-bottom: 0;
-      margin-bottom: 0;
-      height: 100vh;
-      height: 100dvh;
-      /* Extend behind browser UI using safe areas */
-      padding-bottom: env(safe-area-inset-bottom, 0);
-      margin-bottom: calc(-1 * env(safe-area-inset-bottom, 20px));
-    }
-    
-    /* Method 2: Make bottom area fully transparent */
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: env(safe-area-inset-bottom, 30px);
-      background: transparent; /* Fully transparent */
-      backdrop-filter: blur(0px); /* No blur - complete transparency */
-      -webkit-backdrop-filter: blur(0px);
-      pointer-events: none;
-      z-index: 9999;
-    }
-    
-    /* Force body to extend behind browser UI completely */
-    body {
-      background-attachment: fixed;
-      /* Extend body background behind all browser UI */
+      margin: 0 !important;
+      padding: 0 !important;
+      height: 100vh !important;
+      height: 100dvh !important;
+      /* Remove any bottom spacing */
+      margin-bottom: 0 !important;
       padding-bottom: 0 !important;
-      margin-bottom: -50px !important; /* Aggressive extension */
     }
     
-    /* Main content containers */
-    body > div:first-child {
-      min-height: 100vh;
-      min-height: 100dvh;
-      /* Extend content behind any browser UI */
+    /* Target the main container to fill completely */
+    body > div:first-child,
+    #__next,
+    [data-reactroot] {
+      height: 100vh !important;
+      height: 100dvh !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      /* Force content to touch the bottom edge */
+      margin-bottom: 0 !important;
       padding-bottom: 0 !important;
-      margin-bottom: -50px !important;
     }
     
-    /* Override any browser default bottom spacing */
-    html {
-      background: transparent !important;
-      background-attachment: fixed !important;
-    }
-    
-    /* Make any bottom elements fully transparent */
-    *:last-child {
+    /* Remove any spacing from all elements at bottom */
+    body *:last-child,
+    div:last-child,
+    section:last-child {
       margin-bottom: 0 !important;
       padding-bottom: 0 !important;
     }
