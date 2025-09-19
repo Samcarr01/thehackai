@@ -204,22 +204,40 @@
     min-height: 100dvh !important;
   }
   
-  /* Mobile bottom padding elimination - simple approach */
+  /* Mobile bottom padding removal & transparency */
   @media screen and (max-width: 768px) {
-    /* Remove bottom spacing completely */
+    /* Method 1: Complete removal using safe-area-inset */
     html, body {
       padding-bottom: 0;
       margin-bottom: 0;
-      /* Extend content behind mobile browser UI */
       height: 100vh;
       height: 100dvh;
+      /* Extend behind browser UI using safe areas */
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      margin-bottom: calc(-1 * env(safe-area-inset-bottom, 20px));
     }
     
-    /* Target the main content containers */
+    /* Method 2: Make bottom area transparent with backdrop blur */
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-bottom, 20px);
+      background: rgba(15, 23, 42, 0.1); /* Semi-transparent dark */
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      pointer-events: none;
+      z-index: 9999;
+    }
+    
+    /* Main content containers */
     body > div:first-child {
       min-height: 100vh;
       min-height: 100dvh;
-      margin-bottom: -25px; /* Extend behind browser UI */
+      /* Extend content behind any browser UI */
+      padding-bottom: env(safe-area-inset-bottom, 0);
     }
   }
   

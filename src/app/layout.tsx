@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  viewportFit: 'cover', // Essential for safe-area-inset-* to work
+  viewportFit: 'cover', // Essential for env(safe-area-inset-*) to work
   minimumScale: 1,
   maximumScale: 1,
   userScalable: false,
