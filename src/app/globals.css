@@ -153,17 +153,21 @@
   
   /* Mobile full-bleed fix - eliminate white borders */
   html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh; /* Dynamic viewport height for mobile */
-    overflow-x: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important; /* Dynamic viewport height for mobile */
+    overflow-x: hidden !important;
+    background: #0f172a !important; /* Force dark slate background */
   }
   
   body {
-    @apply bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 text-white antialiased;
     font-family: var(--font-sans);
+    color: white !important;
+    /* Remove any conflicting Tailwind background classes */
+    background-color: #0f172a !important;
+    background-image: none !important;
   }
   
   /* Smooth scrolling */
@@ -174,16 +178,49 @@
   /* Mobile Safari viewport fix */
   @supports (-webkit-touch-callout: none) {
     html {
-      min-height: -webkit-fill-available;
+      min-height: -webkit-fill-available !important;
+      background: #0f172a !important;
     }
     
     body {
-      min-height: -webkit-fill-available;
+      min-height: -webkit-fill-available !important;
+      background: #0f172a !important;
       /* Safe area padding for notched devices */
       padding-top: env(safe-area-inset-top, 0);
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      padding-bottom: 0 !important; /* No bottom padding for see-through effect */
       padding-left: env(safe-area-inset-left, 0);
       padding-right: env(safe-area-inset-right, 0);
+    }
+  }
+  
+  /* Force dark background on all potential container elements */
+  #__next, [data-reactroot] {
+    background: #0f172a !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+  }
+  
+  /* Mobile browser UI transparency - like Star Citizen */
+  @media screen and (max-width: 768px) {
+    /* Extend background behind browser UI */
+    html {
+      background: #0f172a !important;
+      background-attachment: fixed !important;
+    }
+    
+    body {
+      background: #0f172a !important;
+      background-attachment: fixed !important;
+      /* Extend content behind mobile browser UI */
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    
+    /* Make sure all containers extend full height */
+    body > div:first-child {
+      min-height: 100vh !important;
+      min-height: 100dvh !important;
+      background: #0f172a !important;
     }
   }
   

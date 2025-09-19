@@ -38,6 +38,9 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -46,8 +49,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={roboto.variable}>
-      <body className={`${roboto.className} font-body`}>
+    <html lang="en" className={roboto.variable} style={{ backgroundColor: '#0f172a', margin: 0, padding: 0 }}>
+      <body className={`${roboto.className} font-body`} style={{ backgroundColor: '#0f172a', margin: 0, padding: 0, minHeight: '100vh' }}>
         <AdminProvider>
           <UniversalLayout>
             {children}
