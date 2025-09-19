@@ -11,8 +11,7 @@ export default function DarkThemeBackground({ children, className = "" }: DarkTh
       margin: 0,
       padding: 0,
       width: '100%',
-      minHeight: '100vh',
-      minHeight: '100dvh'
+      minHeight: '100dvh' // Use dvh for better mobile support
     }}>
       {/* Global Purple/Pink Corner Glows - Mobile Optimized */}
       <div className="fixed inset-0 pointer-events-none z-0">
