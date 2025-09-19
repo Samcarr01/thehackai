@@ -217,19 +217,27 @@
       margin-bottom: calc(-1 * env(safe-area-inset-bottom, 20px));
     }
     
-    /* Method 2: Make bottom area transparent with backdrop blur */
+    /* Method 2: Make bottom area fully transparent */
     body::after {
       content: '';
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      height: env(safe-area-inset-bottom, 20px);
-      background: rgba(15, 23, 42, 0.1); /* Semi-transparent dark */
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      height: env(safe-area-inset-bottom, 30px);
+      background: transparent; /* Fully transparent */
+      backdrop-filter: blur(0px); /* No blur - complete transparency */
+      -webkit-backdrop-filter: blur(0px);
       pointer-events: none;
       z-index: 9999;
+    }
+    
+    /* Force body to extend behind browser UI completely */
+    body {
+      background-attachment: fixed;
+      /* Extend body background behind all browser UI */
+      padding-bottom: 0 !important;
+      margin-bottom: -50px !important; /* Aggressive extension */
     }
     
     /* Main content containers */
@@ -237,7 +245,20 @@
       min-height: 100vh;
       min-height: 100dvh;
       /* Extend content behind any browser UI */
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      padding-bottom: 0 !important;
+      margin-bottom: -50px !important;
+    }
+    
+    /* Override any browser default bottom spacing */
+    html {
+      background: transparent !important;
+      background-attachment: fixed !important;
+    }
+    
+    /* Make any bottom elements fully transparent */
+    *:last-child {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
     }
   }
   
