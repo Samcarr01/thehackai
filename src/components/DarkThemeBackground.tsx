@@ -7,7 +7,7 @@ interface DarkThemeBackgroundProps {
 
 export default function DarkThemeBackground({ children, className = "" }: DarkThemeBackgroundProps) {
   return (
-    <div className={`min-h-screen w-full bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 relative overflow-hidden ${className}`}>
+    <div className={`min-h-screen w-full bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 relative overflow-hidden main-container ${className}`}>
       {/* Global Purple/Pink Corner Glows - Mobile Optimized */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 w-24 sm:w-40 md:w-56 lg:w-64 h-24 sm:h-40 md:h-56 lg:h-64 bg-gradient-to-br from-purple-500/15 sm:from-purple-500/18 md:from-purple-500/20 to-transparent rounded-full blur-2xl sm:blur-3xl will-change-transform"></div>

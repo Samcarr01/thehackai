@@ -204,11 +204,38 @@
     min-height: 100dvh !important;
   }
   
-  /* Nuclear option - remove ALL spacing on mobile */
+  /* iOS 26 Safari Liquid Glass Bottom Padding Elimination */
   @media screen and (max-width: 768px) {
-    * { 
-      margin: 0 !important; 
-      padding: 0 !important; 
+    /* iOS 26 Safari - VH unit now consistently takes 1 point of window.outerHeight */
+    html, body {
+      min-height: 100vh !important;
+      height: 100vh !important;
+      /* Extend content behind Liquid Glass navigation */
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    
+    /* Force full viewport usage with iOS 26 behavior */
+    #__next, [data-reactroot] {
+      min-height: 100vh !important;
+      height: 100vh !important;
+      /* Allow content to extend behind floating Safari UI */
+      overflow: visible !important;
+    }
+    
+    /* Main container extends to full viewport */
+    .main-container, main, [class*="DarkThemeBackground"] {
+      min-height: 100vh !important;
+      height: auto !important;
+      /* No bottom padding - let content flow behind Liquid Glass UI */
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    
+    /* Critical: Remove any bottom spacing from content containers */
+    .container, .max-w-7xl, .mx-auto {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
     }
   }
   
