@@ -7,11 +7,12 @@ interface DarkThemeBackgroundProps {
 
 export default function DarkThemeBackground({ children, className = "" }: DarkThemeBackgroundProps) {
   return (
-    <div className={`min-h-screen min-h-[100dvh] w-full bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 relative overflow-hidden ${className}`} style={{
+    <div className={`min-h-screen min-h-[100svh] w-full bg-gradient-to-b from-gray-900 via-slate-900 to-gray-900 relative overflow-hidden ${className}`} style={{
       margin: 0,
       padding: 0,
       width: '100%',
-      minHeight: '100dvh' // Use dvh for better mobile support
+      minHeight: '100svh', // Small viewport height for iOS 26 Safari
+      height: '100dvh' // Dynamic viewport height adapts to browser UI
     }}>
       {/* Global Purple/Pink Corner Glows - Mobile Optimized */}
       <div className="fixed inset-0 pointer-events-none z-0">

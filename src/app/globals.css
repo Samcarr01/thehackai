@@ -151,26 +151,32 @@
     @apply border-gray-200;
   }
   
-  /* Mobile full-bleed fix - eliminate white borders */
+  /* iOS 26 Safari Full-Bleed Design - Complete Solution */
   html, body {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important; /* Dynamic viewport height for mobile */
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
+    /* Use modern viewport units for iOS 26 Safari */
+    min-height: 100svh !important; /* Small viewport height - browser UI visible */
+    height: 100dvh !important; /* Dynamic viewport height - adapts to browser UI */
     overflow-x: hidden !important;
-    background: #0f172a !important; /* Force dark slate background */
+    background: #0f172a !important;
+    /* Extend behind browser UI */
+    background-attachment: fixed !important;
   }
   
   body {
     font-family: var(--font-sans);
     color: white !important;
-    /* Remove any conflicting Tailwind background classes */
     background-color: #0f172a !important;
     background-image: none !important;
+    /* Handle safe areas properly */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    /* Key: Extend content behind bottom browser UI */
+    padding-bottom: 0 !important;
+    margin-bottom: calc(-1 * env(safe-area-inset-bottom, 20px)) !important;
   }
   
   /* Smooth scrolling */
@@ -209,97 +215,39 @@
     min-height: 100dvh !important;
   }
   
-  /* NUCLEAR OPTION: Complete mobile bottom border elimination */
+  /* iOS 26 Safari Mobile Full-Bleed Design */
   @media screen and (max-width: 768px) {
-    /* Force viewport to be exactly screen height */
+    /* Use small viewport height for consistent behavior */
     html {
-      height: 100vh !important;
-      height: 100dvh !important;
-      max-height: 100vh !important;
-      max-height: 100dvh !important;
-    }
-    
-    body {
-      height: 100vh !important;
-      height: 100dvh !important;
-      max-height: 100vh !important;
-      max-height: 100dvh !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      overflow-y: auto !important;
-    }
-  }
-
-  /* Mobile browser UI transparency - like Star Citizen */
-  @media screen and (max-width: 768px) {
-    /* Extend background behind browser UI */
-    html {
+      height: 100svh !important; /* Small viewport height - accounts for browser UI */
       background: #0f172a !important;
       background-attachment: fixed !important;
-      height: 100% !important;
     }
     
-    body {
-      background: #0f172a !important;
-      background-attachment: fixed !important;
-      /* Completely eliminate bottom spacing */
-      margin: 0 !important;
-      padding: 0 !important;
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-      border: 0 !important;
-      outline: 0 !important;
-      height: 100% !important;
-    }
-    
-    /* Make sure all containers extend full height with no bottom spacing */
+    /* Force containers to extend full height */
     body > div:first-child,
     #__next,
     [data-reactroot] {
-      min-height: 100vh !important;
-      min-height: 100dvh !important;
+      min-height: 100svh !important;
+      height: 100dvh !important; /* Dynamic height adapts to browser UI changes */
       background: #0f172a !important;
       margin: 0 !important;
       padding: 0 !important;
-      border: 0 !important;
-      height: 100% !important;
+      /* Extend behind browser UI like Star Citizen */
+      margin-bottom: calc(-1 * env(safe-area-inset-bottom, 25px)) !important;
     }
     
-    /* Remove any potential bottom margins/padding from all elements */
-    * {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
+    /* Remove spacing from content containers */
+    .min-h-screen,
+    [class*="min-h-screen"] {
+      min-height: 100svh !important; /* Use small viewport height */
     }
     
-    /* Specifically target footer and last elements */
-    footer,
-    .footer,
-    body > *:last-child,
-    main:last-child {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-      border-bottom: 0 !important;
-    }
-    
-    /* Force viewport to extend to absolute bottom */
-    html {
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
-    }
-    
-    /* Remove browser default spacing */
-    body {
-      -webkit-margin-before: 0 !important;
-      -webkit-margin-after: 0 !important;
-      -webkit-padding-start: 0 !important;
-      -webkit-padding-end: 0 !important;
-      margin-block-start: 0 !important;
-      margin-block-end: 0 !important;
-      padding-block-start: 0 !important;
-      padding-block-end: 0 !important;
+    /* Handle iOS 26 Safari fixed element displacement */
+    .fixed,
+    [class*="fixed"] {
+      /* Compensate for iOS 26 Safari viewport displacement */
+      bottom: env(safe-area-inset-bottom, 0) !important;
     }
   }
   

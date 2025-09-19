@@ -37,11 +37,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  viewportFit: 'cover',
+  viewportFit: 'cover', // Essential for safe-area-inset-* to work
   minimumScale: 1,
   maximumScale: 1,
   userScalable: false,
-  interactiveWidget: 'resizes-content',
 }
 
 export default function RootLayout({
