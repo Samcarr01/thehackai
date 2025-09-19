@@ -204,38 +204,11 @@
     min-height: 100dvh !important;
   }
   
-  /* Remove white gap between content and Safari navigation bar */
+  /* Nuclear option - remove ALL spacing on mobile */
   @media screen and (max-width: 768px) {
-    /* Eliminate the white gap - make content touch browser UI directly */
-    html, body {
-      margin: 0 !important;
-      padding: 0 !important;
-      height: 100vh !important;
-      height: 100dvh !important;
-      /* Remove any bottom spacing */
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-    }
-    
-    /* Target the main container to fill completely */
-    body > div:first-child,
-    #__next,
-    [data-reactroot] {
-      height: 100vh !important;
-      height: 100dvh !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      /* Force content to touch the bottom edge */
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-    }
-    
-    /* Remove any spacing from all elements at bottom */
-    body *:last-child,
-    div:last-child,
-    section:last-child {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
+    * { 
+      margin: 0 !important; 
+      padding: 0 !important; 
     }
   }
   
