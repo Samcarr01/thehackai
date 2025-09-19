@@ -49,8 +49,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={roboto.variable} style={{ backgroundColor: '#0f172a', margin: 0, padding: 0 }}>
-      <body className={`${roboto.className} font-body`} style={{ backgroundColor: '#0f172a', margin: 0, padding: 0, minHeight: '100vh' }}>
+    <html lang="en" className={roboto.variable}>
+      <body className={`${roboto.className} font-body`}>
         <AdminProvider>
           <UniversalLayout>
             {children}

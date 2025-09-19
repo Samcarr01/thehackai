@@ -151,32 +151,21 @@
     @apply border-gray-200;
   }
   
-  /* iOS 26 Safari Full-Bleed Design - Complete Solution */
+  /* Clean mobile full-bleed fix */
   html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    /* Use modern viewport units for iOS 26 Safari */
-    min-height: 100svh !important; /* Small viewport height - browser UI visible */
-    height: 100dvh !important; /* Dynamic viewport height - adapts to browser UI */
-    overflow-x: hidden !important;
-    background: #0f172a !important;
-    /* Extend behind browser UI */
-    background-attachment: fixed !important;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #0f172a;
   }
   
   body {
     font-family: var(--font-sans);
-    color: white !important;
-    background-color: #0f172a !important;
-    background-image: none !important;
-    /* Handle safe areas properly */
-    padding-top: env(safe-area-inset-top, 0);
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
-    /* Key: Extend content behind bottom browser UI */
-    padding-bottom: 0 !important;
-    margin-bottom: calc(-1 * env(safe-area-inset-bottom, 20px)) !important;
+    color: white;
+    background-color: #0f172a;
+    background-image: none;
   }
   
   /* Smooth scrolling */
@@ -215,39 +204,22 @@
     min-height: 100dvh !important;
   }
   
-  /* iOS 26 Safari Mobile Full-Bleed Design */
+  /* Mobile bottom padding elimination - simple approach */
   @media screen and (max-width: 768px) {
-    /* Use small viewport height for consistent behavior */
-    html {
-      height: 100svh !important; /* Small viewport height - accounts for browser UI */
-      background: #0f172a !important;
-      background-attachment: fixed !important;
+    /* Remove bottom spacing completely */
+    html, body {
+      padding-bottom: 0;
+      margin-bottom: 0;
+      /* Extend content behind mobile browser UI */
+      height: 100vh;
+      height: 100dvh;
     }
     
-    /* Force containers to extend full height */
-    body > div:first-child,
-    #__next,
-    [data-reactroot] {
-      min-height: 100svh !important;
-      height: 100dvh !important; /* Dynamic height adapts to browser UI changes */
-      background: #0f172a !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      /* Extend behind browser UI like Star Citizen */
-      margin-bottom: calc(-1 * env(safe-area-inset-bottom, 25px)) !important;
-    }
-    
-    /* Remove spacing from content containers */
-    .min-h-screen,
-    [class*="min-h-screen"] {
-      min-height: 100svh !important; /* Use small viewport height */
-    }
-    
-    /* Handle iOS 26 Safari fixed element displacement */
-    .fixed,
-    [class*="fixed"] {
-      /* Compensate for iOS 26 Safari viewport displacement */
-      bottom: env(safe-area-inset-bottom, 0) !important;
+    /* Target the main content containers */
+    body > div:first-child {
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin-bottom: -25px; /* Extend behind browser UI */
     }
   }
   
